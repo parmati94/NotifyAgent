@@ -1,0 +1,19 @@
+{
+    "name": "notifyagent",
+    "version": "1.0.0",
+    "description": "Notify Agent with React frontend and FastAPI backend",
+    "main": "index.js",
+    "scripts": {
+        "setup": "pip install -r requirements.txt && npm install && cd client && npm install",
+        "start": "node ./client/set-env.js && concurrently \"npm --prefix client start\" \"uvicorn api.api.main:app --reload\"",
+        "start-client": "npm --prefix client start",
+        "start-server": "uvicorn api.main:app --reload"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "concurrently": "^8.2.2",
+        "cross-env": "^7.0.3"
+    }
+}
