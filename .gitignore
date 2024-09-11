@@ -281,3 +281,4 @@ dist
 .pnp.*
 /.vscode
 cache
+*.db

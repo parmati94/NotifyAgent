@@ -14,9 +14,8 @@ services:
     ports:
       - "${API_PORT}:8000"
     environment:
-      - REDIRECT_URI=http://${API_HOST}:${API_PORT}/callback
       - FRONTEND_URL=http://${FRONTEND_HOST}:${FRONTEND_PORT}
       - LOG_LEVEL=info
     volumes:
-    - /path/to/logs:/app/spotify_project/logs
+    - /path/to/logs:/app/api/config
     restart: always
