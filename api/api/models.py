@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, String, Text
 from .database import Base, engine
+from pydantic import BaseModel
 
 class Webhook(Base):
     __tablename__ = "webhooks"
@@ -7,6 +8,22 @@ class Webhook(Base):
     id = Column(Integer, primary_key=True, index=True)
     channel_name = Column(String, unique=True, index=True)
     webhook_url = Column(String)
+    
+class EmailRequest(BaseModel):
+    subject: str
+    body: str
+
+class WebhookRequest(BaseModel):
+    channel_name: str
+    webhook_url: str
+
+class TautulliRequest(BaseModel):
+    api_key: str
+    base_url: str
+    
+class DiscordRequest(BaseModel):
+    subject: str
+    body: str
 
 class TautulliCredentials(Base):
     __tablename__ = "tautulli_credentials"

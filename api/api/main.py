@@ -27,25 +27,7 @@ def get_db():
     finally:
         db.close()
 
-# Models
-class EmailRequest(BaseModel):
-    subject: str
-    body: str
-
-class WebhookRequest(BaseModel):
-    channel_name: str
-    webhook_url: str
-
-class TautulliRequest(BaseModel):
-    api_key: str
-    base_url: str
-    
-class DiscordRequest(BaseModel):
-    subject: str
-    body: str
-
 FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:3000')
-
 
 app.add_middleware(
     CORSMiddleware,
@@ -102,7 +84,7 @@ def send_discord_message(subject, body, webhook_url, role_mentions):
         raise HTTPException(status_code=500, detail=f"Failed to send message to Discord channel: {response.status_code}")
 
 @app.post("/send_email/")
-def send_email(request: EmailRequest, db: Session = Depends(get_db)):
+def send_email(request: models.EmailRequest, db: Session = Depends(get_db)):
     emails = crud.get_emails(db)
     recipients = [email.email for email in emails]
     
@@ -113,7 +95,7 @@ def send_email(request: EmailRequest, db: Session = Depends(get_db)):
     return {"message": "Email sent successfully"}
 
 @app.post("/send_discord/")
-def send_discord(request: DiscordRequest, db: Session = Depends(get_db)):
+def send_discord(request: models.DiscordRequest, db: Session = Depends(get_db)):
     webhooks = crud.get_webhooks(db)
     role_mentions = crud.get_discord_roles(db)
     for webhook in webhooks:
@@ -121,7 +103,7 @@ def send_discord(request: DiscordRequest, db: Session = Depends(get_db)):
     return {"message": "Discord message sent successfully"}
 
 @app.post("/set_webhook/", response_model=schemas.Webhook)
-def set_webhook(request: WebhookRequest, db: Session = Depends(get_db)):
+def set_webhook(request: models.WebhookRequest, db: Session = Depends(get_db)):
     db_webhook = crud.get_webhook_by_channel_name(db, channel_name=request.channel_name)
     if db_webhook:
         raise HTTPException(status_code=400, detail="Channel name already registered")
