@@ -86,14 +86,15 @@ def send_email_bcc(db: Session, recipients, subject, body):
         raise HTTPException(status_code=500, detail=f"Failed to send email: {e}")
 
 # Function to send Discord message
-def send_discord_message(subject, body, webhook_url):
+def send_discord_message(subject, body, webhook_url, role_mentions):
     embed = {
         "title": subject,
         "description": body,
         "color": 16753920
     }
+    mentions = " ".join([f"<@&{role.role_id}>" for role in role_mentions])
     data = {
-        "content": "",
+        "content": mentions,
         "embeds": [embed]
     }
     response = requests.post(webhook_url, json=data)
@@ -114,8 +115,9 @@ def send_email(request: EmailRequest, db: Session = Depends(get_db)):
 @app.post("/send_discord/")
 def send_discord(request: DiscordRequest, db: Session = Depends(get_db)):
     webhooks = crud.get_webhooks(db)
+    role_mentions = crud.get_discord_roles(db)
     for webhook in webhooks:
-        send_discord_message(request.subject, request.body, webhook.webhook_url)
+        send_discord_message(request.subject, request.body, webhook.webhook_url, role_mentions)
     return {"message": "Discord message sent successfully"}
 
 @app.post("/set_webhook/", response_model=schemas.Webhook)
@@ -262,3 +264,39 @@ def delete_email_credentials(db: Session = Depends(get_db)):
     if not success:
         raise HTTPException(status_code=404, detail="Email credentials not found")
     return success
+
+@app.post("/set_discord_role/", response_model=schemas.DiscordRole)
+def set_discord_role(request: schemas.DiscordRoleCreate, db: Session = Depends(get_db)):
+    db_discord_role = crud.get_discord_role_by_id(db, role_id=request.role_id)
+    if db_discord_role:
+        raise HTTPException(status_code=400, detail="Role already exists")
+    return crud.create_discord_role(db=db, discord_role=request)
+
+@app.get("/get_discord_roles/", response_model=List[schemas.DiscordRole])
+def get_discord_roles(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    return crud.get_discord_roles(db, skip=skip, limit=limit)
+
+@app.delete("/delete_discord_role/{role_id}", response_model=bool)
+def delete_discord_role(role_id: str, db: Session = Depends(get_db)):
+    success = crud.delete_discord_role(db, role_id=role_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Role not found")
+    return success
+
+@app.post("/save_sent_message/", response_model=schemas.SentMessage)
+def save_sent_message(request: schemas.SentMessageCreate, db: Session = Depends(get_db)):
+    return crud.create_sent_message(db=db, sent_message=request)
+
+@app.get("/get_sent_messages/", response_model=List[schemas.SentMessage])
+def get_sent_messages(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    return crud.get_sent_messages(db, skip=skip, limit=limit)
+
+from fastapi import HTTPException
+
+@app.delete("/clear_sent_messages/")
+def clear_sent_messages(db: Session = Depends(get_db)):
+    try:
+        crud.delete_all_sent_messages(db)
+        return {"message": "All sent messages have been cleared."}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

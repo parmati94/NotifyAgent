@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import CustomButton from './Button';
 import CustomTextField from './TextField';
 import { Typography, Box, Checkbox, FormControlLabel, FormGroup } from '@mui/material';
 import CustomSnackbar from './CustomSnackbar';
+import ConfirmationDialog from './ConfirmationDialog';
 
 const REACT_APP_API_BASE_URL = window._env_.REACT_APP_API_BASE_URL || 'http://localhost:8000';
 
@@ -15,33 +16,78 @@ function MessageForm() {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [emailCount, setEmailCount] = useState(0);
+  const [discordChannels, setDiscordChannels] = useState([]);
 
-  const sendMessage = async () => {
+  const handleSendMessageClick = async () => {
+    if (!subject || !body) {
+      setSnackbarMessage('Subject and body cannot be empty');
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
+      return;
+    }
+
     try {
       if (sendEmail) {
-        const emailResponse = await axios.post(`${REACT_APP_API_BASE_URL}/send_email/`, {
-          subject,
-          body
-        });
-        console.log('Email sent:', emailResponse.data);
+        const emailResponse = await axios.get(`${REACT_APP_API_BASE_URL}/get_emails/`);
+        setEmailCount(emailResponse.data.length);
       }
 
       if (sendDiscord) {
-        const discordResponse = await axios.post(`${REACT_APP_API_BASE_URL}/send_discord/`, {
-          subject,
-          body
-        });
-        console.log('Discord message sent:', discordResponse.data);
+        const discordResponse = await axios.get(`${REACT_APP_API_BASE_URL}/get_webhooks/`);
+        setDiscordChannels(discordResponse.data);
       }
 
-      setSnackbarMessage('Message sent successfully');
-      setSnackbarSeverity('success');
-      setSnackbarOpen(true);
+      setDialogOpen(true);
     } catch (error) {
-      console.error('Error sending message:', error);
-      setSnackbarMessage('Error sending message');
+      console.error('Error fetching email or discord data:', error);
+      setSnackbarMessage('Error fetching email or discord data');
       setSnackbarSeverity('error');
       setSnackbarOpen(true);
+    }
+  };
+
+  const handleDialogClose = async (confirmed) => {
+    setDialogOpen(false);
+    if (confirmed) {
+      try {
+        let servicesUsed = [];
+  
+        if (sendEmail) {
+          const emailResponse = await axios.post(`${REACT_APP_API_BASE_URL}/send_email/`, {
+            subject,
+            body
+          });
+          console.log('Email sent:', emailResponse.data);
+          servicesUsed.push(`email(${emailCount})`);
+        }
+  
+        if (sendDiscord) {
+          const discordResponse = await axios.post(`${REACT_APP_API_BASE_URL}/send_discord/`, {
+            subject,
+            body
+          });
+          console.log('Discord message sent:', discordResponse.data);
+          servicesUsed.push(`discord(${discordChannels.length})`);
+        }
+  
+        // Call the endpoint after messages are sent
+        await axios.post(`${REACT_APP_API_BASE_URL}/save_sent_message/`, {
+          subject,
+          body,
+          services: servicesUsed.join(', ')
+        });
+
+        setSnackbarMessage('Message sent successfully');
+        setSnackbarSeverity('success');
+        setSnackbarOpen(true);
+      } catch (error) {
+        console.error('Error sending message:', error);
+        setSnackbarMessage('Error sending message');
+        setSnackbarSeverity('error');
+        setSnackbarOpen(true);
+      }
     }
   };
 
@@ -70,7 +116,7 @@ function MessageForm() {
           onChange={(e) => setBody(e.target.value)}
         />
         <Box mt={2} display="flex" justifyContent="center">
-          <CustomButton onClick={sendMessage}>Send Message</CustomButton>
+          <CustomButton onClick={handleSendMessageClick}>Send Message</CustomButton>
         </Box>
         <Box mt={2} display="flex" justifyContent="center">
           <FormGroup>
@@ -90,6 +136,21 @@ function MessageForm() {
         message={snackbarMessage}
         severity={snackbarSeverity}
         onClose={handleSnackbarClose}
+      />
+      <ConfirmationDialog
+        open={dialogOpen}
+        onClose={handleDialogClose}
+        title="Confirm Send"
+        content={
+          <>
+            <p>Are you sure you want to send this message to {emailCount} email address(s) and the following Discord channels:</p>
+            <ul>
+              {discordChannels.map((channel) => (
+                <li key={channel.channel_name}>{channel.channel_name}</li>
+              ))}
+            </ul>
+          </>
+        }
       />
     </div>
   );

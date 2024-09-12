@@ -92,3 +92,38 @@ def delete_email_credentials(db: Session):
         db.commit()
         return True
     return False
+
+def create_discord_role(db: Session, discord_role: schemas.DiscordRoleCreate):
+    db_discord_role = models.DiscordRole(**discord_role.dict())
+    db.add(db_discord_role)
+    db.commit()
+    db.refresh(db_discord_role)
+    return db_discord_role
+
+def get_discord_roles(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.DiscordRole).offset(skip).limit(limit).all()
+
+def get_discord_role_by_id(db: Session, role_id: str):
+    return db.query(models.DiscordRole).filter(models.DiscordRole.role_id == role_id).first()
+
+def delete_discord_role(db: Session, role_id: str):
+    db_discord_role = db.query(models.DiscordRole).filter(models.DiscordRole.role_id == role_id).first()
+    if db_discord_role:
+        db.delete(db_discord_role)
+        db.commit()
+        return True
+    return False
+
+def create_sent_message(db: Session, sent_message: schemas.SentMessageCreate):
+    db_sent_message = models.SentMessage(**sent_message.dict())
+    db.add(db_sent_message)
+    db.commit()
+    db.refresh(db_sent_message)
+    return db_sent_message
+
+def get_sent_messages(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.SentMessage).offset(skip).limit(limit).all()
+
+def delete_all_sent_messages(db: Session):
+    db.query(models.SentMessage).delete()
+    db.commit()

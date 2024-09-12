@@ -64,3 +64,32 @@ class EmailCredentials(EmailCredentialsBase):
 
     class Config:
         orm_mode = True
+        
+from pydantic import BaseModel
+
+class DiscordRoleBase(BaseModel):
+    role_name: str
+    role_id: str
+
+class DiscordRoleCreate(DiscordRoleBase):
+    pass
+
+class DiscordRole(DiscordRoleBase):
+    id: int
+
+    class Config:
+        orm_mode: True
+        
+class SentMessageBase(BaseModel):
+    subject: str
+    body: str
+    services: str
+
+class SentMessageCreate(SentMessageBase):
+    pass
+
+class SentMessage(SentMessageBase):
+    id: int
+
+    class Config:
+        orm_mode: True

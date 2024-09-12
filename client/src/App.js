@@ -6,6 +6,7 @@ import EmailForm from './components/EmailForm';
 import WebhookForm from './components/WebhookForm';
 import MessageForm from './components/MessageForm';
 import ConfigurationForm from './components/ConfigurationForm';
+import MessageHistoryForm from './components/MessageHistoryForm';
 import './App.css';
 import ResponsiveAppBar from './components/Navbar';
 import theme from './theme/theme';
@@ -18,6 +19,7 @@ function App() {
           <ResponsiveAppBar />
           <Routes>
             <Route path="/" element={<MessageForm />} />
+            <Route path="/history" element={<MessageHistoryForm />} />
             <Route path="/email" element={<EmailForm />} />
             <Route path="/webhook" element={<WebhookForm />} />
             <Route path="/configuration" element={<ConfigurationForm />} />

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, Text
 from .database import Base, engine
 
 class Webhook(Base):
@@ -33,5 +33,20 @@ class ExclusionList(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True, index=True)
+    
+class DiscordRole(Base):
+    __tablename__ = "discord_roles"
+
+    id = Column(Integer, primary_key=True, index=True)
+    role_name = Column(String, index=True)
+    role_id = Column(String, unique=True, index=True)
+    
+class SentMessage(Base):
+    __tablename__ = "sent_messages"
+
+    id = Column(Integer, primary_key=True, index=True)
+    subject = Column(String, index=True)
+    body = Column(Text)
+    services = Column(String)
 
 Base.metadata.create_all(bind=engine)

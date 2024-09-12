@@ -6,6 +6,7 @@ import { Typography, Box } from '@mui/material';
 import ExclusionList from './ExclusionList';
 import CollapsibleSection from './CollapsibleSection';
 import CustomSnackbar from './CustomSnackbar';
+import DiscordRoleList from './DiscordRoleList';
 
 const REACT_APP_API_BASE_URL = window._env_.REACT_APP_API_BASE_URL || 'http://localhost:8000';
 
@@ -22,6 +23,11 @@ function ConfigurationForm() {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+
+  // Discord state variables
+  const [discordRoles, setDiscordRoles] = useState([]);
+  const [newRoleName, setNewRoleName] = useState('');
+  const [newRoleId, setNewRoleId] = useState('');
 
   useEffect(() => {
     // Fetch saved Tautulli credentials from the backend when the component mounts
@@ -52,6 +58,15 @@ function ConfigurationForm() {
       })
       .catch(error => {
         console.error('Error fetching email credentials:', error);
+      });
+
+    // Fetch Discord roles from the backend when the component mounts
+    axios.get(`${REACT_APP_API_BASE_URL}/get_discord_roles/`)
+      .then(response => {
+        setDiscordRoles(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching Discord roles:', error);
       });
   }, []);
 
@@ -139,6 +154,47 @@ function ConfigurationForm() {
       });
   };
 
+  const addDiscordRole = () => {
+    const role = {
+      role_name: newRoleName,
+      role_id: newRoleId
+    };
+
+    axios.post(`${REACT_APP_API_BASE_URL}/set_discord_role/`, role)
+      .then(response => {
+        setDiscordRoles([...discordRoles, response.data]);
+        setNewRoleName('');
+        setNewRoleId('');
+        setSnackbarMessage('Discord role added successfully');
+        setSnackbarSeverity('success');
+        setSnackbarOpen(true);
+      })
+      .catch(error => {
+        console.error('Error adding Discord role:', error);
+        setSnackbarMessage('Error adding Discord role');
+        setSnackbarSeverity('error');
+        setSnackbarOpen(true);
+      });
+  };
+
+  const removeDiscordRole = (roleId) => {
+    axios.delete(`${REACT_APP_API_BASE_URL}/delete_discord_role/${roleId}`)
+      .then(response => {
+        if (response.data) {
+          setDiscordRoles(discordRoles.filter(role => role.role_id !== roleId));
+          setSnackbarMessage('Discord role removed successfully');
+          setSnackbarSeverity('success');
+          setSnackbarOpen(true);
+        }
+      })
+      .catch(error => {
+        console.error('Error removing Discord role:', error);
+        setSnackbarMessage('Error removing Discord role');
+        setSnackbarSeverity('error');
+        setSnackbarOpen(true);
+      });
+  };
+
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
   };
@@ -208,6 +264,24 @@ function ConfigurationForm() {
           <CustomButton onClick={addExclusion}>Add to Exclusion List</CustomButton>
         </Box>
         <ExclusionList exclusions={exclusionList} onRemove={removeExclusion} />
+      </CollapsibleSection>
+      <CollapsibleSection title="Discord Roles">
+        <CustomTextField
+          type="text"
+          label="Role Name"
+          value={newRoleName}
+          onChange={(e) => setNewRoleName(e.target.value)}
+        />
+        <CustomTextField
+          type="text"
+          label="Role ID"
+          value={newRoleId}
+          onChange={(e) => setNewRoleId(e.target.value)}
+        />
+        <Box mt={2} display="flex" justifyContent="center">
+          <CustomButton onClick={addDiscordRole}>Add Discord Role</CustomButton>
+        </Box>
+        <DiscordRoleList roles={discordRoles} onRemove={removeDiscordRole} />
       </CollapsibleSection>
       <CustomSnackbar
         open={snackbarOpen}
