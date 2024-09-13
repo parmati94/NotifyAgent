@@ -46,7 +46,9 @@ const MessageHistoryTable = ({ messages }) => {
                   </TableCell>
                   <TableCell align="right">{message.body}</TableCell>
                   <TableCell align="right">{message.services}</TableCell>
-                  <TableCell align="right">{new Date(message.timestamp).toLocaleString()}</TableCell>
+                  <TableCell align="right">
+                    {new Date(message.timestamp.replace(' ', 'T') + 'Z').toLocaleString()}
+                  </TableCell>
                 </TableRow>
               ))
             )}
