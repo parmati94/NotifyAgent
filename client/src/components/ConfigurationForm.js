@@ -157,7 +157,8 @@ function ConfigurationForm() {
   const addDiscordRole = () => {
     const role = {
       role_name: newRoleName,
-      role_id: newRoleId
+      role_id: newRoleId,
+      is_active: true // Default to active when adding a new role
     };
 
     axios.post(`${REACT_APP_API_BASE_URL}/set_discord_role/`, role)
@@ -193,6 +194,25 @@ function ConfigurationForm() {
         setSnackbarSeverity('error');
         setSnackbarOpen(true);
       });
+  };
+
+  const toggleDiscordRoleActive = async (roleId) => {
+    const role = discordRoles.find(r => r.role_id === roleId);
+    if (!role) return;
+
+    try {
+      const updatedRole = { ...role, is_active: !role.is_active };
+      await axios.put(`${REACT_APP_API_BASE_URL}/update_discord_role/`, updatedRole);
+      setDiscordRoles(discordRoles.map(r => (r.role_id === roleId ? updatedRole : r)));
+      setSnackbarMessage('Discord role updated successfully');
+      setSnackbarSeverity('success');
+      setSnackbarOpen(true);
+    } catch (error) {
+      console.error('Error updating Discord role:', error);
+      setSnackbarMessage('Error updating Discord role');
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
+    }
   };
 
   const handleSnackbarClose = () => {
@@ -281,7 +301,7 @@ function ConfigurationForm() {
         <Box mt={2} display="flex" justifyContent="center">
           <CustomButton onClick={addDiscordRole}>Add Discord Role</CustomButton>
         </Box>
-        <DiscordRoleList roles={discordRoles} onRemove={removeDiscordRole} />
+        <DiscordRoleList roles={discordRoles} onRemove={removeDiscordRole} onToggleActive={toggleDiscordRoleActive} />
       </CollapsibleSection>
       <CustomSnackbar
         open={snackbarOpen}

@@ -97,9 +97,11 @@ def send_email(request: models.EmailRequest, db: Session = Depends(get_db)):
 @app.post("/send_discord/")
 def send_discord(request: models.DiscordRequest, db: Session = Depends(get_db)):
     webhooks = crud.get_webhooks(db)
+    active_webhooks = [webhook for webhook in webhooks if webhook.is_active]
     role_mentions = crud.get_discord_roles(db)
-    for webhook in webhooks:
-        send_discord_message(request.subject, request.body, webhook.webhook_url, role_mentions)
+    active_role_mentions = [role for role in role_mentions if role.is_active]
+    for webhook in active_webhooks:
+        send_discord_message(request.subject, request.body, webhook.webhook_url, active_role_mentions)
     return {"message": "Discord message sent successfully"}
 
 @app.post("/set_webhook/", response_model=schemas.Webhook)
@@ -119,6 +121,37 @@ def delete_webhook(channel_name: str, db: Session = Depends(get_db)):
     if not success:
         raise HTTPException(status_code=404, detail="Webhook not found")
     return {"detail": "Webhook deleted successfully"}
+
+@app.put("/update_webhook/")
+def update_webhook(webhook: schemas.WebhookUpdate, db: Session = Depends(get_db)):
+    db_webhook = crud.get_webhook_by_channel_name(db, channel_name=webhook.channel_name)
+    if not db_webhook:
+        raise HTTPException(status_code=404, detail="Webhook not found")
+    db_webhook.is_active = webhook.is_active
+    db.commit()
+    db.refresh(db_webhook)
+    return db_webhook
+
+@app.post("/add_email/")
+def add_email(email: schemas.EmailCreate, db: Session = Depends(get_db)):
+    # Validate email format (basic validation)
+    if '@' not in email.email:
+        raise HTTPException(status_code=400, detail="Invalid email format")
+
+    # Check if the email is in the exclusion list
+    exclusion_list = crud.get_exclusion_list(db)
+    exclusion_emails = {exclusion.email for exclusion in exclusion_list}
+    if email.email in exclusion_emails:
+        raise HTTPException(status_code=400, detail="Email is in the exclusion list")
+
+    # Check if the email already exists in the database
+    db_email = crud.get_email_by_address(db, email=email.email)
+    if db_email:
+        raise HTTPException(status_code=400, detail="Email already exists in the database")
+
+    # Add the email to the database
+    crud.create_email(db=db, email=email)
+    return {"message": "Email added successfully"}
 
 @app.post("/import_emails/")
 def import_emails(db: Session = Depends(get_db)):
@@ -264,6 +297,13 @@ def delete_discord_role(role_id: str, db: Session = Depends(get_db)):
     if not success:
         raise HTTPException(status_code=404, detail="Role not found")
     return success
+
+@app.put("/update_discord_role/", response_model=schemas.DiscordRole)
+def update_discord_role(role: schemas.DiscordRoleUpdate, db: Session = Depends(get_db)):
+    updated_role = crud.update_discord_role(db, role=role)
+    if not updated_role:
+        raise HTTPException(status_code=404, detail="Role not found")
+    return updated_role
 
 @app.post("/save_sent_message/", response_model=schemas.SentMessage)
 def save_sent_message(request: schemas.SentMessageCreate, db: Session = Depends(get_db)):

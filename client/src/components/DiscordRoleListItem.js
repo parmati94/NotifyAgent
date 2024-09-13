@@ -1,14 +1,20 @@
 import React from 'react';
-import { ListItem, ListItemText, IconButton } from '@mui/material';
+import { ListItem, ListItemText, IconButton, Checkbox } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-const DiscordRoleListItem = ({ role, onRemove }) => {
+const DiscordRoleListItem = ({ role, onRemove, onToggleActive }) => {
   return (
     <ListItem
       secondaryAction={
-        <IconButton edge="end" aria-label="delete" onClick={() => onRemove(role.role_id)}>
-          <DeleteIcon />
-        </IconButton>
+        <>
+          <Checkbox
+            checked={role.is_active}
+            onChange={() => onToggleActive(role.role_id)}
+          />
+          <IconButton edge="end" aria-label="delete" onClick={() => onRemove(role.role_id)}>
+            <DeleteIcon />
+          </IconButton>
+        </>
       }
     >
       <ListItemText

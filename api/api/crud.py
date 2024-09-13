@@ -106,6 +106,18 @@ def get_discord_roles(db: Session, skip: int = 0, limit: int = 100):
 def get_discord_role_by_id(db: Session, role_id: str):
     return db.query(models.DiscordRole).filter(models.DiscordRole.role_id == role_id).first()
 
+def update_discord_role(db: Session, role: schemas.DiscordRoleUpdate):
+    db_role = db.query(models.DiscordRole).filter(models.DiscordRole.role_id == role.role_id).first()
+    if not db_role:
+        return None
+    if role.role_name is not None:
+        db_role.role_name = role.role_name
+    if role.is_active is not None:
+        db_role.is_active = role.is_active
+    db.commit()
+    db.refresh(db_role)
+    return db_role
+
 def delete_discord_role(db: Session, role_id: str):
     db_discord_role = db.query(models.DiscordRole).filter(models.DiscordRole.role_id == role_id).first()
     if db_discord_role:

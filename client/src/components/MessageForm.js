@@ -69,7 +69,7 @@ function MessageForm() {
             body
           });
           console.log('Discord message sent:', discordResponse.data);
-          servicesUsed.push(`discord(${discordChannels.length})`);
+          servicesUsed.push(`discord(${discordChannels.filter(channel => channel.is_active).length})`);
         }
   
         // Call the endpoint after messages are sent
@@ -145,7 +145,7 @@ function MessageForm() {
           <>
             <p>Are you sure you want to send this message to {emailCount} email address(s) and the following Discord channels:</p>
             <ul>
-              {discordChannels.map((channel) => (
+              {discordChannels.filter(channel => channel.is_active).map((channel) => (
                 <li key={channel.channel_name}>{channel.channel_name}</li>
               ))}
             </ul>

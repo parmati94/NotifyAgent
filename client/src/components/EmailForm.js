@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Button, Typography, Box } from '@mui/material';
+import { Typography, Box, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+import CustomButton from './Button';
 import CustomTextField from './TextField';
 import EmailTable from './EmailTable';
 import CustomSnackbar from './CustomSnackbar';
@@ -15,6 +16,8 @@ function EmailForm() {
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [newEmailDialogOpen, setNewEmailDialogOpen] = useState(false);
+  const [newEmail, setNewEmail] = useState('');
 
   useEffect(() => {
     // Fetch stored emails from the backend when the component mounts
@@ -37,6 +40,23 @@ function EmailForm() {
     } catch (error) {
       console.error('Error importing emails:', error);
       setSnackbarMessage('Error importing emails');
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
+    }
+  };
+
+  const addEmail = async () => {
+    try {
+      const response = await axios.post(`${REACT_APP_API_BASE_URL}/add_email/`, { email: newEmail });
+      setEmails([...emails, newEmail]);
+      setNewEmail('');
+      setSnackbarMessage('Email added successfully');
+      setSnackbarSeverity('success');
+      setSnackbarOpen(true);
+      setNewEmailDialogOpen(false);
+    } catch (error) {
+      console.error('Error adding email:', error);
+      setSnackbarMessage('Error adding email');
       setSnackbarSeverity('error');
       setSnackbarOpen(true);
     }
@@ -76,6 +96,14 @@ function EmailForm() {
     }
   };
 
+  const handleNewEmailDialogOpen = () => {
+    setNewEmailDialogOpen(true);
+  };
+
+  const handleNewEmailDialogClose = () => {
+    setNewEmailDialogOpen(false);
+  };
+
   const filteredEmails = emails.filter(email =>
     email.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -100,9 +128,12 @@ function EmailForm() {
           <EmailTable emails={filteredEmails} onDelete={deleteEmail} />
         </Box>
         <Box mt={4} sx={{ display: 'flex', flexDirection: 'column', gap: 2, alignItems: 'center' }}>
-          <Button variant="contained" onClick={handleDialogOpen} sx={{ width: '300px' }}>
+          <CustomButton variant="contained" onClick={handleDialogOpen} sx={{ width: '300px' }}>
             Import Emails from Tautulli
-          </Button>
+          </CustomButton>
+          <CustomButton variant="contained" onClick={handleNewEmailDialogOpen} sx={{ width: '300px' }}>
+            Add New Email
+          </CustomButton>
         </Box>
         <CustomSnackbar
           open={snackbarOpen}
@@ -116,6 +147,26 @@ function EmailForm() {
           title="Confirm Import"
           content="Are you sure you want to import emails from Tautulli?"
         />
+        <Dialog open={newEmailDialogOpen} onClose={handleNewEmailDialogClose}>
+          <DialogTitle>Add New Email</DialogTitle>
+          <DialogContent>
+            <CustomTextField
+              type="email"
+              label="Email"
+              value={newEmail}
+              onChange={(e) => setNewEmail(e.target.value)}
+              fullWidth
+            />
+          </DialogContent>
+          <DialogActions>
+            <CustomButton onClick={handleNewEmailDialogClose} color="primary">
+              Cancel
+            </CustomButton>
+            <CustomButton onClick={addEmail} color="primary">
+              Add Email
+            </CustomButton>
+          </DialogActions>
+        </Dialog>
       </Box>
     </>
   );

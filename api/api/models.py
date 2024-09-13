@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text
+from sqlalchemy import Column, Integer, String, Text, Boolean
 from .database import Base, engine
 from pydantic import BaseModel
 
@@ -8,6 +8,7 @@ class Webhook(Base):
     id = Column(Integer, primary_key=True, index=True)
     channel_name = Column(String, unique=True, index=True)
     webhook_url = Column(String)
+    is_active = Column(Boolean, default=True)
     
 class EmailRequest(BaseModel):
     subject: str
@@ -57,6 +58,7 @@ class DiscordRole(Base):
     id = Column(Integer, primary_key=True, index=True)
     role_name = Column(String, index=True)
     role_id = Column(String, unique=True, index=True)
+    is_active = Column(Boolean, default=True)
     
 class SentMessage(Base):
     __tablename__ = "sent_messages"

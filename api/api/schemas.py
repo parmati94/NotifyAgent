@@ -1,11 +1,18 @@
 from pydantic import BaseModel
+from typing import Optional
 
 class WebhookBase(BaseModel):
     channel_name: str
     webhook_url: str
+    is_active: bool
 
 class WebhookCreate(WebhookBase):
     pass
+
+class WebhookUpdate(BaseModel):
+    channel_name: Optional[str] = None
+    webhook_url: Optional[str] = None
+    is_active: Optional[bool] = None
 
 class Webhook(WebhookBase):
     id: int
@@ -70,9 +77,15 @@ from pydantic import BaseModel
 class DiscordRoleBase(BaseModel):
     role_name: str
     role_id: str
+    is_active: bool
 
 class DiscordRoleCreate(DiscordRoleBase):
     pass
+
+class DiscordRoleUpdate(BaseModel):
+    role_name: Optional[str] = None
+    role_id: Optional[str] = None
+    is_active: Optional[bool] = None
 
 class DiscordRole(DiscordRoleBase):
     id: int
