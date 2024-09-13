@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import CustomButton from './Button';
 import CustomTextField from './TextField';
-import { Typography, Box, Checkbox, FormControlLabel, FormGroup } from '@mui/material';
+import { Typography, Box, Checkbox, FormControlLabel, FormGroup, Card, CardContent, CardActions } from '@mui/material';
 import CustomSnackbar from './CustomSnackbar';
 import ConfirmationDialog from './ConfirmationDialog';
+import CheckBoxOutlineBlankOutlinedIcon from '@mui/icons-material/CheckBoxOutlineBlankOutlined';
+import CheckBoxOutlinedIcon from '@mui/icons-material/CheckBoxOutlined';
 
 const REACT_APP_API_BASE_URL = window._env_.REACT_APP_API_BASE_URL || 'http://localhost:8000';
 
@@ -19,6 +21,36 @@ function MessageForm() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [emailCount, setEmailCount] = useState(0);
   const [discordChannels, setDiscordChannels] = useState([]);
+  const [webhooksStatus, setWebhooksStatus] = useState(false);
+  const [rolesStatus, setRolesStatus] = useState(false);
+  const [emailStatus, setEmailStatus] = useState(false);
+  const [emailCredentialStatus, setemailCredentialStatus] = useState(false);
+  const [tautulliStatus, setTautulliStatus] = useState(false);
+
+  useEffect(() => {
+    const fetchConfigData = async () => {
+      try {
+        const discordResponse = await axios.get(`${REACT_APP_API_BASE_URL}/get_webhooks/`);
+        setWebhooksStatus(discordResponse.data.length > 0);
+
+        const emailCredentialResponse = await axios.get(`${REACT_APP_API_BASE_URL}/get_email_credentials/`);
+        setemailCredentialStatus(emailCredentialResponse.data !== null && emailCredentialResponse.data !== undefined);
+
+        const emailResponse = await axios.get(`${REACT_APP_API_BASE_URL}/get_emails/`);
+        setEmailStatus(emailResponse.data.length > 0);
+  
+        const tautulliResponse = await axios.get(`${REACT_APP_API_BASE_URL}/get_tautulli_credentials/`);
+        setTautulliStatus(tautulliResponse.data !== null && tautulliResponse.data !== undefined);
+
+        const rolesResponse = await axios.get(`${REACT_APP_API_BASE_URL}/get_discord_roles/`);
+        setRolesStatus(rolesResponse.data.length > 0);
+      } catch (error) {
+        console.error('Error fetching configuration data:', error);
+      }
+    };
+
+    fetchConfigData();
+  }, []);
 
   const handleSendMessageClick = async () => {
     if (!subject || !body) {
@@ -96,40 +128,76 @@ function MessageForm() {
   };
 
   return (
-    <div>
-      <Box sx={{ backgroundColor: '#f5f5f5', padding: '20px', borderRadius: '8px', textAlign: 'center', marginBottom: '20px' }}>
-        <Typography variant="h4" color="primary" gutterBottom>
-          Send Message
-        </Typography>
+    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: 'calc(100vh - 70px)', backgroundColor: '#f5f5f5', margin: '0 auto', overflow: 'hidden', width: '100%' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-around', width: '100%', padding: 2, backgroundColor: '#e0e0e0', borderRadius: 1, marginBottom: 2 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          {emailCredentialStatus ? <CheckBoxOutlinedIcon color="success" /> : <CheckBoxOutlineBlankOutlinedIcon />}
+          <Typography variant="body1" sx={{ marginLeft: 1 }}>
+            Email Credentials
+          </Typography>
+        </Box>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          {tautulliStatus ? <CheckBoxOutlinedIcon color="success" /> : <CheckBoxOutlineBlankOutlinedIcon />}
+          <Typography variant="body1" sx={{ marginLeft: 1 }}>
+            Tautulli Credentials
+          </Typography>
+        </Box>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          {emailStatus ? <CheckBoxOutlinedIcon color="success" /> : <CheckBoxOutlineBlankOutlinedIcon />}
+          <Typography variant="body1" sx={{ marginLeft: 1 }}>
+            Emails
+          </Typography>
+        </Box>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          {webhooksStatus ? <CheckBoxOutlinedIcon color="success" /> : <CheckBoxOutlineBlankOutlinedIcon />}
+          <Typography variant="body1" sx={{ marginLeft: 1 }}>
+            Discord Webhooks
+          </Typography>
+        </Box>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          {rolesStatus ? <CheckBoxOutlinedIcon color="success" /> : <CheckBoxOutlineBlankOutlinedIcon />}
+          <Typography variant="body1" sx={{ marginLeft: 1 }}>
+            Discord Roles
+          </Typography>
+        </Box>
       </Box>
-      <Box sx={{ width: '75%', margin: '0 auto' }}>
-        <CustomTextField
-          type="text"
-          label="Subject"
-          value={subject}
-          onChange={(e) => setSubject(e.target.value)}
-        />
-        <CustomTextField
-          type="text"
-          label="Body"
-          value={body}
-          onChange={(e) => setBody(e.target.value)}
-        />
-        <Box mt={2} display="flex" justifyContent="center">
-          <CustomButton onClick={handleSendMessageClick}>Send Message</CustomButton>
-        </Box>
-        <Box mt={2} display="flex" justifyContent="center">
-          <FormGroup>
-            <FormControlLabel
-              control={<Checkbox checked={sendEmail} onChange={(e) => setSendEmail(e.target.checked)} />}
-              label="Send via Email"
+      <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', flexGrow: 1, width: '100%' }}>
+        <Card sx={{ maxWidth: 700, width: '100%', padding: 2, boxShadow: 6, borderRadius: 2, marginTop: '-7vh' }}>
+          <CardContent>
+            <Typography variant="h4" color="primary" gutterBottom align="center">
+              Send Message
+            </Typography>
+            <CustomTextField
+              type="text"
+              label="Subject"
+              value={subject}
+              onChange={(e) => setSubject(e.target.value)}
+              fullWidth
+              margin="normal"
             />
-            <FormControlLabel
-              control={<Checkbox checked={sendDiscord} onChange={(e) => setSendDiscord(e.target.checked)} />}
-              label="Send via Discord"
+            <CustomTextField
+              type="text"
+              label="Body"
+              value={body}
+              onChange={(e) => setBody(e.target.value)}
+              fullWidth
+              margin="normal"
             />
-          </FormGroup>
-        </Box>
+            <FormGroup row sx={{ justifyContent: 'center', marginTop: 2 }}>
+              <FormControlLabel
+                control={<Checkbox checked={sendEmail} onChange={(e) => setSendEmail(e.target.checked)} />}
+                label="Send via Email"
+              />
+              <FormControlLabel
+                control={<Checkbox checked={sendDiscord} onChange={(e) => setSendDiscord(e.target.checked)} />}
+                label="Send via Discord"
+              />
+            </FormGroup>
+          </CardContent>
+          <CardActions sx={{ justifyContent: 'center' }}>
+            <CustomButton onClick={handleSendMessageClick}>Send Message</CustomButton>
+          </CardActions>
+        </Card>
       </Box>
       <CustomSnackbar
         open={snackbarOpen}
@@ -143,16 +211,20 @@ function MessageForm() {
         title="Confirm Send"
         content={
           <>
-            <p>Are you sure you want to send this message to {emailCount} email address(s) and the following Discord channels:</p>
+            <Typography variant="body1">
+              Are you sure you want to send this message to {emailCount} email address(s) and the following Discord channels:
+            </Typography>
             <ul>
               {discordChannels.filter(channel => channel.is_active).map((channel) => (
-                <li key={channel.channel_name}>{channel.channel_name}</li>
+                <li key={channel.channel_name}>
+                  <Typography variant="body2">{channel.channel_name}</Typography>
+                </li>
               ))}
             </ul>
           </>
         }
       />
-    </div>
+    </Box>
   );
 }
 
