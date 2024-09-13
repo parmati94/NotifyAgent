@@ -16,6 +16,9 @@ const MessageHistoryTable = ({ messages }) => {
     setPage(0);
   };
 
+  // Sort messages by timestamp in descending order
+  const sortedMessages = [...messages].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
   return (
     <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
       <TableContainer component={Paper} sx={{ width: '75%' }}>
@@ -29,14 +32,14 @@ const MessageHistoryTable = ({ messages }) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {messages.length === 0 ? (
+            {sortedMessages.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={3} align="center">
+                <TableCell colSpan={4} align="center">
                   No message history available.
                 </TableCell>
               </TableRow>
             ) : (
-              messages.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((message, index) => (
+              sortedMessages.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((message, index) => (
                 <TableRow key={index} sx={{ '&:nth-of-type(odd)': { backgroundColor: 'action.hover' }, '&:last-child td, &:last-child th': { border: 0 } }}>
                   <TableCell component="th" scope="row">
                     {message.subject}
@@ -52,7 +55,7 @@ const MessageHistoryTable = ({ messages }) => {
         <TablePagination
           rowsPerPageOptions={[10, 20, 50]}
           component="div"
-          count={messages.length}
+          count={sortedMessages.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
