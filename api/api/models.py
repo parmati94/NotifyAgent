@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String, Text, Boolean
+from sqlalchemy import Column, Integer, String, Text, Boolean, DateTime
+from datetime import datetime
 from .database import Base, engine
 from pydantic import BaseModel
 
@@ -67,5 +68,6 @@ class SentMessage(Base):
     subject = Column(String, index=True)
     body = Column(Text)
     services = Column(String)
+    timestamp = Column(DateTime, default=datetime.utcnow)
 
 Base.metadata.create_all(bind=engine)

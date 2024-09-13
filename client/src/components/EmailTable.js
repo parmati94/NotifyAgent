@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, TablePagination } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, TablePagination, TableSortLabel } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 function EmailTable({ emails, onDelete }) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [order, setOrder] = useState('asc');
 
   // Handle page change
   const handleChangePage = (event, newPage) => {
@@ -17,6 +18,20 @@ function EmailTable({ emails, onDelete }) {
     setPage(0);
   };
 
+  // Handle sorting
+  const handleSort = () => {
+    setOrder((prevOrder) => (prevOrder === 'asc' ? 'desc' : 'asc'));
+  };
+
+  // Sort emails
+  const sortedEmails = [...emails].sort((a, b) => {
+    if (order === 'asc') {
+      return a.localeCompare(b);
+    } else {
+      return b.localeCompare(a);
+    }
+  });
+
   return (
     <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
       <TableContainer component={Paper} sx={{ width: '75%', maxWidth: 800 }}>
@@ -24,12 +39,26 @@ function EmailTable({ emails, onDelete }) {
           <TableHead>
             <TableRow>
               <TableCell sx={{ backgroundColor: 'black', color: 'white', width: '10%' }}>#</TableCell>
-              <TableCell sx={{ backgroundColor: 'black', color: 'white', width: '60%', textAlign: 'center' }}>Email</TableCell>
+              <TableCell sx={{ backgroundColor: 'black', color: 'white', width: '60%', textAlign: 'center' }}>
+                <TableSortLabel
+                  active
+                  direction={order}
+                  onClick={handleSort}
+                  sx={{
+                    color: 'white',
+                    '& .MuiTableSortLabel-icon': {
+                      color: 'white !important',
+                    },
+                  }}
+                >
+                  <span style={{ color: 'white' }}>Email</span>
+                </TableSortLabel>
+              </TableCell>
               <TableCell sx={{ backgroundColor: 'black', color: 'white', width: '30%', textAlign: 'center' }}>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {emails.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((email, index) => (
+            {sortedEmails.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((email, index) => (
               <TableRow key={index} sx={{ '&:nth-of-type(odd)': { backgroundColor: 'action.hover' }, '&:last-child td, &:last-child th': { border: 0 } }}>
                 <TableCell component="th" scope="row" sx={{ textAlign: 'center' }}>
                   {page * rowsPerPage + index + 1}

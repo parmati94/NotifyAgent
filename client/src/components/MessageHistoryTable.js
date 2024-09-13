@@ -25,6 +25,7 @@ const MessageHistoryTable = ({ messages }) => {
               <TableCell sx={{ backgroundColor: 'black', color: 'white' }}>Subject</TableCell>
               <TableCell sx={{ backgroundColor: 'black', color: 'white' }} align="right">Body</TableCell>
               <TableCell sx={{ backgroundColor: 'black', color: 'white' }} align="right">Services Used</TableCell>
+              <TableCell sx={{ backgroundColor: 'black', color: 'white' }} align="right">Time</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -42,6 +43,7 @@ const MessageHistoryTable = ({ messages }) => {
                   </TableCell>
                   <TableCell align="right">{message.body}</TableCell>
                   <TableCell align="right">{message.services}</TableCell>
+                  <TableCell align="right">{new Date(message.timestamp).toLocaleString()}</TableCell>
                 </TableRow>
               ))
             )}

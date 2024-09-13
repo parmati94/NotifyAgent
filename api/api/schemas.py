@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from datetime import datetime
 from typing import Optional
 
 class WebhookBase(BaseModel):
@@ -103,6 +104,7 @@ class SentMessageCreate(SentMessageBase):
 
 class SentMessage(SentMessageBase):
     id: int
+    timestamp: datetime
 
     class Config:
         orm_mode: True

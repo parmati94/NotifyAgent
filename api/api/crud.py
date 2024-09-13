@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from datetime import datetime
 from . import models, schemas
 
 def get_webhooks(db: Session):
@@ -127,7 +128,7 @@ def delete_discord_role(db: Session, role_id: str):
     return False
 
 def create_sent_message(db: Session, sent_message: schemas.SentMessageCreate):
-    db_sent_message = models.SentMessage(**sent_message.dict())
+    db_sent_message = models.SentMessage(**sent_message.dict(), timestamp=datetime.utcnow())  # Add timestamp
     db.add(db_sent_message)
     db.commit()
     db.refresh(db_sent_message)
