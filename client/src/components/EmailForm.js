@@ -56,7 +56,13 @@ function EmailForm() {
       setNewEmailDialogOpen(false);
     } catch (error) {
       console.error('Error adding email:', error);
-      setSnackbarMessage('Error adding email');
+      if (error.response && error.response.data && error.response.data.detail) {
+        // Display specific error message from the API
+        setSnackbarMessage(error.response.data.detail);
+      } else {
+        // Display a generic error message
+        setSnackbarMessage('Error adding email');
+      }
       setSnackbarSeverity('error');
       setSnackbarOpen(true);
     }
@@ -147,7 +153,7 @@ function EmailForm() {
           title="Confirm Import"
           content="Are you sure you want to import emails from Tautulli?"
         />
-        <Dialog open={newEmailDialogOpen} onClose={handleNewEmailDialogClose}>
+        <Dialog open={newEmailDialogOpen} onClose={handleNewEmailDialogClose} maxWidth="xs" fullWidth>
           <DialogTitle>Add New Email</DialogTitle>
           <DialogContent>
             <CustomTextField

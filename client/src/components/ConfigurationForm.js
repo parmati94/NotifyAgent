@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import CustomButton from './Button';
 import CustomTextField from './TextField';
 import axios from 'axios';
-import { Typography, Box } from '@mui/material';
+import { Typography, Box, Tooltip, IconButton } from '@mui/material';
 import ExclusionList from './ExclusionList';
 import CollapsibleSection from './CollapsibleSection';
 import CustomSnackbar from './CustomSnackbar';
 import DiscordRoleList from './DiscordRoleList';
+import InfoIcon from '@mui/icons-material/Info';
 
 const REACT_APP_API_BASE_URL = window._env_.REACT_APP_API_BASE_URL || 'http://localhost:8000';
 
@@ -226,7 +227,16 @@ function ConfigurationForm() {
            Configuration
         </Typography>
       </Box>
-      <CollapsibleSection title="Add Email Credentials">
+      <CollapsibleSection title={
+        <Box display="flex" alignItems="center">
+          Add Email Credentials
+          <Tooltip title="Configure email credentials for email notifications" placement="right">
+            <IconButton size="small" sx={{ ml: 1 }}>
+              <InfoIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        </Box>
+      }>
         <CustomTextField
           type="email"
           label="Email Address"
@@ -249,7 +259,16 @@ function ConfigurationForm() {
           <p><strong>Email Address:</strong> {savedEmailAddress}</p>
         </Box>
       </CollapsibleSection>
-      <CollapsibleSection title="Add Tautulli Credentials">
+      <CollapsibleSection title={
+        <Box display="flex" alignItems="center">
+          Add Tautulli Credentials
+          <Tooltip title="Configure Tautulli for importing email addresses of plex users" placement="right">
+            <IconButton size="small" sx={{ ml: 1 }}>
+              <InfoIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        </Box>
+      }>
         <CustomTextField
           type="text"
           label="Tautulli API Key"
@@ -273,7 +292,16 @@ function ConfigurationForm() {
           <p><strong>Base URL:</strong> {savedBaseUrl}</p>
         </Box>
       </CollapsibleSection>
-      <CollapsibleSection title="Exclusion List">
+      <CollapsibleSection title={
+        <Box display="flex" alignItems="center">
+          Exclusion List
+          <Tooltip title="List of emails to exclude when importing email address list from Tautulli" placement="right">
+            <IconButton size="small" sx={{ ml: 1 }}>
+              <InfoIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        </Box>
+      }>
         <CustomTextField
           type="email"
           label="Email to Exclude"
@@ -285,7 +313,16 @@ function ConfigurationForm() {
         </Box>
         <ExclusionList exclusions={exclusionList} onRemove={removeExclusion} />
       </CollapsibleSection>
-      <CollapsibleSection title="Discord Roles">
+      <CollapsibleSection title={
+        <Box display="flex" alignItems="center">
+          Discord Roles
+          <Tooltip title="Configure discord roles to be tagged when sending discord notifications" placement="right">
+            <IconButton size="small" sx={{ ml: 1 }}>
+              <InfoIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        </Box>
+      }>
         <CustomTextField
           type="text"
           label="Role Name"
