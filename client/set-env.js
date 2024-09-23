@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Provide a default value if the environment variable is empty
-const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000';
+const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8181';
 
 // Check if the build directory exists
 const buildDirExists = fs.existsSync(path.join(__dirname, 'build'));
