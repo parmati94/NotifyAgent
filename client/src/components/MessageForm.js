@@ -32,23 +32,41 @@ function MessageForm() {
       try {
         const discordResponse = await axios.get(`${REACT_APP_API_BASE_URL}/get_webhooks/`);
         setWebhooksStatus(discordResponse.data.length > 0);
-
+      } catch (error) {
+        console.error('Error fetching webhooks:', error);
+      }
+  
+      try {
         const emailCredentialResponse = await axios.get(`${REACT_APP_API_BASE_URL}/get_email_credentials/`);
         setemailCredentialStatus(emailCredentialResponse.data !== null && emailCredentialResponse.data !== undefined);
-
+      } catch (error) {
+        console.error('Error fetching email credentials:', error);
+        setemailCredentialStatus(false);
+      }
+  
+      try {
         const emailResponse = await axios.get(`${REACT_APP_API_BASE_URL}/get_emails/`);
         setEmailStatus(emailResponse.data.length > 0);
+      } catch (error) {
+        console.error('Error fetching emails:', error);
+      }
   
+      try {
         const tautulliResponse = await axios.get(`${REACT_APP_API_BASE_URL}/get_tautulli_credentials/`);
         setTautulliStatus(tautulliResponse.data !== null && tautulliResponse.data !== undefined);
-
+      } catch (error) {
+        console.error('Error fetching Tautulli credentials:', error);
+        setTautulliStatus(false);
+      }
+  
+      try {
         const rolesResponse = await axios.get(`${REACT_APP_API_BASE_URL}/get_discord_roles/`);
         setRolesStatus(rolesResponse.data.length > 0);
       } catch (error) {
-        console.error('Error fetching configuration data:', error);
+        console.error('Error fetching Discord roles:', error);
       }
     };
-
+  
     fetchConfigData();
   }, []);
 
