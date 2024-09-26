@@ -1,7 +1,7 @@
 version: '3'
 services:
   frontend:
-    image: spotifyproject-frontend:latest
+    image: parmati/notifyagent-fe:latest
     ports:
       - "${FRONTEND_PORT}:3000"
     depends_on:
@@ -11,7 +11,7 @@ services:
       - TZ=America/New_York
     restart: always
   api:
-    image: spotifyproject-api:latest
+    image: parmati/notifyagent-api:latest
     ports:
       - "${API_PORT}:8000"
     environment:
