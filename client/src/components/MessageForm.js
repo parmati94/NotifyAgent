@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import CustomButton from './Button';
 import CustomTextField from './TextField';
+import CustomMultilineTextField from './CustomMultilineTextField';
 import { Typography, Box, Checkbox, FormControlLabel, FormGroup, Card, CardContent, CardActions } from '@mui/material';
 import CustomSnackbar from './CustomSnackbar';
 import ConfirmationDialog from './ConfirmationDialog';
@@ -193,13 +194,11 @@ function MessageForm() {
               fullWidth
               margin="normal"
             />
-            <CustomTextField
-              type="text"
+            <CustomMultilineTextField
               label="Body"
               value={body}
               onChange={(e) => setBody(e.target.value)}
-              fullWidth
-              margin="normal"
+              placeholder="Body"
             />
             <FormGroup row sx={{ justifyContent: 'center', marginTop: 2 }}>
               <FormControlLabel
