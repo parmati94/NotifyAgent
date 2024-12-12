@@ -27,6 +27,21 @@ function MessageForm() {
   const [emailStatus, setEmailStatus] = useState(false);
   const [emailCredentialStatus, setemailCredentialStatus] = useState(false);
   const [tautulliStatus, setTautulliStatus] = useState(false);
+  const [templates, setTemplates] = useState([]);
+  const [selectedTemplateId, setSelectedTemplateId] = useState('');
+
+  useEffect(() => {
+    const fetchTemplates = async () => {
+      try {
+        const response = await axios.get(`${REACT_APP_API_BASE_URL}/message_templates/`);
+        setTemplates(response.data);
+      } catch (error) {
+        console.error('Error fetching templates:', error);
+      }
+    };
+  
+    fetchTemplates();
+  }, []);
 
   useEffect(() => {
     const fetchConfigData = async () => {
@@ -145,11 +160,27 @@ function MessageForm() {
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
   };
+  
+  const handleTemplateChange = (event) => {
+    const selectedTemplateId = event.target.value;
+    setSelectedTemplateId(selectedTemplateId);
+
+    if (selectedTemplateId === '') {
+      setSubject('');
+      setBody('');
+    } else {
+      const selectedTemplate = templates.find(template => template.id === parseInt(selectedTemplateId));
+      if (selectedTemplate) {
+        setSubject(selectedTemplate.subject);
+        setBody(selectedTemplate.body);
+      }
+    }
+  };
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: 'calc(100vh - 70px)', backgroundColor: '#f5f5f5', margin: '0 auto', overflow: 'hidden', width: '100%' }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-around', width: '100%', padding: 2, backgroundColor: '#e0e0e0', borderRadius: 1, marginBottom: 2 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+      <Box sx={{ display: 'flex', alignItems: 'center' }}>
           {emailCredentialStatus ? <CheckBoxOutlinedIcon color="success" /> : <CheckBoxOutlineBlankOutlinedIcon />}
           <Typography variant="body1" sx={{ marginLeft: 1 }}>
             Email Credentials
@@ -210,6 +241,15 @@ function MessageForm() {
                 label="Send via Discord"
               />
             </FormGroup>
+            <Box mt={2}>
+              <Typography variant="h6">Select a Template</Typography>
+              <select onChange={handleTemplateChange} value={selectedTemplateId}>
+                <option value="">No template</option>
+                {templates.map(template => (
+                  <option key={template.id} value={template.id}>{template.name}</option>
+                ))}
+              </select>
+            </Box>
           </CardContent>
           <CardActions sx={{ justifyContent: 'center' }}>
             <CustomButton onClick={handleSendMessageClick}>Send Message</CustomButton>
