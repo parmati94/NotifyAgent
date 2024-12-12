@@ -108,3 +108,17 @@ class SentMessage(SentMessageBase):
 
     class Config:
         orm_mode: True
+
+class MessageTemplateBase(BaseModel):
+    name: str
+    subject: str
+    body: str
+
+class MessageTemplateCreate(MessageTemplateBase):
+    pass
+
+class MessageTemplate(MessageTemplateBase):
+    id: int
+
+    class Config:
+        orm_mode = True

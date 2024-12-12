@@ -140,3 +140,21 @@ def get_sent_messages(db: Session, skip: int = 0, limit: int = 100):
 def delete_all_sent_messages(db: Session):
     db.query(models.SentMessage).delete()
     db.commit()
+    
+def get_message_templates(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.MessageTemplate).offset(skip).limit(limit).all()
+
+def create_message_template(db: Session, template: schemas.MessageTemplateCreate):
+    db_template = models.MessageTemplate(**template.dict())
+    db.add(db_template)
+    db.commit()
+    db.refresh(db_template)
+    return db_template
+
+def delete_message_template(db: Session, template_id: int):
+    db_template = db.query(models.MessageTemplate).filter(models.MessageTemplate.id == template_id).first()
+    if db_template:
+        db.delete(db_template)
+        db.commit()
+        return True
+    return False

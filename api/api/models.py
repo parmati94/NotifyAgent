@@ -69,5 +69,13 @@ class SentMessage(Base):
     body = Column(Text)
     services = Column(String)
     timestamp = Column(DateTime, default=datetime.utcnow)
+    
+class MessageTemplate(Base):
+    __tablename__ = "message_templates"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, unique=True, index=True)
+    subject = Column(String)
+    body = Column(Text)
 
 Base.metadata.create_all(bind=engine)

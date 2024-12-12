@@ -322,3 +322,15 @@ def clear_sent_messages(db: Session = Depends(get_db)):
         return {"message": "All sent messages have been cleared."}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+@app.get("/message_templates/", response_model=List[schemas.MessageTemplate])
+def get_message_templates(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    return crud.get_message_templates(db, skip=skip, limit=limit)
+
+@app.post("/message_templates/", response_model=schemas.MessageTemplate)
+def create_message_template(template: schemas.MessageTemplateCreate, db: Session = Depends(get_db)):
+    return crud.create_message_template(db=db, template=template)
+
+@app.delete("/message_templates/{template_id}", response_model=bool)
+def delete_message_template(template_id: int, db: Session = Depends(get_db)):
+    return crud.delete_message_template(db, template_id)
