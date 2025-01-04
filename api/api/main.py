@@ -58,8 +58,11 @@ def send_email_bcc(db: Session, recipients, subject, body):
         msg['From'] = credentials.email_address
         msg['To'] = credentials.email_address
         msg['Subject'] = subject
+        
+        # Convert newlines to <br> tags for HTML formatting
+        html_body = body.replace('\n', '<br>')
 
-        msg.attach(MIMEText(body, 'html'))
+        msg.attach(MIMEText(html_body, 'html'))
 
         msg['Bcc'] = ', '.join(recipients)
         server.send_message(msg)
