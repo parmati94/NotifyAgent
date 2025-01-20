@@ -1,7 +1,9 @@
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, status
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel
 from typing import List
+from datetime import timedelta
 import os
 import smtplib
 import requests
@@ -10,7 +12,7 @@ from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
 from dotenv import load_dotenv
 from sqlalchemy.orm import Session
-from . import models, schemas, crud
+from . import models, schemas, crud, auth
 from .database import SessionLocal, engine
 
 app = FastAPI()
@@ -86,8 +88,30 @@ def send_discord_message(subject, body, webhook_url, role_mentions):
     if response.status_code != 204:
         raise HTTPException(status_code=500, detail=f"Failed to send message to Discord channel: {response.status_code}")
 
+@app.post("/token", response_model=schemas.Token)
+def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+    user = crud.authenticate_user(db, form_data.username, form_data.password)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect email or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    access_token_expires = timedelta(minutes=auth.ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = auth.create_access_token(
+        data={"sub": user.email}, expires_delta=access_token_expires
+    )
+    return {"access_token": access_token, "token_type": "bearer"}
+
+@app.post("/register/", response_model=schemas.User)
+def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+    db_user = crud.get_user_by_email(db, email=user.email)
+    if db_user:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    return crud.create_user(db=db, user=user)
+
 @app.post("/send_email/")
-def send_email(request: models.EmailRequest, db: Session = Depends(get_db)):
+def send_email(request: models.EmailRequest, db: Session = Depends(get_db), current_user: schemas.User = Depends(auth.get_current_user)):
     emails = crud.get_emails(db)
     recipients = [email.email for email in emails]
     
@@ -98,7 +122,7 @@ def send_email(request: models.EmailRequest, db: Session = Depends(get_db)):
     return {"message": "Email sent successfully"}
 
 @app.post("/send_discord/")
-def send_discord(request: models.DiscordRequest, db: Session = Depends(get_db)):
+def send_discord(request: models.DiscordRequest, db: Session = Depends(get_db), current_user: schemas.User = Depends(auth.get_current_user)):
     webhooks = crud.get_webhooks(db)
     active_webhooks = [webhook for webhook in webhooks if webhook.is_active]
     role_mentions = crud.get_discord_roles(db)
@@ -108,25 +132,25 @@ def send_discord(request: models.DiscordRequest, db: Session = Depends(get_db)):
     return {"message": "Discord message sent successfully"}
 
 @app.post("/set_webhook/", response_model=schemas.Webhook)
-def set_webhook(request: models.WebhookRequest, db: Session = Depends(get_db)):
+def set_webhook(request: models.WebhookRequest, db: Session = Depends(get_db), current_user: schemas.User = Depends(auth.get_current_user)):
     db_webhook = crud.get_webhook_by_channel_name(db, channel_name=request.channel_name)
     if db_webhook:
         raise HTTPException(status_code=400, detail="Channel name already registered")
     return crud.create_webhook(db=db, webhook=request)
 
 @app.get("/get_webhooks/", response_model=List[schemas.Webhook])
-def get_webhooks(db: Session = Depends(get_db)):
+def get_webhooks(db: Session = Depends(get_db), current_user: schemas.User = Depends(auth.get_current_user)):
     return crud.get_webhooks(db)
 
 @app.delete("/webhooks/{channel_name}", response_model=dict)
-def delete_webhook(channel_name: str, db: Session = Depends(get_db)):
+def delete_webhook(channel_name: str, db: Session = Depends(get_db), current_user: schemas.User = Depends(auth.get_current_user)):
     success = crud.delete_webhook_by_channel_name(db, channel_name)
     if not success:
         raise HTTPException(status_code=404, detail="Webhook not found")
     return {"detail": "Webhook deleted successfully"}
 
 @app.put("/update_webhook/")
-def update_webhook(webhook: schemas.WebhookUpdate, db: Session = Depends(get_db)):
+def update_webhook(webhook: schemas.WebhookUpdate, db: Session = Depends(get_db), current_user: schemas.User = Depends(auth.get_current_user)):
     db_webhook = crud.get_webhook_by_channel_name(db, channel_name=webhook.channel_name)
     if not db_webhook:
         raise HTTPException(status_code=404, detail="Webhook not found")
@@ -136,7 +160,7 @@ def update_webhook(webhook: schemas.WebhookUpdate, db: Session = Depends(get_db)
     return db_webhook
 
 @app.post("/add_email/")
-def add_email(email: schemas.EmailCreate, db: Session = Depends(get_db)):
+def add_email(email: schemas.EmailCreate, db: Session = Depends(get_db), current_user: schemas.User = Depends(auth.get_current_user)):
     # Validate email format (basic validation)
     if '@' not in email.email:
         raise HTTPException(status_code=400, detail="Invalid email format")
@@ -157,7 +181,7 @@ def add_email(email: schemas.EmailCreate, db: Session = Depends(get_db)):
     return {"message": "Email added successfully"}
 
 @app.post("/import_emails/")
-def import_emails(db: Session = Depends(get_db)):
+def import_emails(db: Session = Depends(get_db), current_user: schemas.User = Depends(auth.get_current_user)):
     # Fetch stored Tautulli credentials
     credentials = crud.get_tautulli_credentials(db)
     if not credentials:
@@ -205,19 +229,19 @@ def import_emails(db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail="Failed to retrieve users from Tautulli")
     
 @app.get("/get_emails/", response_model=List[str])
-def get_emails(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+def get_emails(skip: int = 0, limit: int = 100, db: Session = Depends(get_db), current_user: schemas.User = Depends(auth.get_current_user)):
     emails = crud.get_emails(db, skip=skip, limit=limit)
     return [email.email for email in emails]
 
 @app.delete("/delete_email/{email}", response_model=bool)
-def delete_email(email: str, db: Session = Depends(get_db)):
+def delete_email(email: str, db: Session = Depends(get_db), current_user: schemas.User = Depends(auth.get_current_user)):
     success = crud.delete_email(db, email=email)
     if not success:
         raise HTTPException(status_code=404, detail="Email not found")
     return success
     
 @app.post("/set_tautulli_credentials/", response_model=schemas.TautulliCredentials)
-def set_tautulli_credentials(request: schemas.TautulliCredentialsCreate, db: Session = Depends(get_db)):
+def set_tautulli_credentials(request: schemas.TautulliCredentialsCreate, db: Session = Depends(get_db), current_user: schemas.User = Depends(auth.get_current_user)):
     db_credentials = crud.get_tautulli_credentials(db)
     if db_credentials:
         # Update existing credentials
@@ -231,32 +255,32 @@ def set_tautulli_credentials(request: schemas.TautulliCredentialsCreate, db: Ses
         return crud.create_tautulli_credentials(db=db, credentials=request)
 
 @app.get("/get_tautulli_credentials/", response_model=schemas.TautulliCredentials)
-def get_tautulli_credentials(db: Session = Depends(get_db)):
+def get_tautulli_credentials(db: Session = Depends(get_db), current_user: schemas.User = Depends(auth.get_current_user)):
     credentials = crud.get_tautulli_credentials(db)
     if not credentials:
         raise HTTPException(status_code=404, detail="Tautulli credentials not found")
     return credentials
 
 @app.get("/get_exclusion_list/", response_model=List[schemas.Exclusion])
-def get_exclusion_list(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+def get_exclusion_list(skip: int = 0, limit: int = 100, db: Session = Depends(get_db), current_user: schemas.User = Depends(auth.get_current_user)):
     return crud.get_exclusion_list(db, skip=skip, limit=limit)
 
 @app.post("/set_exclusion/", response_model=schemas.Exclusion)
-def set_exclusion(request: schemas.ExclusionCreate, db: Session = Depends(get_db)):
+def set_exclusion(request: schemas.ExclusionCreate, db: Session = Depends(get_db), current_user: schemas.User = Depends(auth.get_current_user)):
     db_exclusion = crud.get_exclusion_by_email(db, email=request.email)
     if db_exclusion:
         raise HTTPException(status_code=400, detail="Email already in exclusion list")
     return crud.create_exclusion(db=db, exclusion=request)
 
 @app.delete("/delete_exclusion/{email}", response_model=bool)
-def delete_exclusion(email: str, db: Session = Depends(get_db)):
+def delete_exclusion(email: str, db: Session = Depends(get_db), current_user: schemas.User = Depends(auth.get_current_user)):
     success = crud.delete_exclusion(db, email=email)
     if not success:
         raise HTTPException(status_code=404, detail="Email not found in exclusion list")
     return success
 
 @app.post("/set_email_credentials/", response_model=schemas.EmailCredentials)
-def set_email_credentials(request: schemas.EmailCredentialsCreate, db: Session = Depends(get_db)):
+def set_email_credentials(request: schemas.EmailCredentialsCreate, db: Session = Depends(get_db), current_user: schemas.User = Depends(auth.get_current_user)):
     db_credentials = crud.get_email_credentials(db)
     if db_credentials:
         # Update existing credentials
@@ -270,56 +294,54 @@ def set_email_credentials(request: schemas.EmailCredentialsCreate, db: Session =
         return crud.create_email_credentials(db=db, credentials=request)
 
 @app.get("/get_email_credentials/", response_model=schemas.EmailCredentials)
-def get_email_credentials(db: Session = Depends(get_db)):
+def get_email_credentials(db: Session = Depends(get_db), current_user: schemas.User = Depends(auth.get_current_user)):
     credentials = crud.get_email_credentials(db)
     if not credentials:
         raise HTTPException(status_code=404, detail="Email credentials not found")
     return credentials
 
 @app.delete("/delete_email_credentials/", response_model=bool)
-def delete_email_credentials(db: Session = Depends(get_db)):
+def delete_email_credentials(db: Session = Depends(get_db), current_user: schemas.User = Depends(auth.get_current_user)):
     success = crud.delete_email_credentials(db)
     if not success:
         raise HTTPException(status_code=404, detail="Email credentials not found")
     return success
 
 @app.post("/set_discord_role/", response_model=schemas.DiscordRole)
-def set_discord_role(request: schemas.DiscordRoleCreate, db: Session = Depends(get_db)):
+def set_discord_role(request: schemas.DiscordRoleCreate, db: Session = Depends(get_db), current_user: schemas.User = Depends(auth.get_current_user)):
     db_discord_role = crud.get_discord_role_by_id(db, role_id=request.role_id)
     if db_discord_role:
         raise HTTPException(status_code=400, detail="Role already exists")
     return crud.create_discord_role(db=db, discord_role=request)
 
 @app.get("/get_discord_roles/", response_model=List[schemas.DiscordRole])
-def get_discord_roles(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+def get_discord_roles(skip: int = 0, limit: int = 100, db: Session = Depends(get_db), current_user: schemas.User = Depends(auth.get_current_user)):
     return crud.get_discord_roles(db, skip=skip, limit=limit)
 
 @app.delete("/delete_discord_role/{role_id}", response_model=bool)
-def delete_discord_role(role_id: str, db: Session = Depends(get_db)):
+def delete_discord_role(role_id: str, db: Session = Depends(get_db), current_user: schemas.User = Depends(auth.get_current_user)):
     success = crud.delete_discord_role(db, role_id=role_id)
     if not success:
         raise HTTPException(status_code=404, detail="Role not found")
     return success
 
 @app.put("/update_discord_role/", response_model=schemas.DiscordRole)
-def update_discord_role(role: schemas.DiscordRoleUpdate, db: Session = Depends(get_db)):
+def update_discord_role(role: schemas.DiscordRoleUpdate, db: Session = Depends(get_db), current_user: schemas.User = Depends(auth.get_current_user)):
     updated_role = crud.update_discord_role(db, role=role)
     if not updated_role:
         raise HTTPException(status_code=404, detail="Role not found")
     return updated_role
 
 @app.post("/save_sent_message/", response_model=schemas.SentMessage)
-def save_sent_message(request: schemas.SentMessageCreate, db: Session = Depends(get_db)):
+def save_sent_message(request: schemas.SentMessageCreate, db: Session = Depends(get_db), current_user: schemas.User = Depends(auth.get_current_user)):
     return crud.create_sent_message(db=db, sent_message=request)
 
 @app.get("/get_sent_messages/", response_model=List[schemas.SentMessage])
-def get_sent_messages(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+def get_sent_messages(skip: int = 0, limit: int = 100, db: Session = Depends(get_db), current_user: schemas.User = Depends(auth.get_current_user)):
     return crud.get_sent_messages(db, skip=skip, limit=limit)
 
-from fastapi import HTTPException
-
 @app.delete("/clear_sent_messages/")
-def clear_sent_messages(db: Session = Depends(get_db)):
+def clear_sent_messages(db: Session = Depends(get_db), current_user: schemas.User = Depends(auth.get_current_user)):
     try:
         crud.delete_all_sent_messages(db)
         return {"message": "All sent messages have been cleared."}
@@ -327,13 +349,13 @@ def clear_sent_messages(db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail=str(e))
     
 @app.get("/message_templates/", response_model=List[schemas.MessageTemplate])
-def get_message_templates(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+def get_message_templates(skip: int = 0, limit: int = 100, db: Session = Depends(get_db), current_user: schemas.User = Depends(auth.get_current_user)):
     return crud.get_message_templates(db, skip=skip, limit=limit)
 
 @app.post("/message_templates/", response_model=schemas.MessageTemplate)
-def create_message_template(template: schemas.MessageTemplateCreate, db: Session = Depends(get_db)):
+def create_message_template(template: schemas.MessageTemplateCreate, db: Session = Depends(get_db), current_user: schemas.User = Depends(auth.get_current_user)):
     return crud.create_message_template(db=db, template=template)
 
 @app.delete("/message_templates/{template_id}", response_model=bool)
-def delete_message_template(template_id: int, db: Session = Depends(get_db)):
+def delete_message_template(template_id: int, db: Session = Depends(get_db), current_user: schemas.User = Depends(auth.get_current_user)):
     return crud.delete_message_template(db, template_id)

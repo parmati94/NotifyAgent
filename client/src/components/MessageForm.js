@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../axiosConfig';
 import CustomButton from './Button';
 import CustomTextField from './TextField';
 import CustomMultilineTextField from './CustomMultilineTextField';
@@ -33,7 +33,7 @@ function MessageForm() {
   useEffect(() => {
     const fetchTemplates = async () => {
       try {
-        const response = await axios.get(`${REACT_APP_API_BASE_URL}/message_templates/`);
+        const response = await axios.get('/message_templates/');
         setTemplates(response.data);
       } catch (error) {
         console.error('Error fetching templates:', error);
@@ -46,14 +46,14 @@ function MessageForm() {
   useEffect(() => {
     const fetchConfigData = async () => {
       try {
-        const discordResponse = await axios.get(`${REACT_APP_API_BASE_URL}/get_webhooks/`);
+        const discordResponse = await axios.get('/get_webhooks/');
         setWebhooksStatus(discordResponse.data.length > 0);
       } catch (error) {
         console.error('Error fetching webhooks:', error);
       }
   
       try {
-        const emailCredentialResponse = await axios.get(`${REACT_APP_API_BASE_URL}/get_email_credentials/`);
+        const emailCredentialResponse = await axios.get('/get_email_credentials/');
         setemailCredentialStatus(emailCredentialResponse.data !== null && emailCredentialResponse.data !== undefined);
       } catch (error) {
         console.error('Error fetching email credentials:', error);
@@ -61,14 +61,14 @@ function MessageForm() {
       }
   
       try {
-        const emailResponse = await axios.get(`${REACT_APP_API_BASE_URL}/get_emails/`);
+        const emailResponse = await axios.get('/get_emails/');
         setEmailStatus(emailResponse.data.length > 0);
       } catch (error) {
         console.error('Error fetching emails:', error);
       }
   
       try {
-        const tautulliResponse = await axios.get(`${REACT_APP_API_BASE_URL}/get_tautulli_credentials/`);
+        const tautulliResponse = await axios.get('/get_tautulli_credentials/');
         setTautulliStatus(tautulliResponse.data !== null && tautulliResponse.data !== undefined);
       } catch (error) {
         console.error('Error fetching Tautulli credentials:', error);
@@ -76,7 +76,7 @@ function MessageForm() {
       }
   
       try {
-        const rolesResponse = await axios.get(`${REACT_APP_API_BASE_URL}/get_discord_roles/`);
+        const rolesResponse = await axios.get('/get_discord_roles/');
         setRolesStatus(rolesResponse.data.length > 0);
       } catch (error) {
         console.error('Error fetching Discord roles:', error);
@@ -96,12 +96,12 @@ function MessageForm() {
 
     try {
       if (sendEmail) {
-        const emailResponse = await axios.get(`${REACT_APP_API_BASE_URL}/get_emails/`);
+        const emailResponse = await axios.get('/get_emails/');
         setEmailCount(emailResponse.data.length);
       }
 
       if (sendDiscord) {
-        const discordResponse = await axios.get(`${REACT_APP_API_BASE_URL}/get_webhooks/`);
+        const discordResponse = await axios.get('/get_webhooks/');
         setDiscordChannels(discordResponse.data);
       }
 
@@ -121,7 +121,7 @@ function MessageForm() {
         let servicesUsed = [];
   
         if (sendEmail) {
-          const emailResponse = await axios.post(`${REACT_APP_API_BASE_URL}/send_email/`, {
+          const emailResponse = await axios.post('/send_email/', {
             subject,
             body
           });
@@ -130,7 +130,7 @@ function MessageForm() {
         }
   
         if (sendDiscord) {
-          const discordResponse = await axios.post(`${REACT_APP_API_BASE_URL}/send_discord/`, {
+          const discordResponse = await axios.post('/send_discord/', {
             subject,
             body
           });
@@ -139,7 +139,7 @@ function MessageForm() {
         }
   
         // Call the endpoint after messages are sent
-        await axios.post(`${REACT_APP_API_BASE_URL}/save_sent_message/`, {
+        await axios.post('/save_sent_message/', {
           subject,
           body,
           services: servicesUsed.join(', ')

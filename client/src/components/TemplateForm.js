@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../axiosConfig';
 import { Typography, Box, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CustomButton from './Button';
@@ -25,7 +25,7 @@ function TemplateForm() {
   useEffect(() => {
     const fetchTemplates = async () => {
       try {
-        const response = await axios.get(`${REACT_APP_API_BASE_URL}/message_templates/`);
+        const response = await axios.get('/message_templates/');
         setTemplates(response.data);
       } catch (error) {
         console.error('Error fetching templates:', error);
@@ -55,7 +55,7 @@ function TemplateForm() {
     }
 
     try {
-      const response = await axios.post(`${REACT_APP_API_BASE_URL}/message_templates/`, {
+      const response = await axios.post('/message_templates/', {
         name: templateName,
         subject: templateSubject,
         body: templateBody
@@ -77,7 +77,7 @@ function TemplateForm() {
     if (!templateToDelete) return;
 
     try {
-      await axios.delete(`${REACT_APP_API_BASE_URL}/message_templates/${templateToDelete.id}`);
+      await axios.delete(`/message_templates/${templateToDelete.id}`);
       setTemplates(templates.filter(template => template.id !== templateToDelete.id));
       setSnackbarMessage('Template deleted successfully');
       setSnackbarSeverity('success');

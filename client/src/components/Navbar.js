@@ -1,4 +1,3 @@
-// Navbar.js
 import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -11,6 +10,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import AdbIcon from '@mui/icons-material/Adb';
+import LogoutIcon from '@mui/icons-material/Logout'; // Import Logout icon
 import { Link } from 'react-router-dom';
 
 const pages = [
@@ -21,7 +21,7 @@ const pages = [
   { name: 'Configuration', path: '/configuration' },
 ];
 
-function ResponsiveAppBar() {
+function ResponsiveAppBar({ onLogout }) {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
 
   const handleOpenNavMenu = (event) => {
@@ -95,6 +95,9 @@ function ResponsiveAppBar() {
                   </Typography>
                 </MenuItem>
               ))}
+              <MenuItem onClick={onLogout}>
+                <Typography textAlign="center">Logout</Typography>
+              </MenuItem>
             </Menu>
           </Box>
           <IconButton component={Link} to="/" sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }}>
@@ -130,6 +133,11 @@ function ResponsiveAppBar() {
                 {page.name}
               </Button>
             ))}
+          </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <IconButton onClick={onLogout} sx={{ color: 'white' }}>
+              <LogoutIcon />
+            </IconButton>
           </Box>
         </Toolbar>
       </Container>

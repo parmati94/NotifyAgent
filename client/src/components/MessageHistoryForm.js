@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../axiosConfig';
 import { Typography, Box } from '@mui/material';
 import MessageHistoryTable from './MessageHistoryTable';
 import CustomButton from './Button';
@@ -16,7 +16,7 @@ const MessageHistory = () => {
     const fetchMessages = async () => {
       try {
         console.log('Fetching message history...');
-        const response = await axios.get(`${REACT_APP_API_BASE_URL}/get_sent_messages/`);
+        const response = await axios.get('/get_sent_messages/');
         console.log('Message history fetched:', response.data);
         setMessages(response.data);
       } catch (error) {
@@ -31,7 +31,7 @@ const MessageHistory = () => {
   const clearMessages = async () => {
     try {
       console.log('Clearing all messages...');
-      await axios.delete(`${REACT_APP_API_BASE_URL}/clear_sent_messages/`);
+      await axios.delete(`/clear_sent_messages/`);
       setMessages([]); // Clear the messages in the state
       console.log('All messages cleared.');
     } catch (error) {

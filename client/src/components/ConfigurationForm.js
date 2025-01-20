@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import CustomButton from './Button';
 import CustomTextField from './TextField';
-import axios from 'axios';
+import axios from '../axiosConfig';
 import { Typography, Box, Tooltip, IconButton } from '@mui/material';
 import ExclusionList from './ExclusionList';
 import CollapsibleSection from './CollapsibleSection';
@@ -32,7 +32,7 @@ function ConfigurationForm() {
 
   useEffect(() => {
     // Fetch saved Tautulli credentials from the backend when the component mounts
-    axios.get(`${REACT_APP_API_BASE_URL}/get_tautulli_credentials/`)
+    axios.get('/get_tautulli_credentials/')
       .then(response => {
         const { api_key, base_url } = response.data;
         setSavedApiKey(api_key);
@@ -43,7 +43,7 @@ function ConfigurationForm() {
       });
 
     // Fetch exclusion list from the backend when the component mounts
-    axios.get(`${REACT_APP_API_BASE_URL}/get_exclusion_list/`)
+    axios.get('/get_exclusion_list/')
       .then(response => {
         setExclusionList(response.data);
       })
@@ -52,7 +52,7 @@ function ConfigurationForm() {
       });
 
     // Fetch saved email credentials from the backend when the component mounts
-    axios.get(`${REACT_APP_API_BASE_URL}/get_email_credentials/`)
+    axios.get('/get_email_credentials/')
       .then(response => {
         const { email_address } = response.data;
         setSavedEmailAddress(email_address);
@@ -62,7 +62,7 @@ function ConfigurationForm() {
       });
 
     // Fetch Discord roles from the backend when the component mounts
-    axios.get(`${REACT_APP_API_BASE_URL}/get_discord_roles/`)
+    axios.get('/get_discord_roles/')
       .then(response => {
         setDiscordRoles(response.data);
       })
@@ -77,7 +77,7 @@ function ConfigurationForm() {
       base_url: baseUrl
     };
 
-    axios.post(`${REACT_APP_API_BASE_URL}/set_tautulli_credentials/`, credentials)
+    axios.post('/set_tautulli_credentials/', credentials)
       .then(response => {
         const { api_key, base_url } = response.data;
         setSavedApiKey(api_key);
@@ -102,7 +102,7 @@ function ConfigurationForm() {
       email_password: emailPassword
     };
 
-    axios.post(`${REACT_APP_API_BASE_URL}/set_email_credentials/`, credentials)
+    axios.post('/set_email_credentials/', credentials)
       .then(response => {
         const { email_address } = response.data;
         setSavedEmailAddress(email_address);
@@ -121,7 +121,7 @@ function ConfigurationForm() {
   };
 
   const addExclusion = () => {
-    axios.post(`${REACT_APP_API_BASE_URL}/set_exclusion/`, { email: newExclusionEmail })
+    axios.post('/set_exclusion/', { email: newExclusionEmail })
       .then(response => {
         setExclusionList([...exclusionList, response.data]);
         setNewExclusionEmail('');
@@ -138,7 +138,7 @@ function ConfigurationForm() {
   };
 
   const removeExclusion = (email) => {
-    axios.delete(`${REACT_APP_API_BASE_URL}/delete_exclusion/${email}`)
+    axios.delete(`/delete_exclusion/${email}`)
       .then(response => {
         if (response.data) {
           setExclusionList(exclusionList.filter(exclusion => exclusion.email !== email));
@@ -162,7 +162,7 @@ function ConfigurationForm() {
       is_active: true // Default to active when adding a new role
     };
 
-    axios.post(`${REACT_APP_API_BASE_URL}/set_discord_role/`, role)
+    axios.post('/set_discord_role/', role)
       .then(response => {
         setDiscordRoles([...discordRoles, response.data]);
         setNewRoleName('');
@@ -180,7 +180,7 @@ function ConfigurationForm() {
   };
 
   const removeDiscordRole = (roleId) => {
-    axios.delete(`${REACT_APP_API_BASE_URL}/delete_discord_role/${roleId}`)
+    axios.delete(`/delete_discord_role/${roleId}`)
       .then(response => {
         if (response.data) {
           setDiscordRoles(discordRoles.filter(role => role.role_id !== roleId));
@@ -203,7 +203,7 @@ function ConfigurationForm() {
 
     try {
       const updatedRole = { ...role, is_active: !role.is_active };
-      await axios.put(`${REACT_APP_API_BASE_URL}/update_discord_role/`, updatedRole);
+      await axios.put('/update_discord_role/', updatedRole);
       setDiscordRoles(discordRoles.map(r => (r.role_id === roleId ? updatedRole : r)));
       setSnackbarMessage('Discord role updated successfully');
       setSnackbarSeverity('success');

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../axiosConfig';
 import CustomButton from './Button';
 import CustomTextField from './TextField';
 import WebhookTable from './WebhookTable';
@@ -22,7 +22,7 @@ function WebhookForm() {
     const fetchWebhooks = async () => {
       try {
         console.log('Fetching webhooks...');
-        const response = await axios.get(`${REACT_APP_API_BASE_URL}/get_webhooks/`);
+        const response = await axios.get('/get_webhooks/');
         console.log('Webhooks fetched:', response.data);
         setWebhooks(response.data);
       } catch (error) {
@@ -36,7 +36,7 @@ function WebhookForm() {
   // Add a new webhook
   const addWebhook = async () => {
     try {
-      const response = await axios.post(`${REACT_APP_API_BASE_URL}/set_webhook/`, {
+      const response = await axios.post('/set_webhook/', {
         channel_name: channelName,
         webhook_url: webhookUrl,
         is_active: true // Default to active when adding a new webhook
@@ -60,7 +60,7 @@ function WebhookForm() {
   // Delete a webhook
   const deleteWebhook = async (channelName) => {
     try {
-      await axios.delete(`${REACT_APP_API_BASE_URL}/webhooks/${channelName}`);
+      await axios.delete(`/webhooks/${channelName}`);
       setWebhooks(webhooks.filter(webhook => webhook.channel_name !== channelName));
       setSnackbarMessage('Webhook deleted successfully');
       setSnackbarSeverity('success');
@@ -80,7 +80,7 @@ function WebhookForm() {
 
     try {
       const updatedWebhook = { ...webhook, is_active: !webhook.is_active };
-      await axios.put(`${REACT_APP_API_BASE_URL}/update_webhook/`, updatedWebhook);
+      await axios.put('/update_webhook/', updatedWebhook);
       setWebhooks(webhooks.map(w => (w.channel_name === channelName ? updatedWebhook : w)));
       setSnackbarMessage('Webhook updated successfully');
       setSnackbarSeverity('success');

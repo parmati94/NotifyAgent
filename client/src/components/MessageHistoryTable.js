@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Tooltip } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
-import axios from 'axios';
+import axios from '../axiosConfig';
 
 const REACT_APP_API_BASE_URL = window._env_.REACT_APP_API_BASE_URL || 'http://localhost:8000';
 
@@ -41,7 +41,7 @@ const MessageHistoryTable = ({ messages }) => {
     if (!templateName || !selectedMessage) return;
 
     try {
-      await axios.post(`${REACT_APP_API_BASE_URL}/message_templates/`, {
+      await axios.post('/message_templates/', {
         name: templateName,
         subject: selectedMessage.subject,
         body: selectedMessage.body

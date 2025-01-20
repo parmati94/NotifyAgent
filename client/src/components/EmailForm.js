@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../axiosConfig';
 import { Typography, Box, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import CustomButton from './Button';
 import CustomTextField from './TextField';
@@ -21,7 +21,7 @@ function EmailForm() {
 
   useEffect(() => {
     // Fetch stored emails from the backend when the component mounts
-    axios.get(`${REACT_APP_API_BASE_URL}/get_emails/`)
+    axios.get('/get_emails/')
       .then(response => {
         setEmails(response.data);
       })
@@ -32,7 +32,7 @@ function EmailForm() {
 
   const importEmails = async () => {
     try {
-      const response = await axios.post(`${REACT_APP_API_BASE_URL}/import_emails/`);
+      const response = await axios.post('/import_emails/');
       setEmails(response.data.emails);
       setSnackbarMessage('Emails imported successfully');
       setSnackbarSeverity('success');
@@ -47,7 +47,7 @@ function EmailForm() {
 
   const addEmail = async () => {
     try {
-      const response = await axios.post(`${REACT_APP_API_BASE_URL}/add_email/`, { email: newEmail });
+      const response = await axios.post('/add_email/', { email: newEmail });
       setEmails([...emails, newEmail]);
       setNewEmail('');
       setSnackbarMessage('Email added successfully');
@@ -70,7 +70,7 @@ function EmailForm() {
 
   const deleteEmail = async (email) => {
     try {
-      await axios.delete(`${REACT_APP_API_BASE_URL}/delete_email/${email}`);
+      await axios.delete(`/delete_email/${email}`);
       setEmails(emails.filter(e => e !== email));
       setSnackbarMessage('Email deleted successfully');
       setSnackbarSeverity('success');
