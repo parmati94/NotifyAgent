@@ -8,6 +8,7 @@ import CustomSnackbar from './CustomSnackbar';
 import ConfirmationDialog from './ConfirmationDialog';
 import CheckBoxOutlineBlankOutlinedIcon from '@mui/icons-material/CheckBoxOutlineBlankOutlined';
 import CheckBoxOutlinedIcon from '@mui/icons-material/CheckBoxOutlined';
+import { useLocation } from 'react-router-dom';
 
 const REACT_APP_API_BASE_URL = window._env_.REACT_APP_API_BASE_URL || 'http://localhost:8000';
 
@@ -29,6 +30,15 @@ function MessageForm() {
   const [tautulliStatus, setTautulliStatus] = useState(false);
   const [templates, setTemplates] = useState([]);
   const [selectedTemplateId, setSelectedTemplateId] = useState('');
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state && location.state.message) {
+      setSnackbarMessage(location.state.message);
+      setSnackbarSeverity(location.state.severity);
+      setSnackbarOpen(true);
+    }
+  }, [location.state]);
 
   useEffect(() => {
     const fetchTemplates = async () => {
