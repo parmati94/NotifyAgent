@@ -10,7 +10,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    environment: Main
+    environment: ${{ github.ref_name == 'main' && 'Main' || 'Feature' }}
 
     steps:
     - uses: actions/checkout@v2
