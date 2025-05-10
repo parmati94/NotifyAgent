@@ -10,6 +10,9 @@ RUN npm run build
 FROM python:3.9-slim as backend
 WORKDIR /app
 
+# Install Nginx and Supervisor first
+RUN apt-get update && apt-get install -y nginx supervisor && apt-get clean
+
 # Install Python dependencies
 COPY api/requirements.txt .
 RUN pip install -r requirements.txt
@@ -17,22 +20,20 @@ RUN pip install -r requirements.txt
 # Copy backend files
 COPY api/ ./api
 
-# Copy the built frontend files from the previous stage
-COPY --from=frontend-builder /app/build ./frontend
+# Clear the default Nginx HTML directory
+RUN rm -rf /usr/share/nginx/html/*
 
-# Stage 3: Set up Nginx
-FROM nginx:alpine
-WORKDIR /app
+# Copy the built frontend files from the previous stage
+COPY --from=frontend-builder /app/build /usr/share/nginx/html
 
 # Copy Nginx configuration
 COPY api/nginx.conf /etc/nginx/nginx.conf
 
-# Copy the backend and frontend files
-COPY --from=backend /app/api /app/api
-COPY --from=backend /app/frontend /usr/share/nginx/html
+# Create Supervisor configuration
+COPY api/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Expose the port
 EXPOSE 8080
 
-# Start Nginx
-CMD ["nginx", "-g", "daemon off;"]
+# Start Supervisor to manage both FastAPI and Nginx
+CMD ["supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
