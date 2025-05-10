@@ -19,7 +19,7 @@ class Webhook(WebhookBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class TautulliCredentialsBase(BaseModel):
     api_key: str
@@ -32,7 +32,7 @@ class TautulliCredentials(TautulliCredentialsBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
         
 class EmailBase(BaseModel):
     email: str
@@ -44,7 +44,7 @@ class Email(EmailBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
         
 class ExclusionBase(BaseModel):
     email: str
@@ -56,7 +56,7 @@ class Exclusion(ExclusionBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
         
 from pydantic import BaseModel
 
@@ -71,7 +71,7 @@ class EmailCredentials(EmailCredentialsBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
         
 from pydantic import BaseModel
 
@@ -92,7 +92,7 @@ class DiscordRole(DiscordRoleBase):
     id: int
 
     class Config:
-        orm_mode: True
+        from_attributes: True
         
 class SentMessageBase(BaseModel):
     subject: str
@@ -107,7 +107,7 @@ class SentMessage(SentMessageBase):
     timestamp: datetime
 
     class Config:
-        orm_mode: True
+        from_attributes: True
 
 class MessageTemplateBase(BaseModel):
     name: str
@@ -121,4 +121,4 @@ class MessageTemplate(MessageTemplateBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
