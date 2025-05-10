@@ -6,7 +6,7 @@ import CustomButton from './Button';
 import CustomSnackbar from './CustomSnackbar';
 import ConfirmationDialog from './ConfirmationDialog';
 
-const REACT_APP_API_BASE_URL = '/api'
+const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 function TemplateForm() {
   const [templates, setTemplates] = useState([]);

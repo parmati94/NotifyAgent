@@ -7,7 +7,7 @@ import EmailTable from './EmailTable';
 import CustomSnackbar from './CustomSnackbar';
 import ConfirmationDialog from './ConfirmationDialog';
 
-const REACT_APP_API_BASE_URL = '/api'
+const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 function EmailForm() {
   const [emails, setEmails] = useState([]);
