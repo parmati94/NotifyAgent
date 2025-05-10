@@ -7,4 +7,4 @@ services:
     environment:
       - LOG_LEVEL=info
       - TZ=America/New_York
-    restart: no
+    restart: always
