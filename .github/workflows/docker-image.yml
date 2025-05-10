@@ -3,7 +3,9 @@ name: Docker Image CI
 on:
   workflow_dispatch:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
+      - feature/*
 
 jobs:
   build:
@@ -33,4 +35,5 @@ jobs:
         context: .
         push: true
         platforms: linux/amd64,linux/arm/v7
-        tags: parmati/notifyagent:latest
+        tags: |
+          parmati/notifyagent:latest${{ github.ref_name == 'main' && '' || '-${{ github.ref_name }}' }}
