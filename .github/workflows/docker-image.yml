@@ -35,7 +35,8 @@ jobs:
         if [ "${{ github.ref_name }}" == "main" ]; then
           echo "tag=latest" >> $GITHUB_ENV
         else
-          echo "tag=${{ github.ref_name }}" >> $GITHUB_ENV
+          sanitized_branch=$(echo "${{ github.ref_name }}" | sed 's#[^a-zA-Z0-9_.-]#-#g')
+          echo "tag=${sanitized_branch}" >> $GITHUB_ENV
         fi
 
     - name: Build and push Docker image for NotifyAgent
