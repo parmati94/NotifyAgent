@@ -9,7 +9,7 @@ import ConfirmationDialog from './ConfirmationDialog';
 import CheckBoxOutlineBlankOutlinedIcon from '@mui/icons-material/CheckBoxOutlineBlankOutlined';
 import CheckBoxOutlinedIcon from '@mui/icons-material/CheckBoxOutlined';
 
-const REACT_APP_API_BASE_URL = window._env_.REACT_APP_API_BASE_URL || 'http://localhost:8000';
+const REACT_APP_API_BASE_URL = '/api'
 
 function MessageForm() {
   const [subject, setSubject] = useState('');

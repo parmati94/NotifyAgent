@@ -6,7 +6,7 @@ import WebhookTable from './WebhookTable';
 import { Typography, Box, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
 import CustomSnackbar from './CustomSnackbar';
 
-const REACT_APP_API_BASE_URL = window._env_.REACT_APP_API_BASE_URL || 'http://localhost:8000';
+const REACT_APP_API_BASE_URL = '/api'
 
 function WebhookForm() {
   const [webhooks, setWebhooks] = useState([]);
