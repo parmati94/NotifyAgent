@@ -1,5 +1,5 @@
 # Stage 1: Build the frontend
-FROM node:16 as frontend-builder
+FROM node:22 as frontend-builder
 WORKDIR /app
 COPY client/package.json client/package-lock.json ./
 RUN npm install
@@ -7,7 +7,7 @@ COPY client/ ./
 RUN npm run build
 
 # Stage 2: Build the backend
-FROM python:3.9-slim as backend
+FROM python:3.13-slim as backend
 WORKDIR /app
 
 # Install Nginx and Supervisor first
