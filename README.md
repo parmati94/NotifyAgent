@@ -1,24 +1,54 @@
-#  NotifyAgent
+# NotifyAgent
 
 ![Screenshot](https://i.imgur.com/e666dmO.png)
 
 ## Docker-less Setup:
 
 Start FastAPI & React:  
-```npm run setup```, then ```npm start```
+```bash
+npm run setup
+npm start
+```
 
-## Docker-ful Setup
+## Docker Setup
 
-The application can be easily started via Docker Compose, use the provided docker-compose.yml.  Make sure to either fill in the placeholders manually, or set the intended values as environment variables on your machine prior to running docker-compose up.
+The application can be easily started via Docker Compose using the provided `docker-compose.yml`. 
 
-Here are the environment variables you need to set:
+### Environment Variables
 
-- `API_HOST`: This should be the IP address of the machine where the API service will run. For example, `192.168.1.2`.
+The following environment variables are optional:
 
-- `FRONTEND_HOST`: This should be the IP address of the machine where the frontend service will run. For example, `192.168.1.2`.
+- `LOG_LEVEL`: Set the logging level for the application (e.g., `info`, `debug`). Default is `info`.
+- `TZ`: Set the timezone for the container. For example, `America/New_York`.
 
-- `FRONTEND_PORT`: This is the port on your host machine that you want to use to access the frontend service. You can choose any port that is not being used by another service. For example, `3001`.
+### Running the Application
 
-- `API_PORT`: This is the port on your host machine that you want to use to access the API service. You can choose any port that is not being used by another service. For example, `8001`. 
+To start the application using Docker Compose, run:
 
+```bash
+docker-compose up
+```
+
+This will build and start the application in a single container, exposing it on port `8080`. You can access the application at `http://<your-server-ip>:8080`.
+
+### Stopping the Application
+
+To stop the application, run:
+
+```bash
+docker-compose down
+```
+
+### Building the Docker Image Manually
+
+If you want to build the Docker image manually, use the following command:
+
+```bash
+docker build -t parmati/notifyagent:latest .
+```
+
+Then run the container:
+
+```bash
+docker run -p 8080:8080 parmati/notifyagent:latest
 ```
