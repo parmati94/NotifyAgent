@@ -5,7 +5,7 @@ import MessageHistoryTable from './MessageHistoryTable';
 import CustomButton from './Button';
 import ConfirmationDialog from './ConfirmationDialog';
 
-const REACT_APP_API_BASE_URL = window._env_.REACT_APP_API_BASE_URL || 'http://localhost:8000';
+const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const MessageHistory = () => {
   const [messages, setMessages] = useState([]);

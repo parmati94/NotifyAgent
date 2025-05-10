@@ -5,7 +5,7 @@
     "main": "index.js",
     "scripts": {
         "setup": "pip install -r ./api/requirements.txt && npm install && cd client && npm install",
-        "start": "node ./client/set-env.js && concurrently \"npm --prefix client start\" \"uvicorn api.api.main:app --reload\"",
+        "start": "concurrently \"npm --prefix client start\" \"uvicorn api.api.main:app --reload\"",
         "start-client": "npm --prefix client start",
         "start-server": "uvicorn api.main:app --reload"
     },

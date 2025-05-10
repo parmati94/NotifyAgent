@@ -9,7 +9,7 @@ import CustomSnackbar from './CustomSnackbar';
 import DiscordRoleList from './DiscordRoleList';
 import InfoIcon from '@mui/icons-material/Info';
 
-const REACT_APP_API_BASE_URL = window._env_.REACT_APP_API_BASE_URL || 'http://localhost:8000';
+const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 function ConfigurationForm() {
   const [apiKey, setApiKey] = useState('');
