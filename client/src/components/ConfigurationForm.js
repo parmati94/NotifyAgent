@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PageHeader from './PageHeader';
 import CustomButton from './Button';
 import CustomTextField from './TextField';
 import axios from 'axios';
@@ -222,11 +223,7 @@ function ConfigurationForm() {
 
   return (
     <div>
-      <Box sx={{ backgroundColor: '#f5f5f5', padding: '20px', borderRadius: '8px', textAlign: 'center', marginBottom: '20px' }}>
-        <Typography variant="h4" color="primary" gutterBottom>
-           Configuration
-        </Typography>
-      </Box>
+      <PageHeader title="Configuration" />
       <CollapsibleSection title={
         <Box display="flex" alignItems="center">
           Add Email Credentials

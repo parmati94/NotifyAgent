@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Typography, Box } from '@mui/material';
+import PageHeader from './PageHeader';
+import { Box } from '@mui/material';
 import MessageHistoryTable from './MessageHistoryTable';
 import CustomButton from './Button';
 import ConfirmationDialog from './ConfirmationDialog';
@@ -49,11 +50,7 @@ const MessageHistory = () => {
 
   return (
     <div>
-      <Box sx={{ backgroundColor: '#f5f5f5', padding: '20px', borderRadius: '8px', textAlign: 'center', marginBottom: '20px' }}>
-        <Typography variant="h4" color="primary" gutterBottom>
-          Message History
-        </Typography>
-      </Box>
+      <PageHeader title="Message History" />
       <MessageHistoryTable messages={messages} />
       <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
         <CustomButton onClick={() => setDialogOpen(true)}>Clear All Messages</CustomButton>
