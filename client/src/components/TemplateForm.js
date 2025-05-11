@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Typography, Box, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination } from '@mui/material';
+import PageHeader from './PageHeader';
+import { Box, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CustomButton from './Button';
 import CustomSnackbar from './CustomSnackbar';
@@ -117,11 +118,7 @@ function TemplateForm() {
 
   return (
     <div>
-      <Box sx={{ backgroundColor: '#f5f5f5', padding: '20px', borderRadius: '8px', textAlign: 'center', marginBottom: '20px' }}>
-        <Typography variant="h4" color="primary" gutterBottom>
-          Manage Templates
-        </Typography>
-      </Box>
+      <PageHeader title="Templates" />
       <TableContainer component={Paper} sx={{ width: '75%', margin: '0 auto' }}>
         <Table sx={{ minWidth: 700 }} aria-label="customized table">
           <TableHead>

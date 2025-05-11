@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import PageHeader from './PageHeader';
 import CustomButton from './Button';
 import CustomTextField from './TextField';
 import WebhookTable from './WebhookTable';
-import { Typography, Box, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
+import { Box, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
 import CustomSnackbar from './CustomSnackbar';
 
 const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
@@ -36,7 +37,7 @@ function WebhookForm() {
   // Add a new webhook
   const addWebhook = async () => {
     try {
-      const response = await axios.post(`${REACT_APP_API_BASE_URL}/set_webhook/`, {
+      await axios.post(`${REACT_APP_API_BASE_URL}/set_webhook/`, {
         channel_name: channelName,
         webhook_url: webhookUrl,
         is_active: true // Default to active when adding a new webhook
@@ -107,11 +108,7 @@ function WebhookForm() {
 
   return (
     <div>
-      <Box sx={{ backgroundColor: '#f5f5f5', padding: '20px', borderRadius: '8px', textAlign: 'center', marginBottom: '20px' }}>
-        <Typography variant="h4" color="primary" gutterBottom>
-          Webhook URL's
-        </Typography>
-      </Box>
+      <PageHeader title="Webhooks" />
       <WebhookTable webhooks={webhooks} onDelete={deleteWebhook} onToggleActive={toggleWebhookActive} />
       <Box mt={4} display="flex" justifyContent="center">
         <CustomButton onClick={handleDialogOpen}>Add Webhook</CustomButton>

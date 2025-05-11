@@ -1,11 +1,27 @@
 import React, { useState } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, TablePagination, TableSortLabel } from '@mui/material';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  IconButton,
+  TablePagination,
+  TableSortLabel,
+  Box,
+} from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
+import SearchIcon from '@mui/icons-material/Search';
+import CustomTextField from './TextField';
 
 function EmailTable({ emails, onDelete }) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [order, setOrder] = useState('asc');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   // Handle page change
   const handleChangePage = (event, newPage) => {
@@ -23,8 +39,23 @@ function EmailTable({ emails, onDelete }) {
     setOrder((prevOrder) => (prevOrder === 'asc' ? 'desc' : 'asc'));
   };
 
+  // Handle search query change
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  // Toggle search bar visibility
+  const toggleSearch = () => {
+    setIsSearchOpen(!isSearchOpen);
+  };
+
+  // Filter emails based on the search query
+  const filteredEmails = emails.filter((email) =>
+    email.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   // Sort emails
-  const sortedEmails = [...emails].sort((a, b) => {
+  const sortedEmails = [...filteredEmails].sort((a, b) => {
     if (order === 'asc') {
       return a.localeCompare(b);
     } else {
@@ -34,12 +65,39 @@ function EmailTable({ emails, onDelete }) {
 
   return (
     <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
-      <TableContainer component={Paper} sx={{ width: '75%', maxWidth: 800 }}>
+      <TableContainer
+        component={Paper}
+        sx={{
+          width: '100%',
+          maxWidth: { xs: '100%', sm: 800 },
+          overflowX: 'auto',
+          position: 'relative',
+        }}
+      >
         <Table sx={{ minWidth: 700 }} aria-label="customized table">
           <TableHead>
             <TableRow>
-              <TableCell sx={{ backgroundColor: 'black', color: 'white', width: '10%' }}>#</TableCell>
-              <TableCell sx={{ backgroundColor: 'black', color: 'white', width: '60%', textAlign: 'center' }}>
+              <TableCell
+                sx={{
+                  backgroundColor: 'black',
+                  color: 'white',
+                  width: '10%',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                #
+              </TableCell>
+              <TableCell
+                sx={{
+                  backgroundColor: 'black',
+                  color: 'white',
+                  width: '60%',
+                  textAlign: 'center',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                }}
+              >
                 <TableSortLabel
                   active
                   direction={order}
@@ -54,12 +112,28 @@ function EmailTable({ emails, onDelete }) {
                   <span style={{ color: 'white' }}>Email</span>
                 </TableSortLabel>
               </TableCell>
-              <TableCell sx={{ backgroundColor: 'black', color: 'white', width: '30%', textAlign: 'center' }}>Actions</TableCell>
+              <TableCell
+                sx={{
+                  backgroundColor: 'black',
+                  color: 'white',
+                  width: '30%',
+                  textAlign: 'center',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                Actions
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {sortedEmails.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((email, index) => (
-              <TableRow key={index} sx={{ '&:nth-of-type(odd)': { backgroundColor: 'action.hover' }, '&:last-child td, &:last-child th': { border: 0 } }}>
+              <TableRow
+                key={index}
+                sx={{
+                  '&:nth-of-type(odd)': { backgroundColor: 'action.hover' },
+                  '&:last-child td, &:last-child th': { border: 0 },
+                }}
+              >
                 <TableCell component="th" scope="row" sx={{ textAlign: 'center' }}>
                   {page * rowsPerPage + index + 1}
                 </TableCell>
@@ -73,16 +147,83 @@ function EmailTable({ emails, onDelete }) {
             ))}
           </TableBody>
         </Table>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 20, 50]}
-          component="div"
-          count={emails.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-          sx={{ backgroundColor: 'black', color: 'white' }}
-        />
+
+        {/* Pagination and Search Bar */}
+        <Box
+          sx={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            backgroundColor: 'black',
+            color: 'white',
+            padding: '8px 16px',
+            gap: 1,
+          }}
+        >
+          {/* Search Icon or Search Bar */}
+          {!isSearchOpen ? (
+            <IconButton
+              onClick={toggleSearch}
+              sx={{
+                color: 'white',
+                '&:hover': { color: '#f0f0f0' },
+              }}
+            >
+              <SearchIcon />
+            </IconButton>
+          ) : (
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                backgroundColor: 'white',
+                color: 'black',
+                borderRadius: '4px',
+                padding: '4px 8px',
+                height: '32px',
+                width: { xs: '150px', sm: '200px' },
+              }}
+            >
+              <CustomTextField
+                placeholder="Search Emails"
+                value={searchQuery}
+                onChange={handleSearchChange}
+                sx={{ width: '100%', height: '32px', margin: 0 }}
+                InputProps={{
+                  disableUnderline: true,
+                  style: { color: 'black', fontSize: '14px' },
+                  endAdornment: (
+                    <IconButton onClick={toggleSearch} sx={{ color: 'black' }}>
+                      <SearchIcon />
+                    </IconButton>
+                  ),
+                }}
+              />
+            </Box>
+          )}
+
+          {/* Pagination */}
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 20, 50]}
+            component="div"
+            count={filteredEmails.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+            sx={{
+              backgroundColor: 'black',
+              color: 'white',
+              '& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows, & .MuiTablePagination-actions': {
+                color: 'white',
+              },
+              '& .MuiSelect-icon': {
+                color: 'white',
+              },
+            }}
+          />
+        </Box>
       </TableContainer>
     </div>
   );
