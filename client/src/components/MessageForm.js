@@ -179,7 +179,7 @@ function MessageForm() {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center',  minHeight: 'calc(100vh - 70px)', backgroundColor: '#f5f8fa', margin: '0 auto', overflow: 'hidden', width: '100%' }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', width: '100%', padding: 2, backgroundColor: '#e0e0e0', borderRadius: '0 0 8px 8px', boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)', marginBottom: 2 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', width: '100%', padding: 2, backgroundColor: '#f5f8fb', borderRadius: '0 0 8px 8px', boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)', marginBottom: 2 }}>
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
         {emailCredentialStatus
           ? <CheckBoxOutlinedIcon sx={{ color: '#3b99ff' }} />
