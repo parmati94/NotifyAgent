@@ -19,7 +19,7 @@ function TemplateForm() {
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [templateToDelete, setTemplateToDelete] = useState(null);
 
@@ -117,16 +117,16 @@ function TemplateForm() {
   };
 
   return (
-    <div>
+    <div className = "main-content">
       <PageHeader title="Templates" />
       <TableContainer component={Paper} sx={{ width: '75%', margin: '0 auto' }}>
         <Table sx={{ minWidth: 700 }} aria-label="customized table">
           <TableHead>
             <TableRow>
-              <TableCell sx={{ backgroundColor: 'black', color: 'white' }}>Name</TableCell>
-              <TableCell sx={{ backgroundColor: 'black', color: 'white' }} align="right">Subject</TableCell>
-              <TableCell sx={{ backgroundColor: 'black', color: 'white' }} align="right">Body</TableCell>
-              <TableCell sx={{ backgroundColor: 'black', color: 'white' }} align="right">Actions</TableCell>
+              <TableCell sx={{ backgroundColor: '#d3d3d3', color: 'black' }}>Name</TableCell>
+              <TableCell sx={{ backgroundColor: '#d3d3d3', color: 'black' }} align="center">Subject</TableCell>
+              <TableCell sx={{ backgroundColor: '#d3d3d3', color: 'black' }} align="left">Body</TableCell>
+              <TableCell sx={{ backgroundColor: '#d3d3d3', color: 'black' }} align="center">Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -135,9 +135,9 @@ function TemplateForm() {
                 <TableCell component="th" scope="row">
                   {template.name}
                 </TableCell>
-                <TableCell align="right">{template.subject}</TableCell>
-                <TableCell align="right">{template.body}</TableCell>
-                <TableCell align="right">
+                <TableCell align="center">{template.subject}</TableCell>
+                <TableCell align="left">{template.body}</TableCell>
+                <TableCell align="center">
                   <IconButton onClick={() => handleDeleteDialogOpen(template)}>
                     <DeleteIcon />
                   </IconButton>
@@ -147,7 +147,7 @@ function TemplateForm() {
           </TableBody>
         </Table>
         <TablePagination
-          rowsPerPageOptions={[10, 20, 50]}
+          rowsPerPageOptions={[5, 10, 20, 50]}
           component="div"
           count={templates.length}
           rowsPerPage={rowsPerPage}
@@ -155,13 +155,13 @@ function TemplateForm() {
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
           sx={{
-            backgroundColor: 'black',
-            color: 'white',
+            backgroundColor: '#d3d3d3',
+            color: 'black',
             '& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows, & .MuiTablePagination-actions': {
-              color: 'white',
+              color: 'black',
             },
             '& .MuiSelect-icon': {
-              color: 'white',
+              color: 'black',
             },
           }}
         />

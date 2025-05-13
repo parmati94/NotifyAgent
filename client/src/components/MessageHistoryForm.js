@@ -49,7 +49,7 @@ const MessageHistory = () => {
   };
 
   return (
-    <div>
+    <div className="main-content">
       <PageHeader title="Message History" />
       <MessageHistoryTable messages={messages} />
       <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>

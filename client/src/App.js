@@ -1,6 +1,6 @@
 // App.js
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material/styles';
 import EmailForm from './components/EmailForm';
 import WebhookForm from './components/WebhookForm';
@@ -16,12 +16,12 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <Router>
-        <div className="App">
+        <div className="app-container">
           <ResponsiveAppBar />
           <Routes>
-            <Route path="/" element={<MessageForm />} />
-            <Route path="/templates" element={<TemplateForm />} />
-            <Route path="/history" element={<MessageHistoryForm />} />
+            <Route path="/" element={<MessageForm />} /> {/* Wrap MessageForm */}
+            <Route path="/templates" element={<TemplateForm />} /> {/* These should already have .main-content */}
+            <Route path="/history" element={<MessageHistoryForm />} /> {/* These should already have .main-content */}
             <Route path="/email" element={<EmailForm />} />
             <Route path="/webhook" element={<WebhookForm />} />
             <Route path="/configuration" element={<ConfigurationForm />} />

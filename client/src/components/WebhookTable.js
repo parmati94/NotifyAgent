@@ -9,10 +9,10 @@ const WebhookTable = ({ webhooks, onDelete, onToggleActive }) => {
         <Table sx={{ minWidth: 700 }} aria-label="customized table">
           <TableHead>
             <TableRow>
-              <TableCell sx={{ backgroundColor: 'black', color: 'white', textAlign: 'center' }}>Active</TableCell>
-              <TableCell sx={{ backgroundColor: 'black', color: 'white', textAlign: 'center' }}>Channel Name</TableCell>
-              <TableCell sx={{ backgroundColor: 'black', color: 'white', textAlign: 'center' }}>Webhook URL</TableCell>
-              <TableCell sx={{ backgroundColor: 'black', color: 'white', textAlign: 'center' }}>Actions</TableCell>
+              <TableCell sx={{ backgroundColor: '#d3d3d3', color: 'black', textAlign: 'center' }}>Active</TableCell>
+              <TableCell sx={{ backgroundColor: '#d3d3d3', color: 'black', textAlign: 'center' }}>Channel Name</TableCell>
+              <TableCell sx={{ backgroundColor: '#d3d3d3', color: 'black', textAlign: 'center' }}>Webhook URL</TableCell>
+              <TableCell sx={{ backgroundColor: '#d3d3d3', color: 'black', textAlign: 'center' }}>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
