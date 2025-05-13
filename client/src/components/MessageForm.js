@@ -181,35 +181,45 @@ function MessageForm() {
     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: 'calc(100vh - 70px)', backgroundColor: '#f5f5f5', margin: '0 auto', overflow: 'hidden', width: '100%' }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', width: '100%', padding: 2, backgroundColor: '#e0e0e0', borderRadius: '0 0 8px 8px', boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)', marginBottom: 2 }}>
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          {emailCredentialStatus ? <CheckBoxOutlinedIcon color="success" /> : <CheckBoxOutlineBlankOutlinedIcon />}
-          <Typography variant="body1" sx={{ marginLeft: 1 }}>
-            Email Credentials
-          </Typography>
-        </Box>
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          {tautulliStatus ? <CheckBoxOutlinedIcon color="success" /> : <CheckBoxOutlineBlankOutlinedIcon />}
-          <Typography variant="body1" sx={{ marginLeft: 1 }}>
-            Tautulli Credentials
-          </Typography>
-        </Box>
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          {emailStatus ? <CheckBoxOutlinedIcon color="success" /> : <CheckBoxOutlineBlankOutlinedIcon />}
-          <Typography variant="body1" sx={{ marginLeft: 1 }}>
-            Emails
-          </Typography>
-        </Box>
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          {webhooksStatus ? <CheckBoxOutlinedIcon color="success" /> : <CheckBoxOutlineBlankOutlinedIcon />}
-          <Typography variant="body1" sx={{ marginLeft: 1 }}>
-            Discord Webhooks
-          </Typography>
-        </Box>
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          {rolesStatus ? <CheckBoxOutlinedIcon color="success" /> : <CheckBoxOutlineBlankOutlinedIcon />}
-          <Typography variant="body1" sx={{ marginLeft: 1 }}>
-            Discord Roles
-          </Typography>
-        </Box>
+        {emailCredentialStatus
+          ? <CheckBoxOutlinedIcon sx={{ color: '#3b99ff' }} />
+          : <CheckBoxOutlineBlankOutlinedIcon sx={{ color: '#3b99ff' }} />}
+        <Typography variant="body1" sx={{ marginLeft: 1 }}>
+          Email Credentials
+        </Typography>
+      </Box>
+      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        {tautulliStatus
+          ? <CheckBoxOutlinedIcon sx={{ color: '#3b99ff' }} />
+          : <CheckBoxOutlineBlankOutlinedIcon sx={{ color: '#3b99ff' }} />}
+        <Typography variant="body1" sx={{ marginLeft: 1 }}>
+          Tautulli Credentials
+        </Typography>
+      </Box>
+      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        {emailStatus
+          ? <CheckBoxOutlinedIcon sx={{ color: '#3b99ff' }} />
+          : <CheckBoxOutlineBlankOutlinedIcon sx={{ color: '#3b99ff' }} />}
+        <Typography variant="body1" sx={{ marginLeft: 1 }}>
+          Emails
+        </Typography>
+      </Box>
+      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        {webhooksStatus
+          ? <CheckBoxOutlinedIcon sx={{ color: '#3b99ff' }} />
+          : <CheckBoxOutlineBlankOutlinedIcon sx={{ color: '#3b99ff' }} />}
+        <Typography variant="body1" sx={{ marginLeft: 1 }}>
+          Discord Webhooks
+        </Typography>
+      </Box>
+      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        {rolesStatus
+          ? <CheckBoxOutlinedIcon sx={{ color: '#3b99ff' }} />
+          : <CheckBoxOutlineBlankOutlinedIcon sx={{ color: '#3b99ff' }} />}
+        <Typography variant="body1" sx={{ marginLeft: 1 }}>
+          Discord Roles
+        </Typography>
+      </Box>
       </Box>
       <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', flexGrow: 1, width: '100%' }}>
         <Card sx={{ maxWidth: 700, width: '100%', padding: 2, boxShadow: 6, borderRadius: 2, marginTop: '-7vh' }}>

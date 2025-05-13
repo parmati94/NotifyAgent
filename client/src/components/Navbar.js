@@ -62,7 +62,18 @@ function ResponsiveAppBar() {
               component={Link}
               to={page.path}
               onClick={handleCloseNavMenu}
-              sx={{ my: 2, color: 'white', display: 'block' }}
+              sx={{
+                my: 2,
+                color: 'white',
+                display: 'block',
+                fontWeight: 500,
+                transition: 'background 0.2s, color 0.2s, transform 0.2s',
+                '&:hover': {
+                  color: "#3b99ff",
+                  fontWeight: 700,
+                  transform: 'scale(1.07)',
+                },
+              }}
             >
               {page.name}
             </Button>
@@ -78,6 +89,13 @@ function ResponsiveAppBar() {
             aria-haspopup="true"
             onClick={handleOpenNavMenu}
             color="inherit"
+            sx={{
+              transition: 'background 0.2s, color 0.2s, transform 0.2s',
+              '&:hover': {
+                color: "#3b99ff",
+                transform: 'scale(1.1)',
+              },
+            }}
           >
             <MenuIcon />
           </IconButton>
@@ -97,11 +115,28 @@ function ResponsiveAppBar() {
             onClose={handleCloseNavMenu}
           >
             {pages.map((page) => (
-              <MenuItem key={page.name} onClick={handleCloseNavMenu}>
+              <MenuItem
+                key={page.name}
+                onClick={handleCloseNavMenu}
+                sx={{
+                  transition: 'background 0.2s, color 0.2s, transform 0.2s',
+                  '&:hover': {
+                    backgroundColor: 'primary.main',
+                    color: 'white',
+                    fontWeight: 700,
+                    transform: 'scale(1.03)',
+                  },
+                }}
+              >
                 <Typography
                   component={Link}
                   to={page.path}
-                  sx={{ textAlign: 'center', textDecoration: 'none', color: 'inherit' }}
+                  sx={{
+                    textAlign: 'center',
+                    textDecoration: 'none',
+                    color: 'inherit',
+                    width: '100%',
+                  }}
                 >
                   {page.name}
                 </Typography>
@@ -114,7 +149,15 @@ function ResponsiveAppBar() {
         <IconButton
           component={Link}
           to="/configuration"
-          sx={{ color: 'white', ml: 'auto' }}
+          sx={{
+            color: 'white',
+            ml: 'auto',
+            transition: 'background 0.2s, color 0.2s, transform 0.2s',
+            '&:hover': {
+              color: "#3b99ff",
+              transform: 'rotate(20deg) scale(1.15)',
+            },
+          }}
           aria-label="Configuration"
         >
           <SettingsIcon />
