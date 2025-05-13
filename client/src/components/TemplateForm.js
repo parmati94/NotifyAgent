@@ -119,7 +119,7 @@ function TemplateForm() {
   return (
     <div className = "main-content">
       <PageHeader title="Templates" />
-      <TableContainer component={Paper} sx={{ width: '75%', margin: '0 auto' }}>
+      <TableContainer component={Paper} sx={{ width: '75%', margin: '0 auto' }} elevation={8}>
         <Table sx={{ minWidth: 700 }} aria-label="customized table">
           <TableHead>
             <TableRow>

@@ -73,6 +73,7 @@ function EmailTable({ emails, onDelete }) {
           overflowX: 'auto',
           position: 'relative',
         }}
+        elevation={8}
       >
         <Table sx={{ minWidth: 700 }} aria-label="customized table">
           <TableHead>

@@ -5,7 +5,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 const WebhookTable = ({ webhooks, onDelete, onToggleActive }) => {
   return (
     <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
-      <TableContainer component={Paper} sx={{ width: '75%', maxWidth: 1920 }}>
+        
+      <TableContainer component={Paper} sx={{ width: '75%', maxWidth: 1920 }} elevation={8}>
         <Table sx={{ minWidth: 700 }} aria-label="customized table">
           <TableHead>
             <TableRow>

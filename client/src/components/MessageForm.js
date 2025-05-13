@@ -222,7 +222,7 @@ function MessageForm() {
       </Box>
       </Box>
       <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', flexGrow: 1, width: '100%' }}>
-        <Card sx={{ maxWidth: 700, width: '100%', padding: 2, boxShadow: 6, borderRadius: 2, marginTop: '-7vh' }}>
+        <Card sx={{ maxWidth: 700, width: '100%', padding: 2, boxShadow: 12, borderRadius: 2, marginTop: '-7vh' }} >
           <CardContent>
             <Typography variant="h4" color="black" gutterBottom align="center">
               Send Message
