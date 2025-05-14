@@ -28,3 +28,7 @@ code {
   flex: 1;
   background-color: #f5f8fb;
 }
+
+.collapsible-section {
+  background-color: #f5f8fb !important;
+}

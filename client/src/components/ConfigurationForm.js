@@ -222,9 +222,9 @@ function ConfigurationForm() {
   };
 
   return (
-    <div>
+    <div className="main-content" style={{ textAlign: 'center'}}>
       <PageHeader title="Configuration" />
-      <CollapsibleSection title={
+      <CollapsibleSection className="collapsible-section" title={
         <Box display="flex" alignItems="center">
           Add Email Credentials
           <Tooltip title="Configure email credentials for email notifications" placement="right">
@@ -256,7 +256,7 @@ function ConfigurationForm() {
           <p><strong>Email Address:</strong> {savedEmailAddress}</p>
         </Box>
       </CollapsibleSection>
-      <CollapsibleSection title={
+      <CollapsibleSection className="collapsible-section" title={
         <Box display="flex" alignItems="center">
           Add Tautulli Credentials
           <Tooltip title="Configure Tautulli for importing email addresses of plex users" placement="right">
@@ -289,7 +289,7 @@ function ConfigurationForm() {
           <p><strong>Base URL:</strong> {savedBaseUrl}</p>
         </Box>
       </CollapsibleSection>
-      <CollapsibleSection title={
+      <CollapsibleSection className="collapsible-section" title={
         <Box display="flex" alignItems="center">
           Exclusion List
           <Tooltip title="List of emails to exclude when importing email address list from Tautulli" placement="right">
@@ -310,7 +310,7 @@ function ConfigurationForm() {
         </Box>
         <ExclusionList exclusions={exclusionList} onRemove={removeExclusion} />
       </CollapsibleSection>
-      <CollapsibleSection title={
+      <CollapsibleSection className="collapsible-section" title={
         <Box display="flex" alignItems="center">
           Discord Roles
           <Tooltip title="Configure discord roles to be tagged when sending discord notifications" placement="right">

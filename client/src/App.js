@@ -19,9 +19,9 @@ function App() {
         <div className="app-container">
           <ResponsiveAppBar />
           <Routes>
-            <Route path="/" element={<MessageForm />} /> {/* Wrap MessageForm */}
-            <Route path="/templates" element={<TemplateForm />} /> {/* These should already have .main-content */}
-            <Route path="/history" element={<MessageHistoryForm />} /> {/* These should already have .main-content */}
+            <Route path="/" element={<MessageForm />} />
+            <Route path="/templates" element={<TemplateForm />} />
+            <Route path="/history" element={<MessageHistoryForm />} />
             <Route path="/email" element={<EmailForm />} />
             <Route path="/webhook" element={<WebhookForm />} />
             <Route path="/configuration" element={<ConfigurationForm />} />
