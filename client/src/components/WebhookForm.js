@@ -107,7 +107,7 @@ function WebhookForm() {
   };
 
   return (
-    <div>
+    <div className = "main-content">
       <PageHeader title="Webhooks" />
       <WebhookTable webhooks={webhooks} onDelete={deleteWebhook} onToggleActive={toggleWebhookActive} />
       <Box mt={4} display="flex" justifyContent="center">

@@ -10,7 +10,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Button from '@mui/material/Button';
 import AdUnitsIcon from '@mui/icons-material/AdUnits';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 const pages = [
   { name: 'Templates', path: '/templates' },
@@ -21,6 +21,7 @@ const pages = [
 
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
+  const location = useLocation();
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -31,7 +32,7 @@ function ResponsiveAppBar() {
   };
 
   return (
-    <AppBar position="static">
+    <AppBar position="static" sx={{ backgroundColor: '#2C3E50' }}>
       <Toolbar disableGutters sx={{ px: 2 }}>
         {/* Left-Aligned Logo */}
         <IconButton component={Link} to="/" sx={{ color: 'white', mr: 2 }}>
@@ -64,12 +65,15 @@ function ResponsiveAppBar() {
               onClick={handleCloseNavMenu}
               sx={{
                 my: 2,
-                color: 'white',
+                color: location.pathname === page.path ? "#3b99ff" : "white",
+                fontWeight: location.pathname === page.path ? 700 : 500,
                 display: 'block',
-                fontWeight: 500,
                 transition: 'background 0.2s, color 0.2s, transform 0.2s',
+                boxShadow: 'none',
                 '&:hover': {
                   color: "#3b99ff",
+                  boxShadow: 'none',
+                  backgroundColor: 'transparent',
                   fontWeight: 700,
                   transform: 'scale(1.07)',
                 },
@@ -119,6 +123,9 @@ function ResponsiveAppBar() {
                 key={page.name}
                 onClick={handleCloseNavMenu}
                 sx={{
+                  backgroundColor: location.pathname === page.path ? "#3b99ff" : undefined,
+                  color: location.pathname === page.path ? "white" : undefined,
+                  fontWeight: location.pathname === page.path ? 700 : undefined,
                   transition: 'background 0.2s, color 0.2s, transform 0.2s',
                   '&:hover': {
                     backgroundColor: 'primary.main',
@@ -150,7 +157,8 @@ function ResponsiveAppBar() {
           component={Link}
           to="/configuration"
           sx={{
-            color: 'white',
+            color: location.pathname === "/configuration" ? "#3b99ff" : "white",
+            fontWeight: location.pathname === "/configuration" ? 700 : 500,
             ml: 'auto',
             transition: 'background 0.2s, color 0.2s, transform 0.2s',
             '&:hover': {

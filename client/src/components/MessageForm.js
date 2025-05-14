@@ -178,8 +178,8 @@ function MessageForm() {
   };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: 'calc(100vh - 70px)', backgroundColor: '#f5f5f5', margin: '0 auto', overflow: 'hidden', width: '100%' }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', width: '100%', padding: 2, backgroundColor: '#e0e0e0', borderRadius: '0 0 8px 8px', boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)', marginBottom: 2 }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center',  minHeight: 'calc(100vh - 70px)', backgroundColor: '#f5f8fa', margin: '0 auto', overflow: 'hidden', width: '100%' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', width: '100%', padding: 2, backgroundColor: '#f5f8fb', borderRadius: '0 0 8px 8px', boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)', marginBottom: 2 }}>
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
         {emailCredentialStatus
           ? <CheckBoxOutlinedIcon sx={{ color: '#3b99ff' }} />
@@ -222,9 +222,9 @@ function MessageForm() {
       </Box>
       </Box>
       <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', flexGrow: 1, width: '100%' }}>
-        <Card sx={{ maxWidth: 700, width: '100%', padding: 2, boxShadow: 6, borderRadius: 2, marginTop: '-7vh' }}>
+        <Card sx={{ maxWidth: 700, width: '100%', padding: 2, boxShadow: 12, borderRadius: 2, marginTop: '-7vh' }} >
           <CardContent>
-            <Typography variant="h4" color="primary" gutterBottom align="center">
+            <Typography variant="h4" color="black" gutterBottom align="center">
               Send Message
             </Typography>
             <CustomTextField
@@ -243,11 +243,33 @@ function MessageForm() {
             />
             <FormGroup row sx={{ justifyContent: 'center', marginTop: 2 }}>
               <FormControlLabel
-                control={<Checkbox checked={sendEmail} onChange={(e) => setSendEmail(e.target.checked)} />}
+                control={
+                  <Checkbox
+                    checked={sendEmail}
+                    onChange={(e) => setSendEmail(e.target.checked)}
+                    sx={{
+                      color: '#3b99ff',
+                      '&.Mui-checked': {
+                        color: '#3b99ff',
+                      },
+                    }}
+                  />
+                }
                 label="Send via Email"
               />
               <FormControlLabel
-                control={<Checkbox checked={sendDiscord} onChange={(e) => setSendDiscord(e.target.checked)} />}
+                control={
+                  <Checkbox
+                    checked={sendDiscord}
+                    onChange={(e) => setSendDiscord(e.target.checked)}
+                    sx={{
+                      color: '#3b99ff',
+                      '&.Mui-checked': {
+                        color: '#3b99ff',
+                      },
+                    }}
+                  />
+                }
                 label="Send via Discord"
               />
             </FormGroup>

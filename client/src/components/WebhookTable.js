@@ -5,14 +5,15 @@ import DeleteIcon from '@mui/icons-material/Delete';
 const WebhookTable = ({ webhooks, onDelete, onToggleActive }) => {
   return (
     <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
-      <TableContainer component={Paper} sx={{ width: '75%', maxWidth: 1920 }}>
+        
+      <TableContainer component={Paper} sx={{ width: '75%', maxWidth: 1920 }} elevation={8}>
         <Table sx={{ minWidth: 700 }} aria-label="customized table">
           <TableHead>
             <TableRow>
-              <TableCell sx={{ backgroundColor: 'black', color: 'white', textAlign: 'center' }}>Active</TableCell>
-              <TableCell sx={{ backgroundColor: 'black', color: 'white', textAlign: 'center' }}>Channel Name</TableCell>
-              <TableCell sx={{ backgroundColor: 'black', color: 'white', textAlign: 'center' }}>Webhook URL</TableCell>
-              <TableCell sx={{ backgroundColor: 'black', color: 'white', textAlign: 'center' }}>Actions</TableCell>
+              <TableCell sx={{ backgroundColor: '#d3d3d3', color: 'black', textAlign: 'center' }}>Active</TableCell>
+              <TableCell sx={{ backgroundColor: '#d3d3d3', color: 'black', textAlign: 'center' }}>Channel Name</TableCell>
+              <TableCell sx={{ backgroundColor: '#d3d3d3', color: 'black', textAlign: 'center' }}>Webhook URL</TableCell>
+              <TableCell sx={{ backgroundColor: '#d3d3d3', color: 'black', textAlign: 'center' }}>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

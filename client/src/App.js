@@ -1,6 +1,6 @@
 // App.js
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material/styles';
 import EmailForm from './components/EmailForm';
 import WebhookForm from './components/WebhookForm';
@@ -16,7 +16,7 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <Router>
-        <div className="App">
+        <div className="app-container">
           <ResponsiveAppBar />
           <Routes>
             <Route path="/" element={<MessageForm />} />

@@ -102,7 +102,7 @@ function EmailForm() {
   };
 
   return (
-    <>
+    <div className = "main-content">
       <PageHeader title="Email List" />
       <Box sx={{ width: '50%', margin: '0 auto' }}>
         <EmailTable emails={emails} onDelete={deleteEmail} />
@@ -147,7 +147,7 @@ function EmailForm() {
           </DialogActions>
         </Dialog>
       </Box>
-    </>
+    </div>
   );
 }
 

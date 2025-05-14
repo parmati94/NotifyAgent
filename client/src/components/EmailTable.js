@@ -73,14 +73,15 @@ function EmailTable({ emails, onDelete }) {
           overflowX: 'auto',
           position: 'relative',
         }}
+        elevation={8}
       >
         <Table sx={{ minWidth: 700 }} aria-label="customized table">
           <TableHead>
             <TableRow>
               <TableCell
                 sx={{
-                  backgroundColor: 'black',
-                  color: 'white',
+                  backgroundColor: '#d3d3d3',
+                  color: 'black',
                   width: '10%',
                   whiteSpace: 'nowrap',
                 }}
@@ -89,8 +90,8 @@ function EmailTable({ emails, onDelete }) {
               </TableCell>
               <TableCell
                 sx={{
-                  backgroundColor: 'black',
-                  color: 'white',
+                  backgroundColor: '#d3d3d3',
+                  color: 'black',
                   width: '60%',
                   textAlign: 'center',
                   whiteSpace: 'nowrap',
@@ -103,19 +104,19 @@ function EmailTable({ emails, onDelete }) {
                   direction={order}
                   onClick={handleSort}
                   sx={{
-                    color: 'white',
+                    color: 'black',
                     '& .MuiTableSortLabel-icon': {
-                      color: 'white !important',
+                      color: 'black !important',
                     },
                   }}
                 >
-                  <span style={{ color: 'white' }}>Email</span>
+                  <span style={{ color: 'black' }}>Email</span>
                 </TableSortLabel>
               </TableCell>
               <TableCell
                 sx={{
-                  backgroundColor: 'black',
-                  color: 'white',
+                  backgroundColor: '#d3d3d3',
+                  color: 'black',
                   width: '30%',
                   textAlign: 'center',
                   whiteSpace: 'nowrap',
@@ -155,7 +156,7 @@ function EmailTable({ emails, onDelete }) {
             flexWrap: 'wrap',
             justifyContent: 'space-between',
             alignItems: 'center',
-            backgroundColor: 'black',
+            backgroundColor: '#d3d3d3',
             color: 'white',
             padding: '8px 16px',
             gap: 1,
@@ -166,8 +167,8 @@ function EmailTable({ emails, onDelete }) {
             <IconButton
               onClick={toggleSearch}
               sx={{
-                color: 'white',
-                '&:hover': { color: '#f0f0f0' },
+                color: 'black',
+                '&:hover': { color: '#3b99ff' },
               }}
             >
               <SearchIcon />
@@ -213,13 +214,13 @@ function EmailTable({ emails, onDelete }) {
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
             sx={{
-              backgroundColor: 'black',
-              color: 'white',
+              backgroundColor: '#d3d3d3',
+              color: 'black',
               '& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows, & .MuiTablePagination-actions': {
-                color: 'white',
+                color: 'black',
               },
               '& .MuiSelect-icon': {
-                color: 'white',
+                color: 'black',
               },
             }}
           />
