@@ -18,22 +18,7 @@ WORKDIR /app
 RUN apk update && apk add --no-cache nginx supervisor
 
 ARG TARGETPLATFORM
-
-# Install Pydantic and pydantic-core from Alpine packages ONLY for ARM
-RUN if [ "$TARGETPLATFORM" = "linux/arm/v7" ] || [ "$TARGETPLATFORM" = "linux/arm64" ]; then \
-    apk add --no-cache py3-pydantic py3-pydantic-core; \
-fi
-
-# Install Python dependencies (excluding pydantic and pydantic-core for ARM)
-COPY api/requirements.txt .
-RUN if [ "$TARGETPLATFORM" = "linux/arm/v7" ] || [ "$TARGETPLATFORM" = "linux/arm64" ]; then \
-    pip install --no-cache-dir --no-binary pydantic-core,pydantic -r requirements.txt; \
-else \
-    pip install --no-cache-dir -r requirements.txt; \
-fi
-
-# Install build dependencies for other potential native extensions on ARM (as a fallback)
-RUN if [ "$TARGETPLATFORM" = "linux/arm/v7" ] || [ "$TARGETPLATFORM" = "linux/arm64" ]; then \
+RUN if [ "$TARGETPLATFORM" = "linux/arm/v7" ]; then \
     apk update && apk add --no-cache --virtual .build-deps \
         gcc \
         musl-dev \
@@ -42,8 +27,11 @@ RUN if [ "$TARGETPLATFORM" = "linux/arm/v7" ] || [ "$TARGETPLATFORM" = "linux/ar
         rust cargo; \
 fi
 
-# Clean up build dependencies for ARM
-RUN if [ "$TARGETPLATFORM" = "linux/arm/v7" ] || [ "$TARGETPLATFORM" = "linux/arm64" ]; then \
+# Install Python dependencies
+COPY api/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+RUN if [ "$TARGETPLATFORM" = "linux/arm/v7" ]; then \
     apk del .build-deps; \
 fi
 
