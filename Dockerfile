@@ -1,21 +1,25 @@
-# Stage 1: Build the frontend
+# ==============================================================================
+# Stage 1: Frontend build
+# ==============================================================================
 FROM node:22 as frontend-builder
 WORKDIR /app
 COPY client/package.json client/package-lock.json ./
-RUN npm install
+RUN npm ci
 COPY client/ ./
 RUN npm run build
 
-# Stage 2: Build the backend
-FROM python:3.13-slim as backend
+# ==============================================================================
+# Stage 2: Final image
+# ==============================================================================
+FROM python:3.13-alpine as backend
 WORKDIR /app
 
 # Install Nginx and Supervisor first
-RUN apt-get update && apt-get install -y nginx supervisor && apt-get clean
+RUN apk update && apk add --no-cache nginx supervisor
 
 # Install Python dependencies
 COPY api/requirements.txt .
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy backend files
 COPY api/ ./api
