@@ -56,16 +56,16 @@ const MessageHistoryTable = ({ messages }) => {
   const sortedMessages = [...messages].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
-      <TableContainer component={Paper} sx={{ width: '75%' }} elevation={8}>
-        <Table sx={{ minWidth: 700 }} aria-label="customized table">
+    <div style={{ width: '100%' }}>
+      <TableContainer>
+        <Table stickyHeader aria-label="message history table">
           <TableHead>
             <TableRow>
-              <TableCell sx={{ backgroundColor: '#d3d3d3', color: 'black' }}>Subject</TableCell>
-              <TableCell sx={{ backgroundColor: '#d3d3d3', color: 'black' }} align="left">Body</TableCell>
-              <TableCell sx={{ backgroundColor: '#d3d3d3', color: 'black' }} align="center">Services Used</TableCell>
-              <TableCell sx={{ backgroundColor: '#d3d3d3', color: 'black' }} align="center">Time</TableCell>
-              <TableCell sx={{ backgroundColor: '#d3d3d3', color: 'black' }} align="center">Actions</TableCell>
+              <TableCell>Subject</TableCell>
+              <TableCell align="left">Body</TableCell>
+              <TableCell align="center">Services Used</TableCell>
+              <TableCell align="center">Time</TableCell>
+              <TableCell align="center">Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -106,16 +106,6 @@ const MessageHistoryTable = ({ messages }) => {
           page={page}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
-          sx={{
-            backgroundColor: '#d3d3d3',
-            color: 'black',
-            '& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows, & .MuiTablePagination-actions': {
-              color: 'black',
-            },
-            '& .MuiSelect-icon': {
-              color: 'black',
-            },
-          }}
         />
       </TableContainer>
       <Dialog open={dialogOpen} onClose={handleDialogClose}>

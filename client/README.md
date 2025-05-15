@@ -61,6 +61,46 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/m
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
 
+## NotifyAgent Custom Components
+
+### DataTable
+
+The DataTable component is a standardized table implementation that provides consistent functionality across the application. It replaces the individual table components previously used in different forms.
+
+#### Features:
+- Customizable columns with sorting, alignment, and custom rendering
+- Built-in search functionality
+- Pagination with configurable rows per page
+- Empty state messaging
+- Consistent styling with the application's theme
+
+#### Usage:
+```jsx
+<DataTable
+  columns={[
+    {
+      id: 'name',
+      header: 'Column Name',
+      accessor: (row) => row.name,
+      align: 'left', // Optional: 'left', 'center', 'right'
+      searchable: true, // Optional: enables searching on this column
+      sortable: true, // Optional: enables sorting on this column
+      width: '150px', // Optional: sets column width
+      render: (row) => <CustomComponent data={row} /> // Optional: custom renderer
+    },
+    // Additional columns...
+  ]}
+  data={dataArray}
+  enableSearch={true} // Optional: enable search functionality
+  enableSort={true} // Optional: enable sorting functionality
+  enablePagination={true} // Optional: enable pagination
+  defaultRowsPerPage={5} // Optional: default number of rows per page
+  rowsPerPageOptions={[5, 10, 25]} // Optional: rows per page options
+  emptyMessage="No data available" // Optional: message when no data is available
+  onRowClick={(row) => handleRowClick(row)} // Optional: callback for row clicks
+/>
+```
+
 ### Deployment
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)

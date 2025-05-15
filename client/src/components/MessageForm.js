@@ -3,11 +3,18 @@ import axios from 'axios';
 import CustomButton from './Button';
 import CustomTextField from './TextField';
 import CustomMultilineTextField from './CustomMultilineTextField';
-import { Typography, Box, Checkbox, FormControlLabel, FormGroup, Card, CardContent, CardActions } from '@mui/material';
+import { 
+  Typography, Box, Checkbox, FormControlLabel, FormGroup, Card, CardContent, CardActions, 
+  Grid, Divider, FormControl, InputLabel, Select, MenuItem, Chip, Tooltip, 
+  useTheme, alpha
+} from '@mui/material';
 import CustomSnackbar from './CustomSnackbar';
 import ConfirmationDialog from './ConfirmationDialog';
 import CheckBoxOutlineBlankOutlinedIcon from '@mui/icons-material/CheckBoxOutlineBlankOutlined';
 import CheckBoxOutlinedIcon from '@mui/icons-material/CheckBoxOutlined';
+import EmailIcon from '@mui/icons-material/Email';
+import MessageIcon from '@mui/icons-material/Message';
+import TemplateIcon from '@mui/icons-material/Description';
 
 const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -29,6 +36,8 @@ function MessageForm() {
   const [tautulliStatus, setTautulliStatus] = useState(false);
   const [templates, setTemplates] = useState([]);
   const [selectedTemplateId, setSelectedTemplateId] = useState('');
+
+  const theme = useTheme();
 
   useEffect(() => {
     const fetchTemplates = async () => {
@@ -177,141 +186,273 @@ function MessageForm() {
     }
   };
 
+  const handleClearForm = () => {
+    setSubject('');
+    setBody('');
+    setSendEmail(true);
+    setSendDiscord(true);
+    setSelectedTemplateId('');
+  };
+
+  const handleSendMessage = () => {
+    handleSendMessageClick();
+  };
+
+  const confirmSendMessage = () => {
+    handleDialogClose(true);
+  };
+
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center',  minHeight: 'calc(100vh - 70px)', backgroundColor: '#f5f8fa', margin: '0 auto', overflow: 'hidden', width: '100%' }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', width: '100%', padding: 2, backgroundColor: '#f5f8fb', borderRadius: '0 0 8px 8px', boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)', marginBottom: 2 }}>
-      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        {emailCredentialStatus
-          ? <CheckBoxOutlinedIcon sx={{ color: '#3b99ff' }} />
-          : <CheckBoxOutlineBlankOutlinedIcon sx={{ color: '#3b99ff' }} />}
-        <Typography variant="body1" sx={{ marginLeft: 1 }}>
-          Email Credentials
-        </Typography>
-      </Box>
-      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        {tautulliStatus
-          ? <CheckBoxOutlinedIcon sx={{ color: '#3b99ff' }} />
-          : <CheckBoxOutlineBlankOutlinedIcon sx={{ color: '#3b99ff' }} />}
-        <Typography variant="body1" sx={{ marginLeft: 1 }}>
-          Tautulli Credentials
-        </Typography>
-      </Box>
-      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        {emailStatus
-          ? <CheckBoxOutlinedIcon sx={{ color: '#3b99ff' }} />
-          : <CheckBoxOutlineBlankOutlinedIcon sx={{ color: '#3b99ff' }} />}
-        <Typography variant="body1" sx={{ marginLeft: 1 }}>
-          Emails
-        </Typography>
-      </Box>
-      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        {webhooksStatus
-          ? <CheckBoxOutlinedIcon sx={{ color: '#3b99ff' }} />
-          : <CheckBoxOutlineBlankOutlinedIcon sx={{ color: '#3b99ff' }} />}
-        <Typography variant="body1" sx={{ marginLeft: 1 }}>
-          Discord Webhooks
-        </Typography>
-      </Box>
-      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        {rolesStatus
-          ? <CheckBoxOutlinedIcon sx={{ color: '#3b99ff' }} />
-          : <CheckBoxOutlineBlankOutlinedIcon sx={{ color: '#3b99ff' }} />}
-        <Typography variant="body1" sx={{ marginLeft: 1 }}>
-          Discord Roles
-        </Typography>
-      </Box>
-      </Box>
-      <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', flexGrow: 1, width: '100%' }}>
-        <Card sx={{ maxWidth: 700, width: '100%', padding: 2, boxShadow: 12, borderRadius: 2, marginTop: '-7vh' }} >
-          <CardContent>
-            <Typography variant="h4" color="black" gutterBottom align="center">
-              Send Message
+    <Box sx={{ maxWidth: 800, margin: '0 auto', p: 2 }}>
+      <Card elevation={3} sx={{
+        borderRadius: theme.shape.borderRadius,
+        overflow: 'hidden',
+        mb: 4,
+        border: `1px solid ${theme.palette.grey[200]}`,
+      }}>
+        <CardContent sx={{ p: 0 }}>
+          <Box sx={{
+            backgroundColor: theme.palette.primary.light,
+            p: 3,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 2,
+            borderBottom: `1px solid ${theme.palette.grey[200]}`
+          }}>
+            <MessageIcon sx={{ color: theme.palette.primary.dark, fontSize: 32 }} />
+            <Typography variant="h5" component="h2" sx={{ fontWeight: 600, color: theme.palette.primary.dark }}>
+              Send Notification
             </Typography>
-            <CustomTextField
-              type="text"
-              label="Subject"
-              value={subject}
-              onChange={(e) => setSubject(e.target.value)}
-              fullWidth
-              margin="normal"
-            />
-            <CustomMultilineTextField
-              label="Body"
-              value={body}
-              onChange={(e) => setBody(e.target.value)}
-              placeholder="Body"
-            />
-            <FormGroup row sx={{ justifyContent: 'center', marginTop: 2 }}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={sendEmail}
-                    onChange={(e) => setSendEmail(e.target.checked)}
-                    sx={{
-                      color: '#3b99ff',
-                      '&.Mui-checked': {
-                        color: '#3b99ff',
-                      },
-                    }}
-                  />
-                }
-                label="Send via Email"
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={sendDiscord}
-                    onChange={(e) => setSendDiscord(e.target.checked)}
-                    sx={{
-                      color: '#3b99ff',
-                      '&.Mui-checked': {
-                        color: '#3b99ff',
-                      },
-                    }}
-                  />
-                }
-                label="Send via Discord"
-              />
-            </FormGroup>
-            <Box mt={2}>
-              <Typography variant="h6">Select a Template</Typography>
-              <select onChange={handleTemplateChange} value={selectedTemplateId}>
-                <option value="">No template</option>
-                {templates.map(template => (
-                  <option key={template.id} value={template.id}>{template.name}</option>
-                ))}
-              </select>
-            </Box>
-          </CardContent>
-          <CardActions sx={{ justifyContent: 'center' }}>
-            <CustomButton onClick={handleSendMessageClick}>Send Message</CustomButton>
-          </CardActions>
-        </Card>
-      </Box>
+          </Box>
+
+          <Box sx={{ p: 3 }}>
+            <Grid container spacing={3}>
+              {/* Template Selection */}
+              <Grid item xs={12}>
+                <FormControl fullWidth variant="outlined">
+                  <InputLabel id="template-select-label">Select a Template</InputLabel>
+                  <Select
+                    labelId="template-select-label"
+                    id="template-select"
+                    value={selectedTemplateId}
+                    label="Select a Template"
+                    onChange={handleTemplateChange}
+                    startAdornment={selectedTemplateId && <TemplateIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />}
+                  >
+                    <MenuItem value="">
+                      <em>No template</em>
+                    </MenuItem>
+                    {templates.map(template => (
+                      <MenuItem key={template.id} value={template.id}>{template.name}</MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+
+              {/* Message Subject */}
+              <Grid item xs={12}>
+                <CustomTextField
+                  id="subject"
+                  name="subject"
+                  label="Subject"
+                  value={subject}
+                  onChange={(e) => setSubject(e.target.value)}
+                  fullWidth
+                  required
+                />
+              </Grid>
+
+              {/* Message Body */}
+              <Grid item xs={12}>
+                <CustomMultilineTextField
+                  id="body"
+                  name="body"
+                  label="Message Body"
+                  value={body}
+                  onChange={(e) => setBody(e.target.value)}
+                  fullWidth
+                  required
+                  minRows={8}
+                />
+              </Grid>
+
+              {/* Send Options */}
+              <Grid item xs={12}>
+                <Box sx={{ 
+                  border: `1px solid ${theme.palette.grey[300]}`,
+                  borderRadius: theme.shape.borderRadius,
+                  p: 2,
+                  backgroundColor: alpha(theme.palette.primary.light, 0.1),
+                }}>
+                  <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: 600 }}>
+                    Send Options
+                  </Typography>
+                  <Divider sx={{ mb: 2 }} />
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6}>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={sendEmail}
+                            onChange={(e) => setSendEmail(e.target.checked)}
+                            icon={<CheckBoxOutlineBlankOutlinedIcon />}
+                            checkedIcon={<CheckBoxOutlinedIcon />}
+                            sx={{
+                              color: theme.palette.primary.main,
+                              '&.Mui-checked': {
+                                color: theme.palette.primary.main,
+                              },
+                            }}
+                          />
+                        }
+                        label={
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <EmailIcon fontSize="small" />
+                            <Typography>Send Email</Typography>
+                          </Box>
+                        }
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={sendDiscord}
+                            onChange={(e) => setSendDiscord(e.target.checked)}
+                            icon={<CheckBoxOutlineBlankOutlinedIcon />}
+                            checkedIcon={<CheckBoxOutlinedIcon />}
+                            sx={{
+                              color: theme.palette.primary.main,
+                              '&.Mui-checked': {
+                                color: theme.palette.primary.main,
+                              },
+                            }}
+                          />
+                        }
+                        label={
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <MessageIcon fontSize="small" />
+                            <Typography>Send Discord</Typography>
+                          </Box>
+                        }
+                      />
+                    </Grid>
+                  </Grid>
+                </Box>
+              </Grid>
+
+              {/* Status Section */}
+              <Grid item xs={12}>
+                <Box sx={{ 
+                  border: `1px solid ${theme.palette.grey[300]}`,
+                  borderRadius: theme.shape.borderRadius,
+                  p: 2,
+                  backgroundColor: alpha(theme.palette.info.light, 0.05),
+                }}>
+                  <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: 600 }}>
+                    Configuration Status
+                  </Typography>
+                  <Divider sx={{ mb: 2 }} />
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                        <Chip 
+                          label="Email Recipients" 
+                          size="small" 
+                          color={emailStatus ? "success" : "error"} 
+                          variant="outlined"
+                          sx={{ mr: 1 }} 
+                        />
+                        <Typography variant="body2">
+                          {emailCount > 0 ? `${emailCount} recipients` : 'No recipients'}
+                        </Typography>
+                      </Box>
+                      
+                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                        <Chip 
+                          label="Email Credentials" 
+                          size="small" 
+                          color={emailCredentialStatus ? "success" : "error"} 
+                          variant="outlined"
+                          sx={{ mr: 1 }} 
+                        />
+                        <Typography variant="body2">
+                          {emailCredentialStatus ? 'Configured' : 'Not configured'}
+                        </Typography>
+                      </Box>
+                    </Grid>
+                    
+                    <Grid item xs={12} sm={6}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                        <Chip 
+                          label="Discord Webhooks" 
+                          size="small" 
+                          color={webhooksStatus ? "success" : "error"} 
+                          variant="outlined"
+                          sx={{ mr: 1 }} 
+                        />
+                        <Typography variant="body2">
+                          {discordChannels.length > 0 ? `${discordChannels.length} channels` : 'No channels'}
+                        </Typography>
+                      </Box>
+                      
+                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                        <Chip 
+                          label="Tautulli" 
+                          size="small" 
+                          color={tautulliStatus ? "success" : "error"} 
+                          variant="outlined"
+                          sx={{ mr: 1 }} 
+                        />
+                        <Typography variant="body2">
+                          {tautulliStatus ? 'Connected' : 'Not connected'}
+                        </Typography>
+                      </Box>
+                    </Grid>
+                  </Grid>
+                </Box>
+              </Grid>
+            </Grid>
+          </Box>
+        </CardContent>
+        
+        <CardActions sx={{ 
+          justifyContent: 'flex-end', 
+          p: 3, 
+          backgroundColor: alpha(theme.palette.background.default, 0.7),
+          borderTop: `1px solid ${theme.palette.grey[200]}`
+        }}>
+          <CustomButton 
+            onClick={handleClearForm} 
+            color="secondary" 
+            variant="outlined" 
+            sx={{ mr: 1 }}
+          >
+            Clear Form
+          </CustomButton>
+          <CustomButton 
+            onClick={handleSendMessage} 
+            color="primary"
+            disabled={!subject.trim() || !body.trim() || (!sendEmail && !sendDiscord)}
+          >
+            Send Message
+          </CustomButton>
+        </CardActions>
+      </Card>
+
+      <ConfirmationDialog
+        open={dialogOpen}
+        title="Send Message"
+        content={`Are you sure you want to send this message to ${emailCount} email recipients${discordChannels.length > 0 ? ` and ${discordChannels.length} Discord channels` : ''}?`}
+        onConfirm={confirmSendMessage}
+        onCancel={() => setDialogOpen(false)}
+      />
+      
       <CustomSnackbar
         open={snackbarOpen}
         message={snackbarMessage}
         severity={snackbarSeverity}
-        onClose={handleSnackbarClose}
-      />
-      <ConfirmationDialog
-        open={dialogOpen}
-        onClose={handleDialogClose}
-        title="Confirm Send"
-        content={
-          <>
-            <Typography variant="body1">
-              Are you sure you want to send this message to {emailCount} email address(s) and the following Discord channels:
-            </Typography>
-            <ul>
-              {discordChannels.filter(channel => channel.is_active).map((channel) => (
-                <li key={channel.channel_name}>
-                  <Typography variant="body2">{channel.channel_name}</Typography>
-                </li>
-              ))}
-            </ul>
-          </>
-        }
+        onClose={() => setSnackbarOpen(false)}
       />
     </Box>
   );

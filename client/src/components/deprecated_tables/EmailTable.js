@@ -64,18 +64,15 @@ function EmailTable({ emails, onDelete }) {
   });
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+    <div style={{ width: '100%' }}>
       <TableContainer
-        component={Paper}
         sx={{
           width: '100%',
-          maxWidth: { xs: '100%', sm: 800 },
           overflowX: 'auto',
           position: 'relative',
         }}
-        elevation={8}
       >
-        <Table sx={{ minWidth: 700 }} aria-label="customized table">
+        <Table stickyHeader aria-label="email table">
           <TableHead>
             <TableRow>
               <TableCell
