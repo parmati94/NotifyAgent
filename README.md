@@ -1,6 +1,6 @@
 # NotifyAgent
 
-![Screenshot](https://i.imgur.com/hm8VLCv.png)
+![Screenshot](https://i.imgur.com/IfyWMDQ.png)
 
 ## Docker-less Setup:
 
