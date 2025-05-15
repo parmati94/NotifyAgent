@@ -17,9 +17,23 @@ WORKDIR /app
 # Install Nginx and Supervisor first
 RUN apk update && apk add --no-cache nginx supervisor
 
+ARG TARGETPLATFORM
+RUN if [ "$TARGETPLATFORM" = "linux/arm/v7" ]; then \
+    apk update && apk add --no-cache --virtual .build-deps \
+        gcc \
+        musl-dev \
+        linux-headers \
+        python3-dev \
+        rust cargo; \
+fi
+
 # Install Python dependencies
 COPY api/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
+
+RUN if [ "$TARGETPLATFORM" = "linux/arm/v7" ]; then \
+    apk del .build-deps; \
+fi
 
 # Copy backend files
 COPY api/ ./api
