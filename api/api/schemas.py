@@ -1,6 +1,34 @@
 from pydantic import BaseModel
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
+
+class Token(BaseModel):
+    token: str
+    username: str
+
+class TokenData(BaseModel):
+    username: Optional[str] = None
+
+class UserBase(BaseModel):
+    username: str
+    is_admin: bool = False
+
+class UserCreate(UserBase):
+    password: str
+
+class UserUpdate(BaseModel):
+    username: Optional[str] = None
+    password: Optional[str] = None
+    is_admin: Optional[bool] = None
+
+class User(UserBase):
+    id: int
+
+    class Config:
+        from_attributes = True
+
+class UserInDB(User):
+    password_hash: str
 
 class WebhookBase(BaseModel):
     channel_name: str

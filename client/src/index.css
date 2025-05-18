@@ -27,6 +27,9 @@ code {
 .main-content { /* Main content */
   flex: 1;
   background-color: #f5f8fb;
+  min-height: calc(100vh - 70px); /* Account for navbar height */
+  display: flex;
+  flex-direction: column;
 }
 
 .collapsible-section {

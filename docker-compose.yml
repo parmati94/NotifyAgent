@@ -7,4 +7,8 @@ services:
     environment:
       - LOG_LEVEL=info
       - TZ=America/New_York
+      - SECRET_KEY=a_very_secret_key_please_change_in_production
+      # Uncomment and modify these lines to customize admin credentials
+      # - ADMIN_USERNAME=admin
+      # - ADMIN_PASSWORD=admin
     restart: always

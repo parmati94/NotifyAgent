@@ -10,6 +10,15 @@ npm run setup
 npm start
 ```
 
+## Authentication System
+
+NotifyAgent includes a secure authentication system. The first time you start the application, an admin user is automatically created:
+
+- Username: `admin`
+- Password: `admin`
+
+**Important**: Change these credentials after your first login for security reasons.
+
 ## Docker Setup
 
 The application can be easily started via Docker Compose using the provided `docker-compose.yml`. 
@@ -20,6 +29,9 @@ The following environment variables are optional:
 
 - `LOG_LEVEL`: Set the logging level for the application (e.g., `info`, `debug`). Default is `info`.
 - `TZ`: Set the timezone for the container. For example, `America/New_York`.
+- `SECRET_KEY`: Secret key for JWT token encryption. Default is a placeholder that should be changed in production.
+- `ADMIN_USERNAME`: Set the default admin username. Default is `admin`.
+- `ADMIN_PASSWORD`: Set the default admin password. Default is `admin`.
 
 ### Running the Application
 

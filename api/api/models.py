@@ -3,6 +3,14 @@ from datetime import datetime
 from .database import Base, engine
 from pydantic import BaseModel
 
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, unique=True, index=True)
+    password_hash = Column(String)
+    is_admin = Column(Boolean, default=False)
+
 class Webhook(Base):
     __tablename__ = "webhooks"
 
