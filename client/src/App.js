@@ -16,8 +16,10 @@ import './App.css';
 import ResponsiveAppBar from './components/Navbar';
 import theme from './theme/theme';
 
-function App() {  return (
-    <ThemeProvider theme={theme}>      <AuthProvider>
+function App() {
+  return (
+    <ThemeProvider theme={theme}>
+      <AuthProvider>
         <SessionExpiryDialog />
         <Router>
           <Routes>
