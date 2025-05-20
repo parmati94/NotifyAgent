@@ -15,7 +15,7 @@ load_dotenv()
 # Set up JWT
 SECRET_KEY = os.getenv("SECRET_KEY", "a_very_secret_key_please_change_in_production")
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30 * 24 * 60  # 30 days
+ACCESS_TOKEN_EXPIRE_MINUTES = 60  # Token expires after 1 hour
 
 # Set up password hashing
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")

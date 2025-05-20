@@ -11,10 +11,11 @@ from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
 from dotenv import load_dotenv
 from sqlalchemy.orm import Session
-from datetime import timedelta
+from datetime import timedelta, datetime
+from jose import JWTError, jwt
 from . import models, schemas, crud
 from .database import SessionLocal, engine, get_db
-from .auth import create_access_token, get_current_user, get_current_active_user, get_admin_user, ACCESS_TOKEN_EXPIRE_MINUTES, get_password_hash, verify_password
+from .auth import create_access_token, get_current_user, get_current_active_user, get_admin_user, ACCESS_TOKEN_EXPIRE_MINUTES, get_password_hash, verify_password, oauth2_scheme, SECRET_KEY, ALGORITHM
 
 app = FastAPI(root_path="/api")
 
@@ -74,14 +75,51 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
             headers={"WWW-Authenticate": "Bearer"},
         )
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    
+    # Calculate expiry timestamp in milliseconds for frontend
+    expiry_ms = int((datetime.utcnow() + access_token_expires).timestamp() * 1000)
+    
     access_token = create_access_token(
         data={"sub": user.username}, expires_delta=access_token_expires
     )
-    return {"token": access_token, "username": user.username}
+    return {"token": access_token, "username": user.username, "expires_at": expiry_ms}
+
+@app.post("/refresh-token/")
+async def refresh_token(current_user = Depends(get_current_user)):
+    # Generate a new token with a fresh expiration time
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    
+    # Calculate expiry timestamp in milliseconds for frontend
+    expiry_ms = int((datetime.utcnow() + access_token_expires).timestamp() * 1000)
+    
+    # Create new token
+    access_token = create_access_token(
+        data={"sub": current_user.username}, expires_delta=access_token_expires
+    )
+    
+    return {"token": access_token, "username": current_user.username, "expires_at": expiry_ms}
 
 @app.get("/verify-token/")
-async def verify_token(current_user = Depends(get_current_user)):
-    return {"valid": True, "username": current_user.username}
+async def verify_token(current_user = Depends(get_current_user), token: str = Depends(oauth2_scheme)):
+    try:
+        # Decode token to get expiry time
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        exp = payload.get("exp")
+        
+        # Calculate expiry time in milliseconds (for frontend)
+        expiry_ms = int(exp) * 1000 if exp else None
+        
+        return {
+            "valid": True, 
+            "username": current_user.username,
+            "expiry": expiry_ms
+        }
+    except JWTError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
 
 # User management routes
 @app.post("/users/", response_model=schemas.User)

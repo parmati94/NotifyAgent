@@ -10,15 +10,15 @@ import MessageHistoryForm from './components/MessageHistoryForm';
 import TemplateForm from './components/TemplateForm';
 import LoginForm from './components/LoginForm';
 import ProtectedRoute from './components/ProtectedRoute';
+import SessionExpiryDialog from './components/SessionExpiryDialog';
 import { AuthProvider } from './context/AuthContext';
 import './App.css';
 import ResponsiveAppBar from './components/Navbar';
 import theme from './theme/theme';
 
-function App() {
-  return (
-    <ThemeProvider theme={theme}>
-      <AuthProvider>
+function App() {  return (
+    <ThemeProvider theme={theme}>      <AuthProvider>
+        <SessionExpiryDialog />
         <Router>
           <Routes>
             {/* Public Routes */}

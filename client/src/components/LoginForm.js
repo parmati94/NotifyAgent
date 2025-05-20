@@ -53,14 +53,14 @@ const LoginForm = () => {
       });
       
       console.log('Login response:', response.data);
-      
-      if (response.data && response.data.token) {
+        if (response.data && response.data.token) {
         console.log('Login successful, token received');
         
-        // Use the login function from AuthContext
+        // Use the login function from AuthContext with expiry time from server
         login(
           { username: response.data.username }, 
-          response.data.token
+          response.data.token,
+          response.data.expires_at // Pass the expiry time from the backend
         );
         
         setSnackbarMessage('Login successful');

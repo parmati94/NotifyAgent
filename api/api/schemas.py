@@ -5,6 +5,7 @@ from typing import Optional, List
 class Token(BaseModel):
     token: str
     username: str
+    expires_at: Optional[int] = None
 
 class TokenData(BaseModel):
     username: Optional[str] = None
