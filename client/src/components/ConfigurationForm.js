@@ -3,12 +3,16 @@ import PageHeader from './PageHeader';
 import CustomButton from './Button';
 import CustomTextField from './TextField';
 import axios from 'axios';
-import { Typography, Box, Tooltip, IconButton } from '@mui/material';
+import { Typography, Box, Tooltip, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 import ExclusionList from './ExclusionList';
 import CollapsibleSection from './CollapsibleSection';
 import CustomSnackbar from './CustomSnackbar';
 import DiscordRoleList from './DiscordRoleList';
 import InfoIcon from '@mui/icons-material/Info';
+import DeleteIcon from '@mui/icons-material/Delete';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import PersonIcon from '@mui/icons-material/Person';
+import ConfirmationDialog from './ConfirmationDialog';
 
 const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -30,6 +34,15 @@ function ConfigurationForm() {
   const [discordRoles, setDiscordRoles] = useState([]);
   const [newRoleName, setNewRoleName] = useState('');
   const [newRoleId, setNewRoleId] = useState('');
+
+  // User management state variables
+  const [users, setUsers] = useState([]);
+  const [newUsername, setNewUsername] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState(null);
 
   useEffect(() => {
     // Fetch saved Tautulli credentials from the backend when the component mounts
@@ -69,6 +82,15 @@ function ConfigurationForm() {
       })
       .catch(error => {
         console.error('Error fetching Discord roles:', error);
+      });
+
+    // Fetch users from the backend when the component mounts
+    axios.get(`${REACT_APP_API_BASE_URL}/users/`)
+      .then(response => {
+        setUsers(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching users:', error);
       });
   }, []);
 
@@ -217,6 +239,78 @@ function ConfigurationForm() {
     }
   };
 
+  const addUser = () => {
+    // Validation
+    if (newPassword !== confirmPassword) {
+      setSnackbarMessage('Passwords do not match');
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
+      return;
+    }
+
+    const userData = {
+      username: newUsername,
+      password: newPassword,
+      is_admin: isAdmin
+    };
+
+    axios.post(`${REACT_APP_API_BASE_URL}/users/`, userData)
+      .then(response => {
+        setUsers([...users, response.data]);
+        setNewUsername('');
+        setNewPassword('');
+        setConfirmPassword('');
+        setIsAdmin(false);
+        setSnackbarMessage('User added successfully');
+        setSnackbarSeverity('success');
+        setSnackbarOpen(true);
+      })
+      .catch(error => {
+        console.error('Error adding user:', error);
+        setSnackbarMessage(error.response?.data?.detail || 'Error adding user');
+        setSnackbarSeverity('error');
+        setSnackbarOpen(true);
+      });
+  };
+  const openDeleteDialog = (user) => {
+    // Prevent deleting the only admin user
+    if (user.is_admin && users.filter(u => u.is_admin).length <= 1) {
+      setSnackbarMessage('Cannot delete the only admin user. Create another admin user first.');
+      setSnackbarSeverity('warning');
+      setSnackbarOpen(true);
+      return;
+    }
+    
+    setUserToDelete(user);
+    setDeleteDialogOpen(true);
+  };
+
+  const closeDeleteDialog = () => {
+    setDeleteDialogOpen(false);
+    setUserToDelete(null);
+  };
+  const confirmDeleteUser = () => {
+    if (!userToDelete) return;
+
+    axios.delete(`${REACT_APP_API_BASE_URL}/users/${userToDelete.id}`)
+      .then(response => {
+        setUsers(users.filter(user => user.id !== userToDelete.id));
+        setSnackbarMessage('User deleted successfully');
+        setSnackbarSeverity('success');
+        setSnackbarOpen(true);
+        closeDeleteDialog();
+      })
+      .catch(error => {
+        console.error('Error deleting user:', error);
+        // Display the specific error message from the server if available
+        const errorMessage = error.response?.data?.detail || 'Error deleting user';
+        setSnackbarMessage(errorMessage);
+        setSnackbarSeverity('error');
+        setSnackbarOpen(true);
+        closeDeleteDialog();
+      });
+  };
+
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
   };
@@ -224,6 +318,118 @@ function ConfigurationForm() {
   return (
     <div className="main-content" style={{ textAlign: 'center'}}>
       <PageHeader title="Configuration" />
+      
+      <CollapsibleSection className="collapsible-section" title={
+        <Box display="flex" alignItems="center">
+          User Management
+          <Tooltip title="Add, edit, and remove user accounts" placement="right">
+            <IconButton size="small" sx={{ ml: 1 }}>
+              <InfoIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        </Box>
+      }>
+        <Box sx={{ mb: 4 }}>
+          <Typography variant="h6" gutterBottom>Add New User</Typography>
+          <CustomTextField
+            label="Username"
+            value={newUsername}
+            onChange={(e) => setNewUsername(e.target.value)}
+            required
+          />
+          <CustomTextField
+            type="password"
+            label="Password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            required
+          />
+          <CustomTextField
+            type="password"
+            label="Confirm Password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+            error={confirmPassword !== '' && newPassword !== confirmPassword}
+            helperText={confirmPassword !== '' && newPassword !== confirmPassword ? "Passwords don't match" : ""}
+          />
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mt: 2 }}>
+            <Tooltip title="Grant admin privileges to this user">
+              <IconButton 
+                onClick={() => setIsAdmin(!isAdmin)}
+                color={isAdmin ? "primary" : "default"}
+              >
+                <AdminPanelSettingsIcon />
+              </IconButton>
+            </Tooltip>
+            <Typography variant="body2" color={isAdmin ? "primary" : "text.secondary"}>
+              {isAdmin ? "Admin User" : "Regular User"}
+            </Typography>
+          </Box>
+          <Box mt={2} display="flex" justifyContent="center">
+            <CustomButton 
+              onClick={addUser}
+              disabled={!newUsername || !newPassword || !confirmPassword || newPassword !== confirmPassword}
+            >
+              Add User
+            </CustomButton>
+          </Box>
+        </Box>
+
+        <Box sx={{ mt: 4 }}>
+          <Typography variant="h6" gutterBottom>User Accounts</Typography>
+          <TableContainer component={Paper} sx={{ mt: 2 }}>
+            <Table aria-label="user table">
+              <TableHead>
+                <TableRow>
+                  <TableCell>Username</TableCell>
+                  <TableCell align="center">Role</TableCell>
+                  <TableCell align="center">Actions</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {users.map((user) => (
+                  <TableRow key={user.id}>
+                    <TableCell component="th" scope="row">
+                      {user.username}
+                    </TableCell>
+                    <TableCell align="center">
+                      {user.is_admin ? 
+                        <Tooltip title="Admin User">
+                          <AdminPanelSettingsIcon color="primary" />
+                        </Tooltip> : 
+                        <Tooltip title="Regular User">
+                          <PersonIcon color="action" />
+                        </Tooltip>
+                      }
+                    </TableCell>                    <TableCell align="center">
+                      <Tooltip title={
+                        user.is_admin && users.filter(u => u.is_admin).length <= 1 
+                          ? "This is the only admin user and cannot be deleted" 
+                          : "Delete User"
+                      }>
+                        <IconButton 
+                          onClick={() => openDeleteDialog(user)}
+                          color="error"
+                          size="small"
+                          disabled={user.is_admin && users.filter(u => u.is_admin).length <= 1}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </Tooltip>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          {users.length === 0 && (
+            <Typography variant="body2" sx={{ mt: 2, color: 'text.secondary' }}>
+              No users found. Add a user to get started.
+            </Typography>
+          )}
+        </Box>
+      </CollapsibleSection>
       <CollapsibleSection className="collapsible-section" title={
         <Box display="flex" alignItems="center">
           Add Email Credentials
@@ -342,6 +548,17 @@ function ConfigurationForm() {
         message={snackbarMessage}
         severity={snackbarSeverity}
         onClose={handleSnackbarClose}
+      />
+        <ConfirmationDialog
+        open={deleteDialogOpen}
+        title="Delete User"
+        content={
+          userToDelete?.is_admin 
+            ? `Warning: You are about to delete an admin user "${userToDelete?.username}". This action cannot be undone.`
+            : `Are you sure you want to delete the user "${userToDelete?.username}"? This action cannot be undone.`
+        }
+        onConfirm={confirmDeleteUser}
+        onCancel={closeDeleteDialog}
       />
     </div>
   );

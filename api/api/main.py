@@ -1,5 +1,6 @@
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, status
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel
 from typing import List
 import os
@@ -10,8 +11,11 @@ from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
 from dotenv import load_dotenv
 from sqlalchemy.orm import Session
+from datetime import timedelta, datetime
+from jose import JWTError, jwt
 from . import models, schemas, crud
-from .database import SessionLocal, engine
+from .database import SessionLocal, engine, get_db
+from .auth import create_access_token, get_current_user, get_current_active_user, get_admin_user, ACCESS_TOKEN_EXPIRE_MINUTES, get_password_hash, verify_password, oauth2_scheme, SECRET_KEY, ALGORITHM
 
 app = FastAPI(root_path="/api")
 
@@ -19,13 +23,38 @@ load_dotenv()
 
 models.Base.metadata.create_all(bind=engine)
 
-# Dependency
-def get_db():
+# Function moved from auth.py to fix circular imports
+def authenticate_user(db: Session, username: str, password: str):
+    user = crud.get_user_by_username(db, username)
+    if not user:
+        return False
+    if not verify_password(password, user.password_hash):
+        return False
+    return user
+
+# Create admin user on startup if no users exist
+def create_admin_user():
     db = SessionLocal()
     try:
-        yield db
+        user_count = db.query(models.User).count()
+        if user_count == 0:
+            # Get admin credentials from environment variables or use defaults
+            admin_username = os.getenv("ADMIN_USERNAME", "admin")
+            admin_password = os.getenv("ADMIN_PASSWORD", "admin")
+            print(f"No users found. Creating default admin user '{admin_username}'")
+            
+            hashed_password = get_password_hash(admin_password)
+            db_user = models.User(username=admin_username, password_hash=hashed_password, is_admin=True)
+            db.add(db_user)
+            db.commit()
+            print(f"Admin user '{admin_username}' created successfully!")
+    except Exception as e:
+        print(f"Error creating admin user: {e}")
     finally:
         db.close()
+
+# Create admin user on startup
+create_admin_user()
 
 app.add_middleware(
     CORSMiddleware,
@@ -34,6 +63,114 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Authentication routes
+@app.post("/login/", response_model=schemas.Token)
+async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+    user = authenticate_user(db, form_data.username, form_data.password)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    
+    # Calculate expiry timestamp in milliseconds for frontend
+    expiry_ms = int((datetime.utcnow() + access_token_expires).timestamp() * 1000)
+    
+    access_token = create_access_token(
+        data={"sub": user.username}, expires_delta=access_token_expires
+    )
+    return {"token": access_token, "username": user.username, "expires_at": expiry_ms}
+
+@app.post("/refresh-token/")
+async def refresh_token(current_user = Depends(get_current_user)):
+    # Generate a new token with a fresh expiration time
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    
+    # Calculate expiry timestamp in milliseconds for frontend
+    expiry_ms = int((datetime.utcnow() + access_token_expires).timestamp() * 1000)
+    
+    # Create new token
+    access_token = create_access_token(
+        data={"sub": current_user.username}, expires_delta=access_token_expires
+    )
+    
+    return {"token": access_token, "username": current_user.username, "expires_at": expiry_ms}
+
+@app.get("/verify-token/")
+async def verify_token(current_user = Depends(get_current_user), token: str = Depends(oauth2_scheme)):
+    try:
+        # Decode token to get expiry time
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        exp = payload.get("exp")
+        
+        # Calculate expiry time in milliseconds (for frontend)
+        expiry_ms = int(exp) * 1000 if exp else None
+        
+        return {
+            "valid": True, 
+            "username": current_user.username,
+            "expiry": expiry_ms
+        }
+    except JWTError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+# User management routes
+@app.post("/users/", response_model=schemas.User)
+async def create_user(user: schemas.UserCreate, db: Session = Depends(get_db), admin_user = Depends(get_admin_user)):
+    db_user = crud.get_user_by_username(db, username=user.username)
+    if db_user:
+        raise HTTPException(status_code=400, detail="Username already registered")
+    return crud.create_user(db=db, user=user)
+
+@app.get("/users/", response_model=List[schemas.User])
+async def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db), admin_user = Depends(get_admin_user)):
+    users = crud.get_users(db, skip=skip, limit=limit)
+    return users
+
+@app.get("/users/me/", response_model=schemas.User)
+async def read_user_me(current_user = Depends(get_current_active_user)):
+    return current_user
+
+@app.get("/users/{user_id}", response_model=schemas.User)
+async def read_user(user_id: int, db: Session = Depends(get_db), admin_user = Depends(get_admin_user)):
+    db_user = crud.get_user(db, user_id=user_id)
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return db_user
+
+@app.put("/users/{user_id}", response_model=schemas.User)
+async def update_user(user_id: int, user: schemas.UserUpdate, db: Session = Depends(get_db), admin_user = Depends(get_admin_user)):
+    db_user = crud.get_user(db, user_id=user_id)
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return crud.update_user(db=db, user_id=user_id, user=user)
+
+@app.delete("/users/{user_id}")
+async def delete_user(user_id: int, db: Session = Depends(get_db), admin_user = Depends(get_admin_user)):
+    db_user = crud.get_user(db, user_id=user_id)
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Check if this is the only admin user
+    if db_user.is_admin:
+        admin_count = db.query(models.User).filter(models.User.is_admin == True).count()
+        if admin_count <= 1:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, 
+                detail="Cannot delete the only admin user. Create another admin user first."
+            )
+    
+    result = crud.delete_user(db=db, user_id=user_id)
+    if result:
+        return {"detail": "User deleted successfully"}
+    raise HTTPException(status_code=500, detail="Failed to delete user")
 
 # Load environment variables
 EMAIL_ADDRESS = os.getenv('EMAIL_ADDRESS')

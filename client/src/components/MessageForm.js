@@ -29,7 +29,6 @@ function MessageForm() {
   const [tautulliStatus, setTautulliStatus] = useState(false);
   const [templates, setTemplates] = useState([]);
   const [selectedTemplateId, setSelectedTemplateId] = useState('');
-
   useEffect(() => {
     const fetchTemplates = async () => {
       try {
@@ -42,7 +41,6 @@ function MessageForm() {
   
     fetchTemplates();
   }, []);
-
   useEffect(() => {
     const fetchConfigData = async () => {
       try {
