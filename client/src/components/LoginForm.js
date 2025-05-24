@@ -112,16 +112,18 @@ const LoginForm = () => {
         minHeight: '100vh',
         backgroundColor: theme.palette.background.default
       }}
-    >
-      <Card 
+    > <Card 
         sx={{ 
           maxWidth: 400, 
           width: '90%', 
           boxShadow: '0 8px 24px rgba(0, 0, 0, 0.12)',
-          borderRadius: 2
+          borderRadius: 2,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center'
         }}
       >
-        <CardContent sx={{ p: 4 }}>
+        <CardContent sx={{ p: 4, width: '100%' }}>
           <Box sx={{ textAlign: 'center', mb: 4 }}>
             <Typography 
               variant="h4" 
@@ -136,10 +138,10 @@ const LoginForm = () => {
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
               Please sign in to continue
-            </Typography>
+            </Typography>          
           </Box>
 
-          <form onSubmit={handleLogin}>
+          <form onSubmit={handleLogin} style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <CustomTextField
               label="Username"
               fullWidth
@@ -166,7 +168,7 @@ const LoginForm = () => {
                 startAdornment: <LockIcon color="action" sx={{ mr: 1 }} />
               }}
             />
-            
+
             <Box sx={{ mt: 3 }}>
               <CustomButton
                 type="submit"
