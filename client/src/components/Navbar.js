@@ -55,10 +55,33 @@ function ResponsiveAppBar() {
   };
 
   return (
-    <AppBar position="static" sx={{ backgroundColor: '#2C3E50' }}>
+    <AppBar 
+      position="static" 
+      sx={{ 
+        background: 'rgba(255, 255, 255, 0.1)',
+        backdropFilter: 'blur(20px)',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+      }}
+    >
       <Toolbar disableGutters sx={{ px: 2 }}>
         {/* Left-Aligned Logo */}
-        <IconButton component={Link} to="/" sx={{ color: 'white', mr: 2 }}>
+        <IconButton 
+          component={Link} 
+          to="/" 
+          sx={{ 
+            color: 'white', 
+            mr: 2,
+            borderRadius: 2,
+            padding: 1.5,
+            background: 'rgba(255, 255, 255, 0.1)',
+            transition: 'all 0.3s ease',
+            '&:hover': {
+              background: 'rgba(255, 255, 255, 0.2)',
+              transform: 'scale(1.05)',
+            }
+          }}
+        >
           <AdUnitsIcon />
         </IconButton>
         <Typography
@@ -67,38 +90,67 @@ function ResponsiveAppBar() {
           component={Link}
           to="/"
           sx={{
-            fontFamily: 'monospace',
+            fontFamily: 'Inter, monospace',
             fontWeight: 700,
-            letterSpacing: '.2rem',
-            color: 'inherit',
+            letterSpacing: '.1rem',
+            color: 'white',
             textDecoration: 'none',
             mr: 2,
+            textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
+            transition: 'all 0.3s ease',
+            '&:hover': {
+              transform: 'scale(1.02)',
+            }
           }}
         >
           NotifyAgent
         </Typography>
 
         {/* Desktop Menu */}
-        <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-          {pages.map((page) => (
+        <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, ml: 4 }}>
+          {pages.map((page, index) => (
             <Button
               key={page.name}
               component={Link}
               to={page.path}
               onClick={handleCloseNavMenu}
               sx={{
-                my: 2,
-                color: location.pathname === page.path ? "#3b99ff" : "white",
-                fontWeight: location.pathname === page.path ? 700 : 500,
+                my: 1,
+                mx: 1,
+                px: 3,
+                py: 1,
+                color: location.pathname === page.path ? "white" : "rgba(255, 255, 255, 0.8)",
+                fontWeight: location.pathname === page.path ? 600 : 500,
                 display: 'block',
-                transition: 'background 0.2s, color 0.2s, transform 0.2s',
-                boxShadow: 'none',
+                borderRadius: 2,
+                background: location.pathname === page.path 
+                  ? 'rgba(255, 255, 255, 0.2)' 
+                  : 'transparent',
+                border: location.pathname === page.path 
+                  ? '1px solid rgba(255, 255, 255, 0.3)' 
+                  : '1px solid transparent',
+                transition: 'all 0.3s ease',
+                position: 'relative',
+                overflow: 'hidden',
+                '&::before': {
+                  content: '""',
+                  position: 'absolute',
+                  top: 0,
+                  left: '-100%',
+                  width: '100%',
+                  height: '100%',
+                  background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent)',
+                  transition: 'left 0.5s',
+                },
                 '&:hover': {
-                  color: "#3b99ff",
-                  boxShadow: 'none',
-                  backgroundColor: 'transparent',
-                  fontWeight: 700,
-                  transform: 'scale(1.07)',
+                  color: "white",
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  transform: 'translateY(-2px)',
+                  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)',
+                  '&::before': {
+                    left: '100%',
+                  },
                 },
               }}
             >
@@ -115,12 +167,14 @@ function ResponsiveAppBar() {
             aria-controls="menu-appbar"
             aria-haspopup="true"
             onClick={handleOpenNavMenu}
-            color="inherit"
             sx={{
-              transition: 'background 0.2s, color 0.2s, transform 0.2s',
+              color: 'white',
+              borderRadius: 2,
+              background: 'rgba(255, 255, 255, 0.1)',
+              transition: 'all 0.3s ease',
               '&:hover': {
-                color: "#3b99ff",
-                transform: 'scale(1.1)',
+                background: 'rgba(255, 255, 255, 0.2)',
+                transform: 'scale(1.05)',
               },
             }}
           >
@@ -140,14 +194,34 @@ function ResponsiveAppBar() {
             }}
             open={Boolean(anchorElNav)}
             onClose={handleCloseNavMenu}
+            sx={{
+              '& .MuiPaper-root': {
+                background: 'rgba(255, 255, 255, 0.95)',
+                backdropFilter: 'blur(20px)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                borderRadius: 3,
+                mt: 1,
+              }
+            }}
           >
             {pages.map((page) => (
               <MenuItem
                 key={page.name}
                 onClick={handleCloseNavMenu}
                 sx={{
-                  backgroundColor: location.pathname === page.path ? "#3b99ff" : undefined,
-                  color: location.pathname === page.path ? "white" : undefined,
+                  borderRadius: 2,
+                  mx: 1,
+                  my: 0.5,
+                  backgroundColor: location.pathname === page.path ? "primary.main" : undefined,
+                  color: location.pathname === page.path ? "white" : "text.primary",
+                  transition: 'all 0.2s ease',
+                  '&:hover': {
+                    backgroundColor: location.pathname === page.path ? "primary.dark" : "primary.light",
+                    color: 'white',
+                    transform: 'translateX(4px)',
+                  },
+                }}
+              >
                   fontWeight: location.pathname === page.path ? 700 : undefined,
                   transition: 'background 0.2s, color 0.2s, transform 0.2s',
                   '&:hover': {
@@ -162,10 +236,10 @@ function ResponsiveAppBar() {
                   component={Link}
                   to={page.path}
                   sx={{
-                    textAlign: 'center',
                     textDecoration: 'none',
                     color: 'inherit',
                     width: '100%',
+                    fontWeight: 500,
                   }}
                 >
                   {page.name}
@@ -175,19 +249,24 @@ function ResponsiveAppBar() {
           </Menu>
         </Box>
 
-        {/* Right-Aligned Gear Icon */}
+        {/* Right-Aligned Settings Icon */}
         <IconButton
           component={Link}
           to="/configuration"
           sx={{
-            color: location.pathname === "/configuration" ? "#3b99ff" : "white",
-            fontWeight: location.pathname === "/configuration" ? 700 : 500,
+            color: location.pathname === "/configuration" ? "white" : "rgba(255, 255, 255, 0.8)",
             ml: 'auto',
-            mr: 1,
-            transition: 'background 0.2s, color 0.2s, transform 0.2s',
+            mr: 2,
+            borderRadius: 2,
+            background: location.pathname === "/configuration" 
+              ? 'rgba(255, 255, 255, 0.2)' 
+              : 'rgba(255, 255, 255, 0.1)',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            transition: 'all 0.3s ease',
             '&:hover': {
-              color: "#3b99ff",
-              transform: 'rotate(20deg) scale(1.15)',
+              color: "white",
+              background: 'rgba(255, 255, 255, 0.25)',
+              transform: 'rotate(90deg) scale(1.1)',
             },
           }}
           aria-label="Configuration"
@@ -197,15 +276,42 @@ function ResponsiveAppBar() {
 
         {/* User Menu */}
         <Box sx={{ flexGrow: 0 }}>
-          <Tooltip title="Account settings">
-            <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-              <Avatar sx={{ bgcolor: 'primary.main', width: 35, height: 35 }}>
+          <Tooltip title="Account settings" arrow>
+            <IconButton 
+              onClick={handleOpenUserMenu} 
+              sx={{ 
+                p: 0,
+                border: '2px solid rgba(255, 255, 255, 0.3)',
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  border: '2px solid rgba(255, 255, 255, 0.6)',
+                  transform: 'scale(1.05)',
+                }
+              }}
+            >
+              <Avatar sx={{ 
+                bgcolor: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                width: 40, 
+                height: 40,
+                fontWeight: 600,
+                fontSize: '1.1rem'
+              }}>
                 {user?.username ? user.username.charAt(0).toUpperCase() : 'U'}
               </Avatar>
             </IconButton>
           </Tooltip>
           <Menu
-            sx={{ mt: '45px' }}
+            sx={{ 
+              mt: '45px',
+              '& .MuiPaper-root': {
+                background: 'rgba(255, 255, 255, 0.95)',
+                backdropFilter: 'blur(20px)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                borderRadius: 3,
+                minWidth: 200,
+              }
+            }}
             id="menu-appbar-user"
             anchorEl={anchorElUser}
             anchorOrigin={{
@@ -220,17 +326,46 @@ function ResponsiveAppBar() {
             open={Boolean(anchorElUser)}
             onClose={handleCloseUserMenu}
           >
-            <MenuItem disabled>
-              <Typography textAlign="center">
+            <MenuItem 
+              disabled
+              sx={{
+                borderRadius: 2,
+                mx: 1,
+                my: 1,
+                backgroundColor: 'primary.light',
+                color: 'white',
+              }}
+            >
+              <Typography 
+                sx={{ 
+                  fontWeight: 600,
+                  fontSize: '1rem',
+                  textAlign: 'center',
+                  width: '100%'
+                }}
+              >
                 {user?.username || 'User'}
               </Typography>
             </MenuItem>
-            <Divider />
-            <MenuItem onClick={handleLogout}>
+            <Divider sx={{ mx: 1, backgroundColor: 'rgba(37, 99, 235, 0.2)' }} />
+            <MenuItem 
+              onClick={handleLogout}
+              sx={{
+                borderRadius: 2,
+                mx: 1,
+                my: 1,
+                transition: 'all 0.2s ease',
+                '&:hover': {
+                  backgroundColor: 'error.light',
+                  color: 'white',
+                  transform: 'translateX(4px)',
+                },
+              }}
+            >
               <ListItemIcon>
-                <LogoutIcon fontSize="small" />
+                <LogoutIcon fontSize="small" sx={{ color: 'inherit' }} />
               </ListItemIcon>
-              <Typography textAlign="center">Logout</Typography>
+              <Typography>Logout</Typography>
             </MenuItem>
           </Menu>
         </Box>

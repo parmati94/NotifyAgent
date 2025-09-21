@@ -3,6 +3,7 @@ import { Box, Card, CardContent, Typography, CircularProgress, useTheme } from '
 import CustomTextField from './TextField';
 import CustomButton from './Button';
 import CustomSnackbar from './CustomSnackbar';
+import PageTransition from './PageTransition';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import PersonIcon from '@mui/icons-material/Person';
@@ -103,45 +104,77 @@ const LoginForm = () => {
   };
 
   return (
-    <Box 
-      sx={{ 
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: '100vh',
-        backgroundColor: theme.palette.background.default
-      }}
-    > <Card 
+    <PageTransition animationType="fadeInScale">
+      <Box 
         sx={{ 
-          maxWidth: 400, 
-          width: '90%', 
-          boxShadow: '0 8px 24px rgba(0, 0, 0, 0.12)',
-          borderRadius: 2,
           display: 'flex',
           flexDirection: 'column',
-          alignItems: 'center'
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: '100vh',
+          padding: 2
+        }}
+      > 
+      <Card 
+        sx={{ 
+          maxWidth: 450, 
+          width: '100%', 
+          background: 'rgba(255, 255, 255, 0.95)',
+          backdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+          borderRadius: 5,
+          boxShadow: '0 20px 60px rgba(0, 0, 0, 0.15)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          overflow: 'hidden',
+          position: 'relative'
         }}
       >
-        <CardContent sx={{ p: 4, width: '100%' }}>
-          <Box sx={{ textAlign: 'center', mb: 4 }}>
+        {/* Decorative background element */}
+        <Box
+          sx={{
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            width: 100,
+            height: 100,
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            borderRadius: '0 0 0 100px',
+            opacity: 0.1,
+          }}
+        />
+        
+        <CardContent sx={{ p: 6, width: '100%', position: 'relative', zIndex: 1 }}>
+          <Box sx={{ textAlign: 'center', mb: 5 }}>
             <Typography 
-              variant="h4" 
+              variant="h3" 
               sx={{ 
                 fontWeight: 700, 
-                color: theme.palette.primary.main,
-                fontFamily: 'monospace',
-                letterSpacing: '.2rem',
+                background: 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)',
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                fontFamily: 'Inter, monospace',
+                letterSpacing: '.1rem',
+                marginBottom: 2
               }}
             >
               NotifyAgent
             </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-              Please sign in to continue
+            <Typography 
+              variant="body1" 
+              sx={{ 
+                color: 'text.secondary',
+                fontWeight: 500,
+                fontSize: '1.1rem'
+              }}
+            >
+              Welcome back! Please sign in to continue
             </Typography>          
           </Box>
 
-          <form onSubmit={handleLogin} style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <form onSubmit={handleLogin} style={{ width: '100%' }}>
             <CustomTextField
               label="Username"
               fullWidth
@@ -150,8 +183,15 @@ const LoginForm = () => {
               margin="normal"
               required
               variant="outlined"
+              sx={{ 
+                width: '100%',
+                marginBottom: 3,
+                '& .MuiOutlinedInput-root': {
+                  backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                }
+              }}
               InputProps={{
-                startAdornment: <PersonIcon color="action" sx={{ mr: 1 }} />
+                startAdornment: <PersonIcon color="primary" sx={{ mr: 1.5 }} />
               }}
             />
             
@@ -164,22 +204,36 @@ const LoginForm = () => {
               margin="normal"
               required
               variant="outlined"
+              sx={{ 
+                width: '100%',
+                marginBottom: 4,
+                '& .MuiOutlinedInput-root': {
+                  backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                }
+              }}
               InputProps={{
-                startAdornment: <LockIcon color="action" sx={{ mr: 1 }} />
+                startAdornment: <LockIcon color="primary" sx={{ mr: 1.5 }} />
               }}
             />
 
-            <Box sx={{ mt: 3 }}>
-              <CustomButton
-                type="submit"
-                fullWidth
-                variant="contained"
-                disabled={loading}
-                sx={{ py: 1.2 }}
-              >
-                {loading ? <CircularProgress size={24} /> : 'Sign In'}
-              </CustomButton>
-            </Box>
+            <CustomButton
+              type="submit"
+              fullWidth
+              variant="contained"
+              disabled={loading}
+              loading={loading}
+              size="large"
+              sx={{ 
+                py: 1.5,
+                fontSize: '1.1rem',
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                '&:hover': {
+                  background: 'linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)',
+                }
+              }}
+            >
+              {loading ? 'Signing In...' : 'Sign In'}
+            </CustomButton>
           </form>
         </CardContent>
       </Card>
@@ -191,6 +245,7 @@ const LoginForm = () => {
         onClose={handleSnackbarClose}
       />
     </Box>
+    </PageTransition>
   );
 };
 
