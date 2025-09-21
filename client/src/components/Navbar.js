@@ -214,21 +214,13 @@ function ResponsiveAppBar() {
                   my: 0.5,
                   backgroundColor: location.pathname === page.path ? "primary.main" : undefined,
                   color: location.pathname === page.path ? "white" : "text.primary",
+                  fontWeight: location.pathname === page.path ? 700 : undefined,
                   transition: 'all 0.2s ease',
                   '&:hover': {
-                    backgroundColor: location.pathname === page.path ? "primary.dark" : "primary.light",
-                    color: 'white',
-                    transform: 'translateX(4px)',
-                  },
-                }}
-              >
-                  fontWeight: location.pathname === page.path ? 700 : undefined,
-                  transition: 'background 0.2s, color 0.2s, transform 0.2s',
-                  '&:hover': {
-                    backgroundColor: 'primary.main',
+                    backgroundColor: location.pathname === page.path ? "primary.dark" : "primary.main",
                     color: 'white',
                     fontWeight: 700,
-                    transform: 'scale(1.03)',
+                    transform: 'translateX(4px) scale(1.03)',
                   },
                 }}
               >

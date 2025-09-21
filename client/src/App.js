@@ -1,7 +1,8 @@
 // App.js
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import { ThemeProvider, CssBaseline } from '@mui/material/styles';
+import { ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
 import EmailForm from './components/EmailForm';
 import WebhookForm from './components/WebhookForm';
 import MessageForm from './components/MessageForm';
