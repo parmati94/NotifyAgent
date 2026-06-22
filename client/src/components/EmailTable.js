@@ -15,6 +15,7 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import SearchIcon from '@mui/icons-material/Search';
 import CustomTextField from './TextField';
+import { tokens } from '../theme/theme';
 
 function EmailTable({ emails, onDelete }) {
   const [page, setPage] = useState(0);
@@ -78,50 +79,22 @@ function EmailTable({ emails, onDelete }) {
         <Table sx={{ minWidth: 700 }} aria-label="customized table">
           <TableHead>
             <TableRow>
-              <TableCell
-                sx={{
-                  backgroundColor: '#d3d3d3',
-                  color: 'black',
-                  width: '10%',
-                  whiteSpace: 'nowrap',
-                }}
-              >
+              <TableCell sx={{ width: '10%' }}>
                 #
               </TableCell>
               <TableCell
                 sx={{
-                  backgroundColor: '#d3d3d3',
-                  color: 'black',
                   width: '60%',
                   textAlign: 'center',
-                  whiteSpace: 'nowrap',
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
                 }}
               >
-                <TableSortLabel
-                  active
-                  direction={order}
-                  onClick={handleSort}
-                  sx={{
-                    color: 'black',
-                    '& .MuiTableSortLabel-icon': {
-                      color: 'black !important',
-                    },
-                  }}
-                >
-                  <span style={{ color: 'black' }}>Email</span>
+                <TableSortLabel active direction={order} onClick={handleSort}>
+                  Email
                 </TableSortLabel>
               </TableCell>
-              <TableCell
-                sx={{
-                  backgroundColor: '#d3d3d3',
-                  color: 'black',
-                  width: '30%',
-                  textAlign: 'center',
-                  whiteSpace: 'nowrap',
-                }}
-              >
+              <TableCell sx={{ width: '30%', textAlign: 'center' }}>
                 Actions
               </TableCell>
             </TableRow>
@@ -156,8 +129,8 @@ function EmailTable({ emails, onDelete }) {
             flexWrap: 'wrap',
             justifyContent: 'space-between',
             alignItems: 'center',
-            backgroundColor: '#d3d3d3',
-            color: 'white',
+            backgroundColor: tokens.tableHeader,
+            color: 'text.primary',
             padding: '8px 16px',
             gap: 1,
           }}
@@ -167,8 +140,8 @@ function EmailTable({ emails, onDelete }) {
             <IconButton
               onClick={toggleSearch}
               sx={{
-                color: 'black',
-                '&:hover': { color: '#3b99ff' },
+                color: 'text.primary',
+                '&:hover': { color: 'primary.main' },
               }}
             >
               <SearchIcon />
@@ -214,14 +187,8 @@ function EmailTable({ emails, onDelete }) {
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
             sx={{
-              backgroundColor: '#d3d3d3',
-              color: 'black',
-              '& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows, & .MuiTablePagination-actions': {
-                color: 'black',
-              },
-              '& .MuiSelect-icon': {
-                color: 'black',
-              },
+              backgroundColor: tokens.tableHeader,
+              color: 'text.primary',
             }}
           />
         </Box>
