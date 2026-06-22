@@ -12,6 +12,7 @@ export const tokens = {
   slateDark: '#22303d',
   surface: '#f5f8fb',     // page background / soft panels
   surfaceBorder: '#e3eaf2',
+  tableHeader: '#eaeff5',  // table head / pagination chrome (replaces flat grey)
   ink: '#1a2733',         // primary text
   inkMuted: '#5b6b7a',    // secondary text
   success: '#2e9e6b',
@@ -105,6 +106,26 @@ const theme = createTheme({
     MuiChip: {
       styleOverrides: {
         root: { fontWeight: 600 },
+      },
+    },
+
+    MuiTableCell: {
+      styleOverrides: {
+        head: {
+          backgroundColor: tokens.tableHeader,
+          color: tokens.ink,
+          fontWeight: 700,
+          whiteSpace: 'nowrap',
+        },
+      },
+    },
+
+    MuiTableContainer: {
+      styleOverrides: {
+        root: {
+          borderRadius: 14,
+          border: `1px solid ${tokens.surfaceBorder}`,
+        },
       },
     },
 

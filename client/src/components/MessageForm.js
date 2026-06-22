@@ -119,20 +119,18 @@ function MessageForm() {
         let servicesUsed = [];
   
         if (sendEmail) {
-          const emailResponse = await axios.post(`${REACT_APP_API_BASE_URL}/send_email/`, {
+          await axios.post(`${REACT_APP_API_BASE_URL}/send_email/`, {
             subject,
             body
           });
-          console.log('Email sent:', emailResponse.data);
           servicesUsed.push(`email(${emailCount})`);
         }
-  
+
         if (sendDiscord) {
-          const discordResponse = await axios.post(`${REACT_APP_API_BASE_URL}/send_discord/`, {
+          await axios.post(`${REACT_APP_API_BASE_URL}/send_discord/`, {
             subject,
             body
           });
-          console.log('Discord message sent:', discordResponse.data);
           servicesUsed.push(`discord(${discordChannels.filter(channel => channel.is_active).length})`);
         }
   

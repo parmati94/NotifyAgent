@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Tooltip } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import axios from 'axios';
+import { tokens } from '../theme/theme';
 
 const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -61,11 +62,11 @@ const MessageHistoryTable = ({ messages }) => {
         <Table sx={{ minWidth: 700 }} aria-label="customized table">
           <TableHead>
             <TableRow>
-              <TableCell sx={{ backgroundColor: '#d3d3d3', color: 'black' }}>Subject</TableCell>
-              <TableCell sx={{ backgroundColor: '#d3d3d3', color: 'black' }} align="left">Body</TableCell>
-              <TableCell sx={{ backgroundColor: '#d3d3d3', color: 'black' }} align="center">Services Used</TableCell>
-              <TableCell sx={{ backgroundColor: '#d3d3d3', color: 'black' }} align="center">Time</TableCell>
-              <TableCell sx={{ backgroundColor: '#d3d3d3', color: 'black' }} align="center">Actions</TableCell>
+              <TableCell>Subject</TableCell>
+              <TableCell align="left">Body</TableCell>
+              <TableCell align="center">Services Used</TableCell>
+              <TableCell align="center">Time</TableCell>
+              <TableCell align="center">Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -107,14 +108,8 @@ const MessageHistoryTable = ({ messages }) => {
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
           sx={{
-            backgroundColor: '#d3d3d3',
-            color: 'black',
-            '& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows, & .MuiTablePagination-actions': {
-              color: 'black',
-            },
-            '& .MuiSelect-icon': {
-              color: 'black',
-            },
+            backgroundColor: tokens.tableHeader,
+            color: 'text.primary',
           }}
         />
       </TableContainer>

@@ -6,6 +6,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import CustomButton from './Button';
 import CustomSnackbar from './CustomSnackbar';
 import ConfirmationDialog from './ConfirmationDialog';
+import { tokens } from '../theme/theme';
 
 const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -123,10 +124,10 @@ function TemplateForm() {
         <Table sx={{ minWidth: 700 }} aria-label="customized table">
           <TableHead>
             <TableRow>
-              <TableCell sx={{ backgroundColor: '#d3d3d3', color: 'black' }}>Name</TableCell>
-              <TableCell sx={{ backgroundColor: '#d3d3d3', color: 'black' }} align="center">Subject</TableCell>
-              <TableCell sx={{ backgroundColor: '#d3d3d3', color: 'black' }} align="left">Body</TableCell>
-              <TableCell sx={{ backgroundColor: '#d3d3d3', color: 'black' }} align="center">Actions</TableCell>
+              <TableCell>Name</TableCell>
+              <TableCell align="center">Subject</TableCell>
+              <TableCell align="left">Body</TableCell>
+              <TableCell align="center">Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -155,14 +156,8 @@ function TemplateForm() {
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
           sx={{
-            backgroundColor: '#d3d3d3',
-            color: 'black',
-            '& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows, & .MuiTablePagination-actions': {
-              color: 'black',
-            },
-            '& .MuiSelect-icon': {
-              color: 'black',
-            },
+            backgroundColor: tokens.tableHeader,
+            color: 'text.primary',
           }}
         />
       </TableContainer>
