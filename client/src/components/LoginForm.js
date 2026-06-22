@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Card, CardContent, Typography, CircularProgress, useTheme } from '@mui/material';
+import { Box, Card, CardContent, Typography, CircularProgress, Avatar, useTheme } from '@mui/material';
 import CustomTextField from './TextField';
 import CustomButton from './Button';
 import CustomSnackbar from './CustomSnackbar';
@@ -7,6 +7,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import PersonIcon from '@mui/icons-material/Person';
 import LockIcon from '@mui/icons-material/Lock';
+import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import { useAuth } from '../context/AuthContext';
 
 // Use the environment variable if available, otherwise use a default value
@@ -26,36 +27,23 @@ const LoginForm = () => {
 
   const handleLogin = async (e) => {
     if (e) e.preventDefault();
-    
-    // Log user interaction for debugging
-    console.log('Login button clicked for user:', username);
-    
+
     if (loading) return;
     setLoading(true);
 
     try {
-      // Debug log for URL
-      console.log(`Sending login request to: ${REACT_APP_API_BASE_URL}/login/`);
-      
-      // Create URLSearchParams for proper x-www-form-urlencoded format
+      // Send credentials as x-www-form-urlencoded (OAuth2 password flow)
       const formData = new URLSearchParams();
       formData.append('username', username);
       formData.append('password', password);
 
-      // Show what we're sending for debugging
-      console.log('Form data:', username);
-
-      // Using axios for more straightforward error handling
       const response = await axios.post(`${REACT_APP_API_BASE_URL}/login/`, formData, {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded'
         }
       });
-      
-      console.log('Login response:', response.data);
-        if (response.data && response.data.token) {
-        console.log('Login successful, token received');
-        
+
+      if (response.data && response.data.token) {
         // Use the login function from AuthContext with expiry time from server
         login(
           { username: response.data.username }, 
@@ -73,24 +61,18 @@ const LoginForm = () => {
         }, 1000);
       }
     } catch (error) {
-      console.error('Login error:', error);
-      
       // Axios provides error.response for handling API errors
       if (error.response) {
         // The server responded with a status code outside the 2xx range
-        console.error('Error response status:', error.response.status);
-        console.error('Error response data:', error.response.data);
         setSnackbarMessage(error.response.data.detail || 'Login failed. Please check your credentials.');
       } else if (error.request) {
         // The request was made but no response was received
-        console.error('Error request:', error.request);
         setSnackbarMessage('No response received from server. Please try again later.');
       } else {
         // Something happened in setting up the request
-        console.error('Error message:', error.message);
         setSnackbarMessage('An error occurred. Please try again.');
       }
-      
+
       setSnackbarSeverity('error');
       setSnackbarOpen(true);
     } finally {
@@ -110,7 +92,8 @@ const LoginForm = () => {
         alignItems: 'center',
         justifyContent: 'center',
         minHeight: '100vh',
-        backgroundColor: theme.palette.background.default
+        p: 2,
+        background: `radial-gradient(1200px 600px at 50% -10%, ${theme.palette.primary.light}22, transparent 60%), ${theme.palette.background.default}`,
       }}
     > <Card 
         sx={{ 
@@ -125,8 +108,20 @@ const LoginForm = () => {
       >
         <CardContent sx={{ p: 4, width: '100%' }}>
           <Box sx={{ textAlign: 'center', mb: 4 }}>
-            <Typography 
-              variant="h4" 
+            <Avatar
+              sx={{
+                bgcolor: 'primary.main',
+                width: 56,
+                height: 56,
+                mx: 'auto',
+                mb: 2,
+                boxShadow: '0 6px 18px rgba(59, 153, 255, 0.35)',
+              }}
+            >
+              <NotificationsActiveIcon />
+            </Avatar>
+            <Typography
+              variant="h4"
               sx={{ 
                 fontWeight: 700, 
                 color: theme.palette.primary.main,
