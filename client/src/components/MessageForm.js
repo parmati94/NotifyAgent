@@ -3,11 +3,11 @@ import axios from 'axios';
 import CustomButton from './Button';
 import CustomTextField from './TextField';
 import CustomMultilineTextField from './CustomMultilineTextField';
-import { Typography, Box, Checkbox, FormControlLabel, FormGroup, Card, CardContent, CardActions } from '@mui/material';
+import { Typography, Box, Checkbox, FormControlLabel, FormGroup, Card, CardContent, CardActions, Chip, TextField, MenuItem, Tooltip } from '@mui/material';
 import CustomSnackbar from './CustomSnackbar';
 import ConfirmationDialog from './ConfirmationDialog';
-import CheckBoxOutlineBlankOutlinedIcon from '@mui/icons-material/CheckBoxOutlineBlankOutlined';
-import CheckBoxOutlinedIcon from '@mui/icons-material/CheckBoxOutlined';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 
 const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -175,55 +175,37 @@ function MessageForm() {
     }
   };
 
+  const statusItems = [
+    { label: 'Email Credentials', ready: emailCredentialStatus, hint: 'SMTP credentials needed to send emails' },
+    { label: 'Tautulli Credentials', ready: tautulliStatus, hint: 'Used to import recipients from Tautulli' },
+    { label: 'Emails', ready: emailStatus, hint: 'At least one recipient email is on file' },
+    { label: 'Discord Webhooks', ready: webhooksStatus, hint: 'At least one webhook is configured' },
+    { label: 'Discord Roles', ready: rolesStatus, hint: 'Optional roles to mention in Discord' },
+  ];
+
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center',  minHeight: 'calc(100vh - 70px)', backgroundColor: '#f5f8fa', margin: '0 auto', overflow: 'hidden', width: '100%' }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', width: '100%', padding: 2, backgroundColor: '#f5f8fb', borderRadius: '0 0 8px 8px', boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)', marginBottom: 2 }}>
-      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        {emailCredentialStatus
-          ? <CheckBoxOutlinedIcon sx={{ color: '#3b99ff' }} />
-          : <CheckBoxOutlineBlankOutlinedIcon sx={{ color: '#3b99ff' }} />}
-        <Typography variant="body1" sx={{ marginLeft: 1 }}>
-          Email Credentials
-        </Typography>
+    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', minHeight: 'calc(100vh - 70px)', bgcolor: 'background.default', margin: '0 auto', width: '100%' }}>
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 1.5, alignItems: 'center', width: '100%', padding: 2, backgroundColor: 'background.paper', borderRadius: '0 0 16px 16px', boxShadow: '0 4px 16px rgba(26, 39, 51, 0.06)', borderBottom: '1px solid', borderColor: 'divider', marginBottom: 4 }}>
+        {statusItems.map(({ label, ready, hint }) => (
+          <Tooltip key={label} title={hint} arrow>
+            <Chip
+              icon={ready ? <CheckCircleIcon /> : <RadioButtonUncheckedIcon />}
+              label={label}
+              variant={ready ? 'filled' : 'outlined'}
+              color={ready ? 'success' : 'default'}
+              sx={{ px: 0.5, ...(ready ? {} : { color: 'text.secondary' }) }}
+            />
+          </Tooltip>
+        ))}
       </Box>
-      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        {tautulliStatus
-          ? <CheckBoxOutlinedIcon sx={{ color: '#3b99ff' }} />
-          : <CheckBoxOutlineBlankOutlinedIcon sx={{ color: '#3b99ff' }} />}
-        <Typography variant="body1" sx={{ marginLeft: 1 }}>
-          Tautulli Credentials
-        </Typography>
-      </Box>
-      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        {emailStatus
-          ? <CheckBoxOutlinedIcon sx={{ color: '#3b99ff' }} />
-          : <CheckBoxOutlineBlankOutlinedIcon sx={{ color: '#3b99ff' }} />}
-        <Typography variant="body1" sx={{ marginLeft: 1 }}>
-          Emails
-        </Typography>
-      </Box>
-      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        {webhooksStatus
-          ? <CheckBoxOutlinedIcon sx={{ color: '#3b99ff' }} />
-          : <CheckBoxOutlineBlankOutlinedIcon sx={{ color: '#3b99ff' }} />}
-        <Typography variant="body1" sx={{ marginLeft: 1 }}>
-          Discord Webhooks
-        </Typography>
-      </Box>
-      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        {rolesStatus
-          ? <CheckBoxOutlinedIcon sx={{ color: '#3b99ff' }} />
-          : <CheckBoxOutlineBlankOutlinedIcon sx={{ color: '#3b99ff' }} />}
-        <Typography variant="body1" sx={{ marginLeft: 1 }}>
-          Discord Roles
-        </Typography>
-      </Box>
-      </Box>
-      <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', flexGrow: 1, width: '100%' }}>
-        <Card sx={{ maxWidth: 700, width: '100%', padding: 2, boxShadow: 12, borderRadius: 2, marginTop: '-7vh' }} >
+      <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', flexGrow: 1, width: '100%', px: 2, pb: 4 }}>
+        <Card sx={{ maxWidth: 700, width: '100%', padding: 2 }} >
           <CardContent>
-            <Typography variant="h4" color="black" gutterBottom align="center">
+            <Typography variant="h4" color="text.primary" gutterBottom align="center">
               Send Message
+            </Typography>
+            <Typography variant="body2" color="text.secondary" align="center" sx={{ mb: 2 }}>
+              Compose a notification to broadcast via email and Discord.
             </Typography>
             <CustomTextField
               type="text"
@@ -243,14 +225,9 @@ function MessageForm() {
               <FormControlLabel
                 control={
                   <Checkbox
+                    color="primary"
                     checked={sendEmail}
                     onChange={(e) => setSendEmail(e.target.checked)}
-                    sx={{
-                      color: '#3b99ff',
-                      '&.Mui-checked': {
-                        color: '#3b99ff',
-                      },
-                    }}
                   />
                 }
                 label="Send via Email"
@@ -258,27 +235,29 @@ function MessageForm() {
               <FormControlLabel
                 control={
                   <Checkbox
+                    color="primary"
                     checked={sendDiscord}
                     onChange={(e) => setSendDiscord(e.target.checked)}
-                    sx={{
-                      color: '#3b99ff',
-                      '&.Mui-checked': {
-                        color: '#3b99ff',
-                      },
-                    }}
                   />
                 }
                 label="Send via Discord"
               />
             </FormGroup>
-            <Box mt={2}>
-              <Typography variant="h6">Select a Template</Typography>
-              <select onChange={handleTemplateChange} value={selectedTemplateId}>
-                <option value="">No template</option>
-                {templates.map(template => (
-                  <option key={template.id} value={template.id}>{template.name}</option>
+            <Box mt={2} sx={{ width: '75%', mx: 'auto' }}>
+              <TextField
+                select
+                fullWidth
+                size="small"
+                label="Template"
+                value={selectedTemplateId}
+                onChange={handleTemplateChange}
+                helperText="Optionally prefill the subject and body from a saved template."
+              >
+                <MenuItem value="">No template</MenuItem>
+                {templates.map((template) => (
+                  <MenuItem key={template.id} value={template.id}>{template.name}</MenuItem>
                 ))}
-              </select>
+              </TextField>
             </Box>
           </CardContent>
           <CardActions sx={{ justifyContent: 'center' }}>
