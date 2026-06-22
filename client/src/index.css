@@ -30,8 +30,5 @@ code {
   min-height: calc(100vh - 70px); /* Account for navbar height */
   display: flex;
   flex-direction: column;
-}
-
-.collapsible-section {
-  background-color: #f5f8fb !important;
+  padding-bottom: 32px;
 }

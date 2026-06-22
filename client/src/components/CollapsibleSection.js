@@ -1,18 +1,33 @@
 import React from 'react';
-import { Accordion, AccordionSummary, AccordionDetails, Typography, Box } from '@mui/material';
+import { Accordion, AccordionSummary, AccordionDetails, Typography, Box, Tooltip, IconButton } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
-const CollapsibleSection = ({ className, title, children }) => {
+// A settings section rendered as an accordion. `icon` shows a leading
+// accent icon and `info` renders a tooltip help bubble next to the title.
+const CollapsibleSection = ({ className, title, icon, info, children }) => {
   return (
-    <Box mt={4} mb={4} sx={{ width: '70%', mx: 'auto' }}>
-      <Accordion className={className} sx={{ boxShadow: '0 1px 4px 0' }}>
+    <Box mt={3} mb={3} sx={{ width: { xs: '92%', md: '70%' }, mx: 'auto' }}>
+      <Accordion className={className} disableGutters>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography variant="h5" align="center" sx={{ width: '100%' }}>
-            {title}
-          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25, width: '100%' }}>
+            {icon && (
+              <Box sx={{ display: 'flex', color: 'primary.main' }}>{icon}</Box>
+            )}
+            <Typography variant="h6" sx={{ fontWeight: 600 }}>
+              {title}
+            </Typography>
+            {info && (
+              <Tooltip title={info} placement="right">
+                <IconButton size="small" sx={{ color: 'text.secondary', ml: -0.5 }}>
+                  <InfoOutlinedIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
+            )}
+          </Box>
         </AccordionSummary>
-        <AccordionDetails>
-          <Box sx={{ width: '75%', margin: '0 auto' }}>
+        <AccordionDetails sx={{ borderTop: '1px solid', borderColor: 'divider' }}>
+          <Box sx={{ width: { xs: '100%', sm: '80%' }, mx: 'auto', py: 1 }}>
             {children}
           </Box>
         </AccordionDetails>
