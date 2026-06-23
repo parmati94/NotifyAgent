@@ -8,13 +8,62 @@ import ExclusionList from './ExclusionList';
 import CollapsibleSection from './CollapsibleSection';
 import CustomSnackbar from './CustomSnackbar';
 import DiscordRoleList from './DiscordRoleList';
-import InfoIcon from '@mui/icons-material/Info';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import PersonIcon from '@mui/icons-material/Person';
+import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
+import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
+import StorageOutlinedIcon from '@mui/icons-material/StorageOutlined';
+import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
+import TagOutlinedIcon from '@mui/icons-material/TagOutlined';
 import ConfirmationDialog from './ConfirmationDialog';
 
 const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
+// Read-only display of a saved credential value, with a "Not set" fallback.
+const SavedValue = ({ label, value }) => (
+  <Box
+    sx={{
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'baseline',
+      gap: 2,
+      py: 1,
+      px: 1.5,
+      '&:not(:last-of-type)': { borderBottom: '1px solid', borderColor: 'divider' },
+    }}
+  >
+    <Typography variant="body2" sx={{ fontWeight: 600, color: 'text.secondary', whiteSpace: 'nowrap' }}>
+      {label}
+    </Typography>
+    <Typography variant="body2" sx={{ wordBreak: 'break-all', textAlign: 'right' }}>
+      {value ? value : <Box component="span" sx={{ color: 'text.disabled', fontStyle: 'italic' }}>Not set</Box>}
+    </Typography>
+  </Box>
+);
+
+// Wrapper panel for a group of SavedValue rows.
+const SavedPanel = ({ title, children }) => (
+  <Box sx={{ mt: 4 }}>
+    <Typography variant="subtitle2" sx={{ color: 'text.secondary', mb: 1, textTransform: 'uppercase', letterSpacing: '.05rem' }}>
+      {title}
+    </Typography>
+    <Box
+      sx={{
+        maxWidth: 460,
+        mx: 'auto',
+        textAlign: 'left',
+        border: '1px solid',
+        borderColor: 'divider',
+        borderRadius: 2,
+        bgcolor: 'background.default',
+        overflow: 'hidden',
+      }}
+    >
+      {children}
+    </Box>
+  </Box>
+);
 
 function ConfigurationForm() {
   const [apiKey, setApiKey] = useState('');
@@ -319,16 +368,12 @@ function ConfigurationForm() {
     <div className="main-content" style={{ textAlign: 'center'}}>
       <PageHeader title="Configuration" />
       
-      <CollapsibleSection className="collapsible-section" title={
-        <Box display="flex" alignItems="center">
-          User Management
-          <Tooltip title="Add, edit, and remove user accounts" placement="right">
-            <IconButton size="small" sx={{ ml: 1 }}>
-              <InfoIcon fontSize="small" />
-            </IconButton>
-          </Tooltip>
-        </Box>
-      }>
+      <CollapsibleSection
+        className="collapsible-section"
+        title="User Management"
+        icon={<PeopleAltOutlinedIcon />}
+        info="Add, edit, and remove user accounts"
+      >
         <Box sx={{ mb: 4 }}>
           <Typography variant="h6" gutterBottom>Add New User</Typography>
           <CustomTextField
@@ -430,16 +475,12 @@ function ConfigurationForm() {
           )}
         </Box>
       </CollapsibleSection>
-      <CollapsibleSection className="collapsible-section" title={
-        <Box display="flex" alignItems="center">
-          Add Email Credentials
-          <Tooltip title="Configure email credentials for email notifications" placement="right">
-            <IconButton size="small" sx={{ ml: 1 }}>
-              <InfoIcon fontSize="small" />
-            </IconButton>
-          </Tooltip>
-        </Box>
-      }>
+      <CollapsibleSection
+        className="collapsible-section"
+        title="Email Credentials"
+        icon={<EmailOutlinedIcon />}
+        info="Configure email credentials for email notifications"
+      >
         <CustomTextField
           type="email"
           label="Email Address"
@@ -455,23 +496,16 @@ function ConfigurationForm() {
         <Box mt={2} display="flex" justifyContent="center">
           <CustomButton onClick={saveEmailCredentials}>Save Email Credentials</CustomButton>
         </Box>
-        <Box mt={4}>
-          <Typography variant="h5" gutterBottom align="center">
-            Saved Email Address
-          </Typography>
-          <p><strong>Email Address:</strong> {savedEmailAddress}</p>
-        </Box>
+        <SavedPanel title="Saved Email Address">
+          <SavedValue label="Email Address" value={savedEmailAddress} />
+        </SavedPanel>
       </CollapsibleSection>
-      <CollapsibleSection className="collapsible-section" title={
-        <Box display="flex" alignItems="center">
-          Add Tautulli Credentials
-          <Tooltip title="Configure Tautulli for importing email addresses of plex users" placement="right">
-            <IconButton size="small" sx={{ ml: 1 }}>
-              <InfoIcon fontSize="small" />
-            </IconButton>
-          </Tooltip>
-        </Box>
-      }>
+      <CollapsibleSection
+        className="collapsible-section"
+        title="Tautulli Credentials"
+        icon={<StorageOutlinedIcon />}
+        info="Configure Tautulli for importing email addresses of Plex users"
+      >
         <CustomTextField
           type="text"
           label="Tautulli API Key"
@@ -487,24 +521,17 @@ function ConfigurationForm() {
         <Box mt={2} display="flex" justifyContent="center">
           <CustomButton onClick={saveCredentials}>Save Credentials</CustomButton>
         </Box>
-        <Box mt={4}>
-          <Typography variant="h5" gutterBottom align="center">
-            Saved Credentials
-          </Typography>
-          <p><strong>API Key:</strong> {savedApiKey}</p>
-          <p><strong>Base URL:</strong> {savedBaseUrl}</p>
-        </Box>
+        <SavedPanel title="Saved Credentials">
+          <SavedValue label="API Key" value={savedApiKey} />
+          <SavedValue label="Base URL" value={savedBaseUrl} />
+        </SavedPanel>
       </CollapsibleSection>
-      <CollapsibleSection className="collapsible-section" title={
-        <Box display="flex" alignItems="center">
-          Exclusion List
-          <Tooltip title="List of emails to exclude when importing email address list from Tautulli" placement="right">
-            <IconButton size="small" sx={{ ml: 1 }}>
-              <InfoIcon fontSize="small" />
-            </IconButton>
-          </Tooltip>
-        </Box>
-      }>
+      <CollapsibleSection
+        className="collapsible-section"
+        title="Exclusion List"
+        icon={<BlockOutlinedIcon />}
+        info="Emails to exclude when importing the address list from Tautulli"
+      >
         <CustomTextField
           type="email"
           label="Email to Exclude"
@@ -516,16 +543,12 @@ function ConfigurationForm() {
         </Box>
         <ExclusionList exclusions={exclusionList} onRemove={removeExclusion} />
       </CollapsibleSection>
-      <CollapsibleSection className="collapsible-section" title={
-        <Box display="flex" alignItems="center">
-          Discord Roles
-          <Tooltip title="Configure discord roles to be tagged when sending discord notifications" placement="right">
-            <IconButton size="small" sx={{ ml: 1 }}>
-              <InfoIcon fontSize="small" />
-            </IconButton>
-          </Tooltip>
-        </Box>
-      }>
+      <CollapsibleSection
+        className="collapsible-section"
+        title="Discord Roles"
+        icon={<TagOutlinedIcon />}
+        info="Discord roles to tag when sending Discord notifications"
+      >
         <CustomTextField
           type="text"
           label="Role Name"

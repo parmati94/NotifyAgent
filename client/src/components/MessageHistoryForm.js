@@ -16,9 +16,7 @@ const MessageHistory = () => {
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        console.log('Fetching message history...');
         const response = await axios.get(`${REACT_APP_API_BASE_URL}/get_sent_messages/`);
-        console.log('Message history fetched:', response.data);
         setMessages(response.data);
       } catch (error) {
         console.error('Error fetching message history:', error);
@@ -31,10 +29,8 @@ const MessageHistory = () => {
   // Function to clear all messages
   const clearMessages = async () => {
     try {
-      console.log('Clearing all messages...');
       await axios.delete(`${REACT_APP_API_BASE_URL}/clear_sent_messages/`);
       setMessages([]); // Clear the messages in the state
-      console.log('All messages cleared.');
     } catch (error) {
       console.error('Error clearing messages:', error);
     }

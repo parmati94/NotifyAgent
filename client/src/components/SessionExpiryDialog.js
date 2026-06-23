@@ -33,9 +33,7 @@ const SessionExpiryDialog = () => {  const { sessionExpiring, extendSession, log
   }, [sessionExpiring]);
 
   const handleExtendSession = async () => {
-    console.log('User clicked to extend session');
-    const result = await extendSession();
-    console.log('Session extension result:', result);
+    await extendSession();
   };
 
   return (

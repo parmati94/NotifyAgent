@@ -55,7 +55,7 @@ function ResponsiveAppBar() {
   };
 
   return (
-    <AppBar position="static" sx={{ backgroundColor: '#2C3E50' }}>
+    <AppBar position="static">
       <Toolbar disableGutters sx={{ px: 2 }}>
         {/* Left-Aligned Logo */}
         <IconButton component={Link} to="/" sx={{ color: 'white', mr: 2 }}>
@@ -88,13 +88,13 @@ function ResponsiveAppBar() {
               onClick={handleCloseNavMenu}
               sx={{
                 my: 2,
-                color: location.pathname === page.path ? "#3b99ff" : "white",
+                color: location.pathname === page.path ? "primary.light" : "white",
                 fontWeight: location.pathname === page.path ? 700 : 500,
                 display: 'block',
                 transition: 'background 0.2s, color 0.2s, transform 0.2s',
                 boxShadow: 'none',
                 '&:hover': {
-                  color: "#3b99ff",
+                  color: "primary.light",
                   boxShadow: 'none',
                   backgroundColor: 'transparent',
                   fontWeight: 700,
@@ -119,7 +119,7 @@ function ResponsiveAppBar() {
             sx={{
               transition: 'background 0.2s, color 0.2s, transform 0.2s',
               '&:hover': {
-                color: "#3b99ff",
+                color: "primary.light",
                 transform: 'scale(1.1)',
               },
             }}
@@ -146,7 +146,7 @@ function ResponsiveAppBar() {
                 key={page.name}
                 onClick={handleCloseNavMenu}
                 sx={{
-                  backgroundColor: location.pathname === page.path ? "#3b99ff" : undefined,
+                  backgroundColor: location.pathname === page.path ? "primary.light" : undefined,
                   color: location.pathname === page.path ? "white" : undefined,
                   fontWeight: location.pathname === page.path ? 700 : undefined,
                   transition: 'background 0.2s, color 0.2s, transform 0.2s',
@@ -180,13 +180,13 @@ function ResponsiveAppBar() {
           component={Link}
           to="/configuration"
           sx={{
-            color: location.pathname === "/configuration" ? "#3b99ff" : "white",
+            color: location.pathname === "/configuration" ? "primary.light" : "white",
             fontWeight: location.pathname === "/configuration" ? 700 : 500,
             ml: 'auto',
             mr: 1,
             transition: 'background 0.2s, color 0.2s, transform 0.2s',
             '&:hover': {
-              color: "#3b99ff",
+              color: "primary.light",
               transform: 'rotate(20deg) scale(1.15)',
             },
           }}

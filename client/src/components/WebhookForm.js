@@ -22,9 +22,7 @@ function WebhookForm() {
   useEffect(() => {
     const fetchWebhooks = async () => {
       try {
-        console.log('Fetching webhooks...');
         const response = await axios.get(`${REACT_APP_API_BASE_URL}/get_webhooks/`);
-        console.log('Webhooks fetched:', response.data);
         setWebhooks(response.data);
       } catch (error) {
         console.error('Error fetching webhooks:', error);

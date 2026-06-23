@@ -10,10 +10,10 @@ const WebhookTable = ({ webhooks, onDelete, onToggleActive }) => {
         <Table sx={{ minWidth: 700 }} aria-label="customized table">
           <TableHead>
             <TableRow>
-              <TableCell sx={{ backgroundColor: '#d3d3d3', color: 'black', textAlign: 'center' }}>Active</TableCell>
-              <TableCell sx={{ backgroundColor: '#d3d3d3', color: 'black', textAlign: 'center' }}>Channel Name</TableCell>
-              <TableCell sx={{ backgroundColor: '#d3d3d3', color: 'black', textAlign: 'center' }}>Webhook URL</TableCell>
-              <TableCell sx={{ backgroundColor: '#d3d3d3', color: 'black', textAlign: 'center' }}>Actions</TableCell>
+              <TableCell sx={{ textAlign: 'center' }}>Active</TableCell>
+              <TableCell sx={{ textAlign: 'center' }}>Channel Name</TableCell>
+              <TableCell sx={{ textAlign: 'center' }}>Webhook URL</TableCell>
+              <TableCell sx={{ textAlign: 'center' }}>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -28,7 +28,7 @@ const WebhookTable = ({ webhooks, onDelete, onToggleActive }) => {
                 <TableCell component="th" scope="row" sx={{ textAlign: 'center' }}>
                   {webhook.channel_name}
                 </TableCell>
-                <TableCell sx={{ textAlign: 'center' }}>{webhook.webhook_url}</TableCell>
+                <TableCell sx={{ textAlign: 'center', wordBreak: 'break-all' }}>{webhook.webhook_url}</TableCell>
                 <TableCell sx={{ textAlign: 'center' }}>
                   <IconButton onClick={() => onDelete(webhook.channel_name)}>
                     <DeleteIcon />

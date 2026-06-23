@@ -5,31 +5,25 @@ const PageHeader = ({ title, subtitle }) => {
   return (
     <Box
       sx={{
-        backgroundColor: '#f5f8fb',
-        color: 'black',
-        padding: '7px',
-        borderRadius: '0 0 0 0',
+        backgroundColor: 'background.paper',
+        color: 'text.primary',
+        py: 2,
+        px: 2,
         textAlign: 'center',
-        boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)',
-        marginBottom: '20px',
+        boxShadow: '0 4px 16px rgba(26, 39, 51, 0.06)',
+        borderBottom: '1px solid',
+        borderColor: 'divider',
+        mb: '20px',
       }}
     >
-      <Typography
-        variant="h4"
-        sx={{
-          fontWeight: 'medium',
-          fontFamily: 'Montserrat, Roboto, Arial, sans-serif',
-        }}
-      >
+      <Typography variant="h4">
         {title}
       </Typography>
       {subtitle && (
         <Typography
           variant="subtitle1"
-          sx={{
-            opacity: 0.8,
-            fontFamily: 'monospace',
-          }}
+          color="text.secondary"
+          sx={{ fontFamily: 'monospace' }}
         >
           {subtitle}
         </Typography>
