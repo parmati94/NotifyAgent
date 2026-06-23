@@ -28,7 +28,7 @@ const WebhookTable = ({ webhooks, onDelete, onToggleActive }) => {
                 <TableCell component="th" scope="row" sx={{ textAlign: 'center' }}>
                   {webhook.channel_name}
                 </TableCell>
-                <TableCell sx={{ textAlign: 'center' }}>{webhook.webhook_url}</TableCell>
+                <TableCell sx={{ textAlign: 'center', wordBreak: 'break-all' }}>{webhook.webhook_url}</TableCell>
                 <TableCell sx={{ textAlign: 'center' }}>
                   <IconButton onClick={() => onDelete(webhook.channel_name)}>
                     <DeleteIcon />
