@@ -15,7 +15,6 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import SearchIcon from '@mui/icons-material/Search';
 import CustomTextField from './TextField';
-import { tokens } from '../theme/theme';
 
 function EmailTable({ emails, onDelete }) {
   const [page, setPage] = useState(0);
@@ -129,7 +128,7 @@ function EmailTable({ emails, onDelete }) {
             flexWrap: 'wrap',
             justifyContent: 'space-between',
             alignItems: 'center',
-            backgroundColor: tokens.tableHeader,
+            backgroundColor: 'tableChrome.main',
             color: 'text.primary',
             padding: '8px 16px',
             gap: 1,
@@ -151,8 +150,8 @@ function EmailTable({ emails, onDelete }) {
               sx={{
                 display: 'flex',
                 alignItems: 'center',
-                backgroundColor: 'white',
-                color: 'black',
+                backgroundColor: 'background.paper',
+                color: 'text.primary',
                 borderRadius: '4px',
                 padding: '4px 8px',
                 height: '32px',
@@ -166,9 +165,9 @@ function EmailTable({ emails, onDelete }) {
                 sx={{ width: '100%', height: '32px', margin: 0 }}
                 InputProps={{
                   disableUnderline: true,
-                  style: { color: 'black', fontSize: '14px' },
+                  style: { fontSize: '14px' },
                   endAdornment: (
-                    <IconButton onClick={toggleSearch} sx={{ color: 'black' }}>
+                    <IconButton onClick={toggleSearch} sx={{ color: 'text.primary' }}>
                       <SearchIcon />
                     </IconButton>
                   ),
@@ -186,10 +185,6 @@ function EmailTable({ emails, onDelete }) {
             page={page}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
-            sx={{
-              backgroundColor: tokens.tableHeader,
-              color: 'text.primary',
-            }}
           />
         </Box>
       </TableContainer>

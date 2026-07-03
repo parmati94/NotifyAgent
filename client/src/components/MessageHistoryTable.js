@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Tooltip } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import axios from 'axios';
-import { tokens } from '../theme/theme';
 
 const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -107,10 +106,6 @@ const MessageHistoryTable = ({ messages }) => {
           page={page}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
-          sx={{
-            backgroundColor: tokens.tableHeader,
-            color: 'text.primary',
-          }}
         />
       </TableContainer>
       <Dialog open={dialogOpen} onClose={handleDialogClose}>

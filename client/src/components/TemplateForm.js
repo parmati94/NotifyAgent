@@ -6,7 +6,6 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import CustomButton from './Button';
 import CustomSnackbar from './CustomSnackbar';
 import ConfirmationDialog from './ConfirmationDialog';
-import { tokens } from '../theme/theme';
 
 const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -155,10 +154,6 @@ function TemplateForm() {
           page={page}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
-          sx={{
-            backgroundColor: tokens.tableHeader,
-            color: 'text.primary',
-          }}
         />
       </TableContainer>
       <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
