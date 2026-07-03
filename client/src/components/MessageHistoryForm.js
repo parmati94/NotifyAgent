@@ -6,7 +6,7 @@ import MessageHistoryTable from './MessageHistoryTable';
 import CustomButton from './Button';
 import ConfirmationDialog from './ConfirmationDialog';
 
-const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+import { API_BASE_URL } from '../config';
 
 const MessageHistory = () => {
   const [messages, setMessages] = useState([]);
@@ -16,7 +16,7 @@ const MessageHistory = () => {
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        const response = await axios.get(`${REACT_APP_API_BASE_URL}/get_sent_messages/`);
+        const response = await axios.get(`${API_BASE_URL}/get_sent_messages/`);
         setMessages(response.data);
       } catch (error) {
         console.error('Error fetching message history:', error);
@@ -29,7 +29,7 @@ const MessageHistory = () => {
   // Function to clear all messages
   const clearMessages = async () => {
     try {
-      await axios.delete(`${REACT_APP_API_BASE_URL}/clear_sent_messages/`);
+      await axios.delete(`${API_BASE_URL}/clear_sent_messages/`);
       setMessages([]); // Clear the messages in the state
     } catch (error) {
       console.error('Error clearing messages:', error);

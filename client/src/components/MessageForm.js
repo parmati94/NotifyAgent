@@ -11,13 +11,12 @@ import PageHeader from './PageHeader';
 import ChannelCard from './ChannelCard';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import TagIcon from '@mui/icons-material/Tag';
+import { API_BASE_URL } from '../config';
 
 const ripple = keyframes`
   0% { opacity: 0.9; transform: scale(1); }
   100% { opacity: 0; transform: scale(2.1); }
 `;
-
-const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 function MessageForm() {
   const [subject, setSubject] = useState('');
@@ -48,7 +47,7 @@ function MessageForm() {
   useEffect(() => {
     const fetchTemplates = async () => {
       try {
-        const response = await axios.get(`${REACT_APP_API_BASE_URL}/message_templates/`);
+        const response = await axios.get(`${API_BASE_URL}/message_templates/`);
         setTemplates(response.data);
       } catch (error) {
         console.error('Error fetching templates:', error);
@@ -60,7 +59,7 @@ function MessageForm() {
   useEffect(() => {
     const fetchConfigData = async () => {
       try {
-        const discordResponse = await axios.get(`${REACT_APP_API_BASE_URL}/get_webhooks/`);
+        const discordResponse = await axios.get(`${API_BASE_URL}/get_webhooks/`);
         setWebhooksStatus(discordResponse.data.length > 0);
         setDiscordChannels(discordResponse.data);
       } catch (error) {
@@ -68,7 +67,7 @@ function MessageForm() {
       }
   
       try {
-        const emailCredentialResponse = await axios.get(`${REACT_APP_API_BASE_URL}/get_email_credentials/`);
+        const emailCredentialResponse = await axios.get(`${API_BASE_URL}/get_email_credentials/`);
         setemailCredentialStatus(emailCredentialResponse.data !== null && emailCredentialResponse.data !== undefined);
       } catch (error) {
         console.error('Error fetching email credentials:', error);
@@ -76,7 +75,7 @@ function MessageForm() {
       }
   
       try {
-        const emailResponse = await axios.get(`${REACT_APP_API_BASE_URL}/get_emails/`);
+        const emailResponse = await axios.get(`${API_BASE_URL}/get_emails/`);
         setEmailStatus(emailResponse.data.length > 0);
         setEmailCount(emailResponse.data.length);
       } catch (error) {
@@ -84,7 +83,7 @@ function MessageForm() {
       }
   
       try {
-        const tautulliResponse = await axios.get(`${REACT_APP_API_BASE_URL}/get_tautulli_credentials/`);
+        const tautulliResponse = await axios.get(`${API_BASE_URL}/get_tautulli_credentials/`);
         setTautulliStatus(tautulliResponse.data !== null && tautulliResponse.data !== undefined);
       } catch (error) {
         console.error('Error fetching Tautulli credentials:', error);
@@ -92,7 +91,7 @@ function MessageForm() {
       }
   
       try {
-        const rolesResponse = await axios.get(`${REACT_APP_API_BASE_URL}/get_discord_roles/`);
+        const rolesResponse = await axios.get(`${API_BASE_URL}/get_discord_roles/`);
         setRolesStatus(rolesResponse.data.length > 0);
       } catch (error) {
         console.error('Error fetching Discord roles:', error);
@@ -112,12 +111,12 @@ function MessageForm() {
 
     try {
       if (sendEmail) {
-        const emailResponse = await axios.get(`${REACT_APP_API_BASE_URL}/get_emails/`);
+        const emailResponse = await axios.get(`${API_BASE_URL}/get_emails/`);
         setEmailCount(emailResponse.data.length);
       }
 
       if (sendDiscord) {
-        const discordResponse = await axios.get(`${REACT_APP_API_BASE_URL}/get_webhooks/`);
+        const discordResponse = await axios.get(`${API_BASE_URL}/get_webhooks/`);
         setDiscordChannels(discordResponse.data);
       }
 
@@ -137,7 +136,7 @@ function MessageForm() {
         let servicesUsed = [];
   
         if (sendEmail) {
-          await axios.post(`${REACT_APP_API_BASE_URL}/send_email/`, {
+          await axios.post(`${API_BASE_URL}/send_email/`, {
             subject,
             body
           });
@@ -145,7 +144,7 @@ function MessageForm() {
         }
 
         if (sendDiscord) {
-          await axios.post(`${REACT_APP_API_BASE_URL}/send_discord/`, {
+          await axios.post(`${API_BASE_URL}/send_discord/`, {
             subject,
             body
           });
@@ -153,7 +152,7 @@ function MessageForm() {
         }
   
         // Call the endpoint after messages are sent
-        await axios.post(`${REACT_APP_API_BASE_URL}/save_sent_message/`, {
+        await axios.post(`${API_BASE_URL}/save_sent_message/`, {
           subject,
           body,
           services: servicesUsed.join(', ')

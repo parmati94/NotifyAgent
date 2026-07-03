@@ -3,7 +3,7 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
 import SaveIcon from '@mui/icons-material/Save';
 import axios from 'axios';
 
-const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+import { API_BASE_URL } from '../config';
 
 const MessageHistoryTable = ({ messages }) => {
   const [page, setPage] = useState(0);
@@ -41,7 +41,7 @@ const MessageHistoryTable = ({ messages }) => {
     if (!templateName || !selectedMessage) return;
 
     try {
-      await axios.post(`${REACT_APP_API_BASE_URL}/message_templates/`, {
+      await axios.post(`${API_BASE_URL}/message_templates/`, {
         name: templateName,
         subject: selectedMessage.subject,
         body: selectedMessage.body

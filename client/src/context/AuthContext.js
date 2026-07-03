@@ -1,9 +1,7 @@
 import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 import axios from 'axios';
 
-// Use the environment variable directly
-const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || '/api';
-console.log(`Auth Context using API base URL: ${REACT_APP_API_BASE_URL}`);
+import { API_BASE_URL } from '../config';
 
 // Create auth context
 const AuthContext = createContext(null);
@@ -110,7 +108,7 @@ export const AuthProvider = ({ children }) => {
           // Set the token for all future requests
           axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
             // Validate token with the backend
-          const response = await axios.get(`${REACT_APP_API_BASE_URL}/verify-token/`);
+          const response = await axios.get(`${API_BASE_URL}/verify-token/`);
           
           if (response.data && response.data.valid) {
             setUser(JSON.parse(storedUser));
@@ -161,7 +159,7 @@ export const AuthProvider = ({ children }) => {
       try {
         console.log('Extending session...');
         // Call the refresh token endpoint to get a new token
-        const response = await axios.post(`${REACT_APP_API_BASE_URL}/refresh-token/`);
+        const response = await axios.post(`${API_BASE_URL}/refresh-token/`);
         
         if (response.data && response.data.token) {
           console.log('Received new token with expiry:', response.data.expires_at);

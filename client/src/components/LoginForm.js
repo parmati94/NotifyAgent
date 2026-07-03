@@ -10,8 +10,7 @@ import LockIcon from '@mui/icons-material/Lock';
 import CellTowerIcon from '@mui/icons-material/CellTower';
 import { useAuth } from '../context/AuthContext';
 
-// Use the environment variable if available, otherwise use a default value
-const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || '/api';
+import { API_BASE_URL } from '../config';
 
 const LoginForm = () => {
   const [username, setUsername] = useState('');
@@ -37,7 +36,7 @@ const LoginForm = () => {
       formData.append('username', username);
       formData.append('password', password);
 
-      const response = await axios.post(`${REACT_APP_API_BASE_URL}/login/`, formData, {
+      const response = await axios.post(`${API_BASE_URL}/login/`, formData, {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded'
         }
