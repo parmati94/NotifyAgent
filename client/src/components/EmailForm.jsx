@@ -1,23 +1,40 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useOutletContext } from 'react-router-dom';
 import PageHeader from './PageHeader';
-import { Box, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+import {
+  Box,
+  Button,
+  Chip,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Paper,
+  TextField,
+  Typography,
+  InputAdornment,
+} from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
+import AlternateEmailIcon from '@mui/icons-material/AlternateEmail';
 import CustomButton from './Button';
 import CustomTextField from './TextField';
-import EmailTable from './EmailTable';
 import CustomSnackbar from './CustomSnackbar';
 import ConfirmationDialog from './ConfirmationDialog';
+import EmptyState from './EmptyState';
 
 import { API_BASE_URL } from '../config';
 
 function EmailForm() {
   const [emails, setEmails] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [newEmailDialogOpen, setNewEmailDialogOpen] = useState(false);
   const [newEmail, setNewEmail] = useState('');
+  const { openSettings } = useOutletContext() || {};
 
   useEffect(() => {
     // Fetch stored emails from the backend when the component mounts
@@ -35,7 +52,7 @@ function EmailForm() {
     try {
       const response = await axios.post(`${API_BASE_URL}/import_emails/`);
       setEmails(response.data.emails);
-      setSnackbarMessage('Emails imported successfully');
+      setSnackbarMessage('Emails imported from Tautulli');
       setSnackbarSeverity('success');
       setSnackbarOpen(true);
     } catch (error) {
@@ -51,7 +68,7 @@ function EmailForm() {
       await axios.post(`${API_BASE_URL}/add_email/`, { email: newEmail });
       setEmails([...emails, newEmail]);
       setNewEmail('');
-      setSnackbarMessage('Email added successfully');
+      setSnackbarMessage('Email added');
       setSnackbarSeverity('success');
       setSnackbarOpen(true);
       setNewEmailDialogOpen(false);
@@ -67,12 +84,12 @@ function EmailForm() {
     try {
       await axios.delete(`${API_BASE_URL}/delete_email/${email}`);
       setEmails(emails.filter((e) => e !== email));
-      setSnackbarMessage('Email deleted successfully');
+      setSnackbarMessage('Email removed');
       setSnackbarSeverity('success');
       setSnackbarOpen(true);
     } catch (error) {
       console.error('Error deleting email:', error);
-      setSnackbarMessage('Error deleting email');
+      setSnackbarMessage('Error removing email');
       setSnackbarSeverity('error');
       setSnackbarOpen(true);
     }
@@ -82,10 +99,6 @@ function EmailForm() {
     setSnackbarOpen(false);
   };
 
-  const handleDialogOpen = () => {
-    setDialogOpen(true);
-  };
-
   const handleDialogClose = (confirmed) => {
     setDialogOpen(false);
     if (confirmed) {
@@ -93,60 +106,133 @@ function EmailForm() {
     }
   };
 
-  const handleNewEmailDialogOpen = () => {
-    setNewEmailDialogOpen(true);
-  };
-
-  const handleNewEmailDialogClose = () => {
-    setNewEmailDialogOpen(false);
-  };
+  const filteredEmails = emails
+    .filter((email) => email.toLowerCase().includes(searchQuery.toLowerCase()))
+    .sort((a, b) => a.localeCompare(b));
 
   return (
     <div>
-      <PageHeader eyebrow="Channel · Email" title="Recipients" />
-      <Box sx={{ width: '50%', margin: '0 auto' }}>
-        <EmailTable emails={emails} onDelete={deleteEmail} />
-        <Box mt={4} sx={{ display: 'flex', flexDirection: 'column', gap: 2, alignItems: 'center' }}>
-          <CustomButton variant="contained" onClick={handleDialogOpen} sx={{ width: '300px' }}>
-            Import Emails from Tautulli
-          </CustomButton>
-          <CustomButton variant="contained" onClick={handleNewEmailDialogOpen} sx={{ width: '300px' }}>
-            Add New Email
-          </CustomButton>
-        </Box>
-        <CustomSnackbar
-          open={snackbarOpen}
-          message={snackbarMessage}
-          severity={snackbarSeverity}
-          onClose={handleSnackbarClose}
+      <PageHeader
+        eyebrow="Channel · Email"
+        title="Recipients"
+        action={
+          <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
+            <Button variant="outlined" onClick={() => setDialogOpen(true)}>
+              Import from Tautulli
+            </Button>
+            <CustomButton onClick={() => setNewEmailDialogOpen(true)}>Add email</CustomButton>
+          </Box>
+        }
+      />
+
+      {emails.length === 0 ? (
+        <EmptyState
+          icon={<AlternateEmailIcon />}
+          title="No recipients yet"
+          description="Import your Plex users' addresses from Tautulli, or add one manually."
+          action={
+            <Box sx={{ display: 'flex', gap: 1.5 }}>
+              <Button variant="outlined" onClick={() => setDialogOpen(true)}>
+                Import from Tautulli
+              </Button>
+              <CustomButton onClick={() => setNewEmailDialogOpen(true)}>Add email</CustomButton>
+            </Box>
+          }
         />
-        <ConfirmationDialog
-          open={dialogOpen}
-          onClose={handleDialogClose}
-          title="Confirm Import"
-          content="Are you sure you want to import emails from Tautulli?"
-        />
-        <Dialog open={newEmailDialogOpen} onClose={handleNewEmailDialogClose} maxWidth="xs" fullWidth>
-          <DialogTitle>Add New Email</DialogTitle>
-          <DialogContent>
-            <CustomTextField
-              type="email"
-              label="Email"
-              value={newEmail}
-              onChange={(e) => setNewEmail(e.target.value)}
-              fullWidth
+      ) : (
+        <>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2, flexWrap: 'wrap' }}>
+            <Typography
+              sx={{
+                fontFamily: (theme) => theme.typography.fontFamilyMono,
+                fontSize: '0.74rem',
+                letterSpacing: '0.08em',
+                textTransform: 'uppercase',
+                color: 'text.secondary',
+              }}
+            >
+              {emails.length} recipient{emails.length === 1 ? '' : 's'}
+              {searchQuery && ` · ${filteredEmails.length} shown`}
+            </Typography>
+            <TextField
+              size="small"
+              placeholder="Search emails"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              sx={{ width: { xs: '100%', sm: 240 }, ml: { sm: 'auto' } }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon fontSize="small" />
+                  </InputAdornment>
+                ),
+              }}
             />
-          </DialogContent>
-          <DialogActions>
-            <CustomButton onClick={handleNewEmailDialogClose} color="primary">
-              Cancel
-            </CustomButton>
-            <CustomButton onClick={addEmail} color="primary">
-              Add Email
-            </CustomButton>
-          </DialogActions>
-        </Dialog>
-      </Box>
+            {openSettings && (
+              <Button size="small" onClick={openSettings} sx={{ color: 'text.secondary' }}>
+                Manage exclusions
+              </Button>
+            )}
+          </Box>
+
+          <Paper sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 3, p: 2 }}>
+            {filteredEmails.length === 0 ? (
+              <Typography variant="body2" color="text.secondary" sx={{ p: 1 }}>
+                No recipients match “{searchQuery}”.
+              </Typography>
+            ) : (
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                {filteredEmails.map((email) => (
+                  <Chip
+                    key={email}
+                    label={email}
+                    onDelete={() => deleteEmail(email)}
+                    variant="outlined"
+                    sx={{
+                      fontFamily: (theme) => theme.typography.fontFamilyMono,
+                      fontSize: '0.76rem',
+                      fontWeight: 400,
+                    }}
+                  />
+                ))}
+              </Box>
+            )}
+          </Paper>
+        </>
+      )}
+
+      <CustomSnackbar
+        open={snackbarOpen}
+        message={snackbarMessage}
+        severity={snackbarSeverity}
+        onClose={handleSnackbarClose}
+      />
+      <ConfirmationDialog
+        open={dialogOpen}
+        onClose={handleDialogClose}
+        title="Import from Tautulli?"
+        content="This fetches your Plex users' email addresses from Tautulli and adds them to the recipient list."
+      />
+      <Dialog open={newEmailDialogOpen} onClose={() => setNewEmailDialogOpen(false)} maxWidth="xs" fullWidth>
+        <DialogTitle>Add email</DialogTitle>
+        <DialogContent>
+          <CustomTextField
+            type="email"
+            label="Email"
+            value={newEmail}
+            onChange={(e) => setNewEmail(e.target.value)}
+            fullWidth
+          />
+        </DialogContent>
+        <DialogActions>
+          <CustomButton onClick={() => setNewEmailDialogOpen(false)} color="primary">
+            Cancel
+          </CustomButton>
+          <CustomButton onClick={addEmail} color="primary">
+            Add email
+          </CustomButton>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }

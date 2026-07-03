@@ -24,7 +24,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { useAuth } from '../../context/AuthContext';
-import ColorModeToggle from './ColorModeToggle';
+import AppearancePopover from './AppearancePopover';
 
 const navItems = [
   { name: 'Compose', path: '/', icon: <SendIcon /> },
@@ -34,13 +34,16 @@ const navItems = [
   { name: 'Discord', path: '/webhook', icon: <TagIcon /> },
 ];
 
+// Renders as a router Link when the item has a path, or a plain button when
+// it has an onClick (e.g. Settings, which opens a dialog instead of routing).
 const NavItem = ({ item, active, collapsed, onNavigate }) => {
+  const linkProps = item.path
+    ? { component: Link, to: item.path, onClick: onNavigate }
+    : { onClick: item.onClick };
   const button = (
     <ListItemButton
-      component={Link}
-      to={item.path}
+      {...linkProps}
       selected={active}
-      onClick={onNavigate}
       sx={{
         mx: 1,
         my: 0.25,
@@ -79,7 +82,7 @@ const NavItem = ({ item, active, collapsed, onNavigate }) => {
 // Drawer contents: wordmark, primary navigation, and the bottom cluster
 // (settings, color mode, current user). Used by both the permanent desktop
 // drawer (which can collapse to icons) and the temporary mobile drawer.
-const Sidebar = ({ collapsed = false, onToggleCollapse, onNavigate }) => {
+const Sidebar = ({ collapsed = false, onToggleCollapse, onNavigate, onOpenSettings, settingsOpen = false }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
@@ -157,17 +160,16 @@ const Sidebar = ({ collapsed = false, onToggleCollapse, onNavigate }) => {
       <Divider sx={{ mx: 1.5 }} />
       <List>
         <NavItem
-          item={{ name: 'Settings', path: '/configuration', icon: <SettingsIcon /> }}
-          active={isActive('/configuration')}
+          item={{ name: 'Settings', icon: <SettingsIcon />, onClick: onOpenSettings }}
+          active={settingsOpen}
           collapsed={collapsed}
-          onNavigate={onNavigate}
         />
         {collapsed ? (
           <Box sx={{ display: 'flex', justifyContent: 'center', my: 0.25 }}>
-            <ColorModeToggle iconOnly />
+            <AppearancePopover iconOnly />
           </Box>
         ) : (
-          <ColorModeToggle />
+          <AppearancePopover />
         )}
       </List>
 

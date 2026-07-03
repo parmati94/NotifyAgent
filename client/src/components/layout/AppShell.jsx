@@ -4,7 +4,8 @@ import { Box, Drawer, IconButton, Typography } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import CellTowerIcon from '@mui/icons-material/CellTower';
 import Sidebar from './Sidebar';
-import ColorModeToggle from './ColorModeToggle';
+import AppearancePopover from './AppearancePopover';
+import SettingsDialog from '../settings/SettingsDialog';
 
 const DRAWER_WIDTH = 240;
 const DRAWER_WIDTH_COLLAPSED = 76;
@@ -18,6 +19,12 @@ const AppShell = () => {
     () => localStorage.getItem(COLLAPSE_KEY) === 'true'
   );
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+
+  const openSettings = () => {
+    setSettingsOpen(true);
+    setMobileOpen(false);
+  };
 
   const toggleCollapsed = () => {
     setCollapsed((prev) => {
@@ -47,7 +54,12 @@ const AppShell = () => {
           },
         }}
       >
-        <Sidebar collapsed={collapsed} onToggleCollapse={toggleCollapsed} />
+        <Sidebar
+          collapsed={collapsed}
+          onToggleCollapse={toggleCollapsed}
+          onOpenSettings={openSettings}
+          settingsOpen={settingsOpen}
+        />
       </Drawer>
 
       {/* Mobile: temporary drawer */}
@@ -61,8 +73,14 @@ const AppShell = () => {
           '& .MuiDrawer-paper': { width: DRAWER_WIDTH },
         }}
       >
-        <Sidebar onNavigate={() => setMobileOpen(false)} />
+        <Sidebar
+          onNavigate={() => setMobileOpen(false)}
+          onOpenSettings={openSettings}
+          settingsOpen={settingsOpen}
+        />
       </Drawer>
+
+      <SettingsDialog open={settingsOpen} onClose={() => setSettingsOpen(false)} />
 
       <Box
         component="main"
@@ -111,7 +129,7 @@ const AppShell = () => {
             </Typography>
           </Box>
           <Box sx={{ ml: 'auto' }}>
-            <ColorModeToggle iconOnly />
+            <AppearancePopover iconOnly />
           </Box>
         </Box>
 
@@ -128,7 +146,7 @@ const AppShell = () => {
             py: { xs: 2.5, md: 4 },
           }}
         >
-          <Outlet />
+          <Outlet context={{ openSettings }} />
         </Box>
       </Box>
     </Box>

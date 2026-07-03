@@ -4,8 +4,10 @@ import PageHeader from './PageHeader';
 import CustomButton from './Button';
 import CustomTextField from './TextField';
 import WebhookTable from './WebhookTable';
-import { Box, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
+import TagIcon from '@mui/icons-material/Tag';
 import CustomSnackbar from './CustomSnackbar';
+import EmptyState from './EmptyState';
 
 import { API_BASE_URL } from '../config';
 
@@ -106,11 +108,21 @@ function WebhookForm() {
 
   return (
     <div>
-      <PageHeader eyebrow="Channel · Discord" title="Discord webhooks" />
-      <WebhookTable webhooks={webhooks} onDelete={deleteWebhook} onToggleActive={toggleWebhookActive} />
-      <Box mt={4} display="flex" justifyContent="center">
-        <CustomButton onClick={handleDialogOpen}>Add Webhook</CustomButton>
-      </Box>
+      <PageHeader
+        eyebrow="Channel · Discord"
+        title="Discord webhooks"
+        action={<CustomButton onClick={handleDialogOpen}>Add webhook</CustomButton>}
+      />
+      {webhooks.length === 0 ? (
+        <EmptyState
+          icon={<TagIcon />}
+          title="No webhooks yet"
+          description="Add a Discord webhook to post announcements to a channel."
+          action={<CustomButton onClick={handleDialogOpen}>Add webhook</CustomButton>}
+        />
+      ) : (
+        <WebhookTable webhooks={webhooks} onDelete={deleteWebhook} onToggleActive={toggleWebhookActive} />
+      )}
       <Dialog open={dialogOpen} onClose={handleDialogClose}>
         <DialogTitle>Add New Webhook</DialogTitle>
         <DialogContent>
