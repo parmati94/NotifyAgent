@@ -1,0 +1,44 @@
+name: notifyagent-dev
+# Dev with hot reload. Two containers: the CRA dev server (webpack HMR) and uvicorn --reload.
+# Edits under client/src/ hot-swap in the browser; edits under api/ restart the API.
+# Same-origin like production: the dev server proxies /api to the api container
+# (client/src/setupProxy.js), so only one port is exposed.
+#   docker compose -f docker-compose.dev.yml up --build
+# App: http://localhost:5271
+services:
+  client:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+      target: client-dev
+    image: notifyagent-client:dev
+    container_name: notifyagent-client-dev
+    ports:
+      - "5271:3000"
+    environment:
+      - TZ=America/New_York
+      # Where setupProxy.js forwards /api requests (inside the compose network).
+      - API_PROXY_TARGET=http://api:8000
+    volumes:
+      - ./client/src:/app/src        # webpack HMR
+      - ./client/public:/app/public
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+      target: api-dev
+    image: notifyagent-api:dev
+    container_name: notifyagent-api-dev
+    environment:
+      - TZ=America/New_York
+      - SECRET_KEY=dev_only_secret_key
+      # Default admin login is admin/admin unless overridden:
+      # - ADMIN_USERNAME=admin
+      # - ADMIN_PASSWORD=admin
+    volumes:
+      - ./api:/app/api               # uvicorn --reload; SQLite lands in api/config/ (gitignored)
+    restart: unless-stopped

@@ -1,0 +1,18 @@
+# Dev-only images used by docker-compose.dev.yml. Two targets:
+#   api-dev    — uvicorn --reload against the bind-mounted ./api source
+#   client-dev — CRA dev server (webpack HMR) against bind-mounted ./client/src
+
+FROM python:3.13-slim AS api-dev
+WORKDIR /app
+COPY api/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+EXPOSE 8000
+CMD ["uvicorn", "api.api.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+
+FROM node:22 AS client-dev
+WORKDIR /app
+COPY client/package.json client/package-lock.json ./
+RUN npm install
+COPY client/ ./
+EXPOSE 3000
+CMD ["npm", "start"]
