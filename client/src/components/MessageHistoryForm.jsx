@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Button } from '@mui/material';
+import HistoryIcon from '@mui/icons-material/History';
 import PageHeader from './PageHeader';
-import { Box } from '@mui/material';
-import MessageHistoryTable from './MessageHistoryTable';
-import CustomButton from './Button';
+import MessageLog from './MessageLog';
+import EmptyState from './EmptyState';
 import ConfirmationDialog from './ConfirmationDialog';
 
 import { API_BASE_URL } from '../config';
@@ -46,16 +47,31 @@ const MessageHistory = () => {
 
   return (
     <div>
-      <PageHeader eyebrow="Messages · Sent" title="History" />
-      <MessageHistoryTable messages={messages} />
-      <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
-        <CustomButton onClick={() => setDialogOpen(true)}>Clear All Messages</CustomButton>
-      </Box>
+      <PageHeader
+        eyebrow="Messages · Sent"
+        title="History"
+        action={
+          messages.length > 0 && (
+            <Button variant="outlined" color="error" onClick={() => setDialogOpen(true)}>
+              Clear history
+            </Button>
+          )
+        }
+      />
+      {messages.length === 0 ? (
+        <EmptyState
+          icon={<HistoryIcon />}
+          title="Nothing sent yet"
+          description="Messages you broadcast show up here, with the channels they went to."
+        />
+      ) : (
+        <MessageLog messages={messages} />
+      )}
       <ConfirmationDialog
         open={dialogOpen}
         onClose={handleDialogClose}
-        title="Confirm Deletion"
-        content="Are you sure you want to delete all message history?"
+        title="Clear history?"
+        content="This deletes every entry in the sent-message history. It cannot be undone."
       />
     </div>
   );

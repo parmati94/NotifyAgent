@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Link, useLocation } from 'react-router-dom';
 import { keyframes } from '@emotion/react';
 import CustomButton from './Button';
 import CustomTextField from './TextField';
 import CustomMultilineTextField from './CustomMultilineTextField';
-import { Typography, Box, Card, CardContent, CardActions, TextField, MenuItem, Tooltip } from '@mui/material';
+import { Typography, Box, Card, CardContent, CardActions, TextField, MenuItem, Tooltip, Paper, Chip, Button } from '@mui/material';
 import CustomSnackbar from './CustomSnackbar';
 import ConfirmationDialog from './ConfirmationDialog';
 import PageHeader from './PageHeader';
@@ -37,11 +38,39 @@ function MessageForm() {
   const [templates, setTemplates] = useState([]);
   const [selectedTemplateId, setSelectedTemplateId] = useState('');
   const [justSent, setJustSent] = useState(false);
+  const [lastSent, setLastSent] = useState(null);
+  const location = useLocation();
 
   useEffect(() => {
     if (!justSent) return undefined;
     const timer = setTimeout(() => setJustSent(false), 950);
     return () => clearTimeout(timer);
+  }, [justSent]);
+
+  // Prefill from a template handed over by the Templates page ("Use in Compose")
+  useEffect(() => {
+    const templateId = location.state?.templateId;
+    if (!templateId || templates.length === 0) return;
+    const template = templates.find((t) => t.id === templateId);
+    if (template) {
+      setSelectedTemplateId(template.id);
+      setSubject(template.subject);
+      setBody(template.body);
+    }
+  }, [location.state, templates]);
+
+  useEffect(() => {
+    const fetchLastSent = async () => {
+      try {
+        const response = await axios.get(`${API_BASE_URL}/get_sent_messages/`);
+        const sorted = [...response.data].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+        setLastSent(sorted[0] || null);
+      } catch (error) {
+        console.error('Error fetching sent messages:', error);
+      }
+    };
+
+    fetchLastSent();
   }, [justSent]);
 
   useEffect(() => {
@@ -221,7 +250,8 @@ function MessageForm() {
   ];
 
   return (
-    <Box sx={{ width: '100%', maxWidth: 760, mx: 'auto' }}>
+    <Box sx={{ display: 'flex', gap: 3, alignItems: 'flex-start', width: '100%', maxWidth: 1080, mx: 'auto' }}>
+      <Box sx={{ flexGrow: 1, minWidth: 0, maxWidth: 760, mx: { xs: 'auto', lg: 0 } }}>
       <PageHeader
         eyebrow="Broadcast"
         title="Compose"
@@ -373,6 +403,73 @@ function MessageForm() {
           </>
         }
       />
+      </Box>
+
+      {/* Last transmission rail (wide screens) */}
+      <Box sx={{ width: 300, flexShrink: 0, display: { xs: 'none', lg: 'block' }, pt: 0.5 }}>
+        <Paper sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 3, p: 2.5 }}>
+          <Typography
+            sx={{
+              fontFamily: (theme) => theme.typography.fontFamilyMono,
+              fontSize: '0.66rem',
+              letterSpacing: '0.14em',
+              textTransform: 'uppercase',
+              color: 'text.secondary',
+              mb: 1.5,
+            }}
+          >
+            Last transmission
+          </Typography>
+          {lastSent ? (
+            <>
+              <Typography sx={{ fontWeight: 600, fontSize: '0.92rem' }}>{lastSent.subject}</Typography>
+              <Typography
+                sx={{
+                  fontFamily: (theme) => theme.typography.fontFamilyMono,
+                  fontSize: '0.7rem',
+                  color: 'text.secondary',
+                  mt: 0.25,
+                  mb: 1,
+                }}
+              >
+                {new Date(lastSent.timestamp.replace(' ', 'T') + 'Z').toLocaleString()}
+              </Typography>
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{
+                  display: '-webkit-box',
+                  WebkitLineClamp: 4,
+                  WebkitBoxOrient: 'vertical',
+                  overflow: 'hidden',
+                  whiteSpace: 'pre-line',
+                  mb: 1.5,
+                }}
+              >
+                {lastSent.body}
+              </Typography>
+              <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap', mb: 1 }}>
+                {(lastSent.services || '').split(', ').filter(Boolean).map((service) => (
+                  <Chip
+                    key={service}
+                    label={service}
+                    size="small"
+                    variant="outlined"
+                    sx={{ fontFamily: (theme) => theme.typography.fontFamilyMono, fontSize: '0.64rem' }}
+                  />
+                ))}
+              </Box>
+            </>
+          ) : (
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+              Nothing sent yet. Your most recent message will show up here.
+            </Typography>
+          )}
+          <Button component={Link} to="/history" size="small" sx={{ ml: -0.5 }}>
+            View history
+          </Button>
+        </Paper>
+      </Box>
     </Box>
   );
 }

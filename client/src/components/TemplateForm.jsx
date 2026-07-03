@@ -1,11 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import PageHeader from './PageHeader';
-import { Box, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination } from '@mui/material';
+import {
+  Box,
+  Card,
+  CardActions,
+  CardContent,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Button,
+  IconButton,
+  Tooltip,
+  Typography,
+} from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
+import SendIcon from '@mui/icons-material/Send';
+import DescriptionIcon from '@mui/icons-material/Description';
 import CustomButton from './Button';
 import CustomSnackbar from './CustomSnackbar';
 import ConfirmationDialog from './ConfirmationDialog';
+import EmptyState from './EmptyState';
 
 import { API_BASE_URL } from '../config';
 
@@ -18,10 +36,9 @@ function TemplateForm() {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [templateToDelete, setTemplateToDelete] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchTemplates = async () => {
@@ -63,7 +80,7 @@ function TemplateForm() {
       });
       setTemplates([...templates, response.data]);
       handleDialogClose();
-      setSnackbarMessage('Template saved successfully');
+      setSnackbarMessage('Template saved');
       setSnackbarSeverity('success');
       setSnackbarOpen(true);
     } catch (error) {
@@ -80,7 +97,7 @@ function TemplateForm() {
     try {
       await axios.delete(`${API_BASE_URL}/message_templates/${templateToDelete.id}`);
       setTemplates(templates.filter(template => template.id !== templateToDelete.id));
-      setSnackbarMessage('Template deleted successfully');
+      setSnackbarMessage('Template deleted');
       setSnackbarSeverity('success');
       setSnackbarOpen(true);
       setDeleteDialogOpen(false);
@@ -107,58 +124,71 @@ function TemplateForm() {
     }
   };
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
+  const useInCompose = (template) => {
+    navigate('/', { state: { templateId: template.id } });
   };
 
   return (
     <div>
-      <PageHeader eyebrow="Messages · Saved" title="Templates" />
-      <TableContainer component={Paper} sx={{ width: { xs: '100%', md: '90%' }, margin: '0 auto' }}>
-        <Table sx={{ minWidth: 700 }} aria-label="customized table">
-          <TableHead>
-            <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell align="center">Subject</TableCell>
-              <TableCell align="left">Body</TableCell>
-              <TableCell align="center">Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {templates.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((template) => (
-              <TableRow key={template.id} sx={{ '&:nth-of-type(odd)': { backgroundColor: 'action.hover' }, '&:last-child td, &:last-child th': { border: 0 } }}>
-                <TableCell component="th" scope="row">
-                  {template.name}
-                </TableCell>
-                <TableCell align="center">{template.subject}</TableCell>
-                <TableCell align="left">{template.body}</TableCell>
-                <TableCell align="center">
-                  <IconButton onClick={() => handleDeleteDialogOpen(template)}>
-                    <DeleteIcon />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 20, 50]}
-          component="div"
-          count={templates.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
+      <PageHeader
+        eyebrow="Messages · Saved"
+        title="Templates"
+        action={<CustomButton onClick={handleDialogOpen}>Add template</CustomButton>}
+      />
+
+      {templates.length === 0 ? (
+        <EmptyState
+          icon={<DescriptionIcon />}
+          title="No templates yet"
+          description="Save a message you send often, then reuse it from Compose with one click."
+          action={<CustomButton onClick={handleDialogOpen}>Add template</CustomButton>}
         />
-      </TableContainer>
-      <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
-        <CustomButton onClick={handleDialogOpen}>Add Template</CustomButton>
-      </Box>
+      ) : (
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+            gap: 2,
+          }}
+        >
+          {templates.map((template) => (
+            <Card key={template.id} sx={{ display: 'flex', flexDirection: 'column' }}>
+              <CardContent sx={{ flexGrow: 1, pb: 0 }}>
+                <Typography variant="h6" sx={{ fontSize: '1rem' }} gutterBottom>
+                  {template.name}
+                </Typography>
+                <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.75 }} noWrap>
+                  {template.subject}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{
+                    display: '-webkit-box',
+                    WebkitLineClamp: 3,
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden',
+                    whiteSpace: 'pre-line',
+                  }}
+                >
+                  {template.body}
+                </Typography>
+              </CardContent>
+              <CardActions sx={{ px: 2, pb: 1.5, justifyContent: 'space-between' }}>
+                <Button size="small" startIcon={<SendIcon />} onClick={() => useInCompose(template)}>
+                  Use in Compose
+                </Button>
+                <Tooltip title="Delete template">
+                  <IconButton size="small" onClick={() => handleDeleteDialogOpen(template)}>
+                    <DeleteIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+              </CardActions>
+            </Card>
+          ))}
+        </Box>
+      )}
+
       <Dialog open={dialogOpen} onClose={handleDialogClose}>
         <DialogTitle>Add New Template</DialogTitle>
         <DialogContent>

@@ -146,7 +146,7 @@ const AppShell = () => {
             py: { xs: 2.5, md: 4 },
           }}
         >
-          <Outlet />
+          <Outlet context={{ openSettings }} />
         </Box>
       </Box>
     </Box>
