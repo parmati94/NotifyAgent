@@ -7,11 +7,10 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import PersonIcon from '@mui/icons-material/Person';
 import LockIcon from '@mui/icons-material/Lock';
-import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
+import CellTowerIcon from '@mui/icons-material/CellTower';
 import { useAuth } from '../context/AuthContext';
 
-// Use the environment variable if available, otherwise use a default value
-const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || '/api';
+import { API_BASE_URL } from '../config';
 
 const LoginForm = () => {
   const [username, setUsername] = useState('');
@@ -37,7 +36,7 @@ const LoginForm = () => {
       formData.append('username', username);
       formData.append('password', password);
 
-      const response = await axios.post(`${REACT_APP_API_BASE_URL}/login/`, formData, {
+      const response = await axios.post(`${API_BASE_URL}/login/`, formData, {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded'
         }
@@ -93,14 +92,12 @@ const LoginForm = () => {
         justifyContent: 'center',
         minHeight: '100vh',
         p: 2,
-        background: `radial-gradient(1200px 600px at 50% -10%, ${theme.palette.primary.light}22, transparent 60%), ${theme.palette.background.default}`,
+        background: `radial-gradient(1200px 600px at 50% -10%, rgba(${theme.vars.palette.primary.mainChannel} / 0.13), transparent 60%), ${theme.vars.palette.background.default}`,
       }}
-    > <Card 
-        sx={{ 
-          maxWidth: 400, 
-          width: '90%', 
-          boxShadow: '0 8px 24px rgba(0, 0, 0, 0.12)',
-          borderRadius: 2,
+    > <Card
+        sx={{
+          maxWidth: 400,
+          width: '90%',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center'
@@ -111,29 +108,40 @@ const LoginForm = () => {
             <Avatar
               sx={{
                 bgcolor: 'primary.main',
+                color: 'primary.contrastText',
                 width: 56,
                 height: 56,
                 mx: 'auto',
                 mb: 2,
-                boxShadow: '0 6px 18px rgba(59, 153, 255, 0.35)',
+                boxShadow: `0 6px 18px rgba(${theme.vars.palette.primary.mainChannel} / 0.35)`,
               }}
             >
-              <NotificationsActiveIcon />
+              <CellTowerIcon />
             </Avatar>
             <Typography
               variant="h4"
-              sx={{ 
-                fontWeight: 700, 
-                color: theme.palette.primary.main,
-                fontFamily: 'monospace',
-                letterSpacing: '.2rem',
+              sx={{
+                fontWeight: 700,
+                color: 'text.primary',
               }}
             >
               NotifyAgent
             </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-              Please sign in to continue
-            </Typography>          
+            <Typography
+              sx={{
+                fontFamily: theme.typography.fontFamilyMono,
+                fontSize: '0.65rem',
+                letterSpacing: '0.18em',
+                textTransform: 'uppercase',
+                color: 'text.secondary',
+                mt: 0.5,
+              }}
+            >
+              Broadcast console
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 1.5 }}>
+              Sign in to continue
+            </Typography>
           </Box>
 
           <form onSubmit={handleLogin} style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>

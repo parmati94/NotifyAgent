@@ -1,5 +1,5 @@
 import React from 'react';
-import { Accordion, AccordionSummary, AccordionDetails, Typography, Box, Tooltip, IconButton } from '@mui/material';
+import { Accordion, AccordionSummary, AccordionDetails, Typography, Box, Tooltip } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
@@ -19,9 +19,9 @@ const CollapsibleSection = ({ className, title, icon, info, children }) => {
             </Typography>
             {info && (
               <Tooltip title={info} placement="right">
-                <IconButton size="small" sx={{ color: 'text.secondary', ml: -0.5 }}>
+                <Box sx={{ display: 'flex', color: 'text.secondary', ml: 0.25 }}>
                   <InfoOutlinedIcon fontSize="small" />
-                </IconButton>
+                </Box>
               </Tooltip>
             )}
           </Box>

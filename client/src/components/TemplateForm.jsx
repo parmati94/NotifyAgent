@@ -6,9 +6,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import CustomButton from './Button';
 import CustomSnackbar from './CustomSnackbar';
 import ConfirmationDialog from './ConfirmationDialog';
-import { tokens } from '../theme/theme';
 
-const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+import { API_BASE_URL } from '../config';
 
 function TemplateForm() {
   const [templates, setTemplates] = useState([]);
@@ -27,7 +26,7 @@ function TemplateForm() {
   useEffect(() => {
     const fetchTemplates = async () => {
       try {
-        const response = await axios.get(`${REACT_APP_API_BASE_URL}/message_templates/`);
+        const response = await axios.get(`${API_BASE_URL}/message_templates/`);
         setTemplates(response.data);
       } catch (error) {
         console.error('Error fetching templates:', error);
@@ -57,7 +56,7 @@ function TemplateForm() {
     }
 
     try {
-      const response = await axios.post(`${REACT_APP_API_BASE_URL}/message_templates/`, {
+      const response = await axios.post(`${API_BASE_URL}/message_templates/`, {
         name: templateName,
         subject: templateSubject,
         body: templateBody
@@ -79,7 +78,7 @@ function TemplateForm() {
     if (!templateToDelete) return;
 
     try {
-      await axios.delete(`${REACT_APP_API_BASE_URL}/message_templates/${templateToDelete.id}`);
+      await axios.delete(`${API_BASE_URL}/message_templates/${templateToDelete.id}`);
       setTemplates(templates.filter(template => template.id !== templateToDelete.id));
       setSnackbarMessage('Template deleted successfully');
       setSnackbarSeverity('success');
@@ -118,9 +117,9 @@ function TemplateForm() {
   };
 
   return (
-    <div className = "main-content">
-      <PageHeader title="Templates" />
-      <TableContainer component={Paper} sx={{ width: '75%', margin: '0 auto' }} elevation={8}>
+    <div>
+      <PageHeader eyebrow="Messages · Saved" title="Templates" />
+      <TableContainer component={Paper} sx={{ width: { xs: '100%', md: '90%' }, margin: '0 auto' }}>
         <Table sx={{ minWidth: 700 }} aria-label="customized table">
           <TableHead>
             <TableRow>
@@ -155,10 +154,6 @@ function TemplateForm() {
           page={page}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
-          sx={{
-            backgroundColor: tokens.tableHeader,
-            color: 'text.primary',
-          }}
         />
       </TableContainer>
       <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>

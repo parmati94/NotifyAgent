@@ -12,14 +12,13 @@ import TemplateForm from './components/TemplateForm';
 import LoginForm from './components/LoginForm';
 import ProtectedRoute from './components/ProtectedRoute';
 import SessionExpiryDialog from './components/SessionExpiryDialog';
+import AppShell from './components/layout/AppShell';
 import { AuthProvider } from './context/AuthContext';
-import './App.css';
-import ResponsiveAppBar from './components/Navbar';
 import theme from './theme/theme';
 
 function App() {
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={theme} defaultMode="dark">
       <CssBaseline />
       <AuthProvider>
         <SessionExpiryDialog />
@@ -27,47 +26,19 @@ function App() {
           <Routes>
             {/* Public Routes */}
             <Route path="/login" element={<LoginForm />} />
-            
+
             {/* Protected Routes - Require Authentication */}
             <Route element={<ProtectedRoute />}>
-              <Route path="/" element={
-                <>
-                  <ResponsiveAppBar />
-                  <MessageForm />
-                </>
-              } />
-              <Route path="/templates" element={
-                <>
-                  <ResponsiveAppBar />
-                  <TemplateForm />
-                </>
-              } />
-              <Route path="/history" element={
-                <>
-                  <ResponsiveAppBar />
-                  <MessageHistoryForm />
-                </>
-              } />
-              <Route path="/email" element={
-                <>
-                  <ResponsiveAppBar />
-                  <EmailForm />
-                </>
-              } />
-              <Route path="/webhook" element={
-                <>
-                  <ResponsiveAppBar />
-                  <WebhookForm />
-                </>
-              } />
-              <Route path="/configuration" element={
-                <>
-                  <ResponsiveAppBar />
-                  <ConfigurationForm />
-                </>
-              } />
+              <Route element={<AppShell />}>
+                <Route path="/" element={<MessageForm />} />
+                <Route path="/templates" element={<TemplateForm />} />
+                <Route path="/history" element={<MessageHistoryForm />} />
+                <Route path="/email" element={<EmailForm />} />
+                <Route path="/webhook" element={<WebhookForm />} />
+                <Route path="/configuration" element={<ConfigurationForm />} />
+              </Route>
             </Route>
-            
+
             {/* Catch all - redirect to login */}
             <Route path="*" element={<Navigate to="/login" replace />} />
           </Routes>

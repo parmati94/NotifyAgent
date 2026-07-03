@@ -8,7 +8,7 @@ import EmailTable from './EmailTable';
 import CustomSnackbar from './CustomSnackbar';
 import ConfirmationDialog from './ConfirmationDialog';
 
-const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+import { API_BASE_URL } from '../config';
 
 function EmailForm() {
   const [emails, setEmails] = useState([]);
@@ -22,7 +22,7 @@ function EmailForm() {
   useEffect(() => {
     // Fetch stored emails from the backend when the component mounts
     axios
-      .get(`${REACT_APP_API_BASE_URL}/get_emails/`)
+      .get(`${API_BASE_URL}/get_emails/`)
       .then((response) => {
         setEmails(response.data);
       })
@@ -33,7 +33,7 @@ function EmailForm() {
 
   const importEmails = async () => {
     try {
-      const response = await axios.post(`${REACT_APP_API_BASE_URL}/import_emails/`);
+      const response = await axios.post(`${API_BASE_URL}/import_emails/`);
       setEmails(response.data.emails);
       setSnackbarMessage('Emails imported successfully');
       setSnackbarSeverity('success');
@@ -48,7 +48,7 @@ function EmailForm() {
 
   const addEmail = async () => {
     try {
-      await axios.post(`${REACT_APP_API_BASE_URL}/add_email/`, { email: newEmail });
+      await axios.post(`${API_BASE_URL}/add_email/`, { email: newEmail });
       setEmails([...emails, newEmail]);
       setNewEmail('');
       setSnackbarMessage('Email added successfully');
@@ -65,7 +65,7 @@ function EmailForm() {
 
   const deleteEmail = async (email) => {
     try {
-      await axios.delete(`${REACT_APP_API_BASE_URL}/delete_email/${email}`);
+      await axios.delete(`${API_BASE_URL}/delete_email/${email}`);
       setEmails(emails.filter((e) => e !== email));
       setSnackbarMessage('Email deleted successfully');
       setSnackbarSeverity('success');
@@ -102,8 +102,8 @@ function EmailForm() {
   };
 
   return (
-    <div className = "main-content">
-      <PageHeader title="Email List" />
+    <div>
+      <PageHeader eyebrow="Channel · Email" title="Recipients" />
       <Box sx={{ width: '50%', margin: '0 auto' }}>
         <EmailTable emails={emails} onDelete={deleteEmail} />
         <Box mt={4} sx={{ display: 'flex', flexDirection: 'column', gap: 2, alignItems: 'center' }}>

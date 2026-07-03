@@ -1,0 +1,28 @@
+name: notifyagent-dev
+# Dev with hot reload, same single image as production. Bind-mounts the backend source
+# (uvicorn --reload restarts on edits under api/) and the host-built frontend into nginx.
+# Rebuild the frontend when you change the UI:
+#   cd client && npm run build        (add `-- --watch` to rebuild continuously)
+# Run with:
+#   docker compose -f docker-compose.dev.yml up --build
+# App: http://localhost:5271
+services:
+  notifyagent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: notifyagent:dev
+    container_name: notifyagent-dev
+    ports:
+      - "5271:8080"
+    environment:
+      - TZ=America/New_York
+      - SECRET_KEY=dev_only_secret_key
+      # Default admin login is admin/admin unless overridden:
+      # - ADMIN_USERNAME=admin
+      # - ADMIN_PASSWORD=admin
+    volumes:
+      - ./api:/app/api                                          # backend live-reload via uvicorn --reload
+      - ./client/dist:/usr/share/nginx/html                     # host-built frontend (cd client && npm run build)
+      - ./api/supervisord.dev.conf:/etc/supervisor/conf.d/supervisord.conf:ro
+    restart: unless-stopped

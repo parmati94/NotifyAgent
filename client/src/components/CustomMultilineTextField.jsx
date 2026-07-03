@@ -1,7 +1,7 @@
 import * as React from 'react';
 import TextField from '@mui/material/TextField';
 
-export default function CustomTextField({ label, value, onChange, placeholder, sx, InputProps, ...rest }) {
+export default function CustomMultilineTextField({ label, value, onChange, placeholder, minRows = 4 }) {
   return (
     <TextField
       type="text"
@@ -9,12 +9,11 @@ export default function CustomTextField({ label, value, onChange, placeholder, s
       value={value}
       onChange={onChange}
       placeholder={placeholder}
-      variant="standard"
+      variant="outlined"
       fullWidth
       margin="normal"
-      sx={{ width: '75%', ...sx }}
-      InputProps={InputProps}
-      {...rest}
+      multiline
+      minRows={minRows}
     />
   );
 }

@@ -7,7 +7,7 @@ import WebhookTable from './WebhookTable';
 import { Box, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
 import CustomSnackbar from './CustomSnackbar';
 
-const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+import { API_BASE_URL } from '../config';
 
 function WebhookForm() {
   const [webhooks, setWebhooks] = useState([]);
@@ -22,7 +22,7 @@ function WebhookForm() {
   useEffect(() => {
     const fetchWebhooks = async () => {
       try {
-        const response = await axios.get(`${REACT_APP_API_BASE_URL}/get_webhooks/`);
+        const response = await axios.get(`${API_BASE_URL}/get_webhooks/`);
         setWebhooks(response.data);
       } catch (error) {
         console.error('Error fetching webhooks:', error);
@@ -35,7 +35,7 @@ function WebhookForm() {
   // Add a new webhook
   const addWebhook = async () => {
     try {
-      await axios.post(`${REACT_APP_API_BASE_URL}/set_webhook/`, {
+      await axios.post(`${API_BASE_URL}/set_webhook/`, {
         channel_name: channelName,
         webhook_url: webhookUrl,
         is_active: true // Default to active when adding a new webhook
@@ -59,7 +59,7 @@ function WebhookForm() {
   // Delete a webhook
   const deleteWebhook = async (channelName) => {
     try {
-      await axios.delete(`${REACT_APP_API_BASE_URL}/webhooks/${channelName}`);
+      await axios.delete(`${API_BASE_URL}/webhooks/${channelName}`);
       setWebhooks(webhooks.filter(webhook => webhook.channel_name !== channelName));
       setSnackbarMessage('Webhook deleted successfully');
       setSnackbarSeverity('success');
@@ -79,7 +79,7 @@ function WebhookForm() {
 
     try {
       const updatedWebhook = { ...webhook, is_active: !webhook.is_active };
-      await axios.put(`${REACT_APP_API_BASE_URL}/update_webhook/`, updatedWebhook);
+      await axios.put(`${API_BASE_URL}/update_webhook/`, updatedWebhook);
       setWebhooks(webhooks.map(w => (w.channel_name === channelName ? updatedWebhook : w)));
       setSnackbarMessage('Webhook updated successfully');
       setSnackbarSeverity('success');
@@ -105,8 +105,8 @@ function WebhookForm() {
   };
 
   return (
-    <div className = "main-content">
-      <PageHeader title="Webhooks" />
+    <div>
+      <PageHeader eyebrow="Channel · Discord" title="Discord webhooks" />
       <WebhookTable webhooks={webhooks} onDelete={deleteWebhook} onToggleActive={toggleWebhookActive} />
       <Box mt={4} display="flex" justifyContent="center">
         <CustomButton onClick={handleDialogOpen}>Add Webhook</CustomButton>

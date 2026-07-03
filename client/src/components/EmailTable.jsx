@@ -15,7 +15,6 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import SearchIcon from '@mui/icons-material/Search';
 import CustomTextField from './TextField';
-import { tokens } from '../theme/theme';
 
 function EmailTable({ emails, onDelete }) {
   const [page, setPage] = useState(0);
@@ -74,7 +73,6 @@ function EmailTable({ emails, onDelete }) {
           overflowX: 'auto',
           position: 'relative',
         }}
-        elevation={8}
       >
         <Table sx={{ minWidth: 700 }} aria-label="customized table">
           <TableHead>
@@ -111,7 +109,12 @@ function EmailTable({ emails, onDelete }) {
                 <TableCell component="th" scope="row" sx={{ textAlign: 'center' }}>
                   {page * rowsPerPage + index + 1}
                 </TableCell>
-                <TableCell align="center">{email}</TableCell>
+                <TableCell
+                  align="center"
+                  sx={{ fontFamily: (theme) => theme.typography.fontFamilyMono, fontSize: '0.82rem' }}
+                >
+                  {email}
+                </TableCell>
                 <TableCell align="center">
                   <IconButton onClick={() => onDelete(email)}>
                     <DeleteIcon />
@@ -129,7 +132,7 @@ function EmailTable({ emails, onDelete }) {
             flexWrap: 'wrap',
             justifyContent: 'space-between',
             alignItems: 'center',
-            backgroundColor: tokens.tableHeader,
+            backgroundColor: 'tableChrome.main',
             color: 'text.primary',
             padding: '8px 16px',
             gap: 1,
@@ -139,6 +142,7 @@ function EmailTable({ emails, onDelete }) {
           {!isSearchOpen ? (
             <IconButton
               onClick={toggleSearch}
+              aria-label="Search emails"
               sx={{
                 color: 'text.primary',
                 '&:hover': { color: 'primary.main' },
@@ -147,34 +151,23 @@ function EmailTable({ emails, onDelete }) {
               <SearchIcon />
             </IconButton>
           ) : (
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                backgroundColor: 'white',
-                color: 'black',
-                borderRadius: '4px',
-                padding: '4px 8px',
-                height: '32px',
-                width: { xs: '150px', sm: '200px' },
+            <CustomTextField
+              placeholder="Search emails"
+              value={searchQuery}
+              onChange={handleSearchChange}
+              size="small"
+              autoFocus
+              margin="none"
+              sx={{ width: { xs: 170, sm: 220 }, my: 0, bgcolor: 'background.paper', borderRadius: 1 }}
+              InputProps={{
+                style: { fontSize: '14px' },
+                endAdornment: (
+                  <IconButton onClick={toggleSearch} size="small" aria-label="Close search">
+                    <SearchIcon fontSize="small" />
+                  </IconButton>
+                ),
               }}
-            >
-              <CustomTextField
-                placeholder="Search Emails"
-                value={searchQuery}
-                onChange={handleSearchChange}
-                sx={{ width: '100%', height: '32px', margin: 0 }}
-                InputProps={{
-                  disableUnderline: true,
-                  style: { color: 'black', fontSize: '14px' },
-                  endAdornment: (
-                    <IconButton onClick={toggleSearch} sx={{ color: 'black' }}>
-                      <SearchIcon />
-                    </IconButton>
-                  ),
-                }}
-              />
-            </Box>
+            />
           )}
 
           {/* Pagination */}
@@ -186,10 +179,6 @@ function EmailTable({ emails, onDelete }) {
             page={page}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
-            sx={{
-              backgroundColor: tokens.tableHeader,
-              color: 'text.primary',
-            }}
           />
         </Box>
       </TableContainer>

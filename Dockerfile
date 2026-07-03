@@ -24,7 +24,7 @@ COPY api/ ./api
 RUN rm -rf /usr/share/nginx/html/*
 
 # Copy the built frontend files from the previous stage
-COPY --from=frontend-builder /app/build /usr/share/nginx/html
+COPY --from=frontend-builder /app/dist /usr/share/nginx/html
 
 # Copy Nginx configuration
 COPY api/nginx.conf /etc/nginx/nginx.conf

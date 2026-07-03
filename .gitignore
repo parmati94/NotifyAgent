@@ -9,6 +9,7 @@ __pycache__/
 # Distribution / packaging
 .Python
 build/
+dist/
 develop-eggs/
 dist/
 downloads/
@@ -279,3 +280,7 @@ dist
 /.vscode
 cache
 *.db
+# Personal compose files and local data (never committed)
+docker-compose.local.yml
+docker-compose.local.dev.yml
+/data/
