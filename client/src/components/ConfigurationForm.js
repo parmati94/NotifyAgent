@@ -455,7 +455,8 @@ function ConfigurationForm() {
                           <PersonIcon color="action" />
                         </Tooltip>
                       }
-                    </TableCell>                    <TableCell align="center">
+                    </TableCell>
+                    <TableCell align="center">
                       <Tooltip title={
                         user.is_admin && users.filter(u => u.is_admin).length <= 1 
                           ? "This is the only admin user and cannot be deleted" 
