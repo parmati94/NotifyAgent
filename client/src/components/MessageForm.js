@@ -182,7 +182,7 @@ function MessageForm() {
   ];
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', minHeight: 'calc(100vh - 70px)', bgcolor: 'background.default', margin: '0 auto', width: '100%' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', flexGrow: 1, margin: '0 auto', width: '100%' }}>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 1.5, alignItems: 'center', width: '100%', padding: 2, backgroundColor: 'background.paper', borderRadius: '0 0 16px 16px', boxShadow: '0 4px 16px rgba(26, 39, 51, 0.06)', borderBottom: '1px solid', borderColor: 'divider', marginBottom: 4 }}>
         {statusItems.map(({ label, ready, hint }) => (
           <Tooltip key={label} title={hint} arrow>

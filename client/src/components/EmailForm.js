@@ -102,8 +102,8 @@ function EmailForm() {
   };
 
   return (
-    <div className = "main-content">
-      <PageHeader title="Email List" />
+    <div>
+      <PageHeader eyebrow="Channel · Email" title="Recipients" />
       <Box sx={{ width: '50%', margin: '0 auto' }}>
         <EmailTable emails={emails} onDelete={deleteEmail} />
         <Box mt={4} sx={{ display: 'flex', flexDirection: 'column', gap: 2, alignItems: 'center' }}>

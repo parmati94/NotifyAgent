@@ -365,8 +365,8 @@ function ConfigurationForm() {
   };
 
   return (
-    <div className="main-content" style={{ textAlign: 'center'}}>
-      <PageHeader title="Configuration" />
+    <div style={{ textAlign: 'center' }}>
+      <PageHeader eyebrow="System" title="Settings" />
       
       <CollapsibleSection
         className="collapsible-section"

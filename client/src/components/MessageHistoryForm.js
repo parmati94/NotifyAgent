@@ -45,8 +45,8 @@ const MessageHistory = () => {
   };
 
   return (
-    <div className="main-content">
-      <PageHeader title="Message History" />
+    <div>
+      <PageHeader eyebrow="Messages · Sent" title="History" />
       <MessageHistoryTable messages={messages} />
       <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
         <CustomButton onClick={() => setDialogOpen(true)}>Clear All Messages</CustomButton>

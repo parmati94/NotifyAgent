@@ -1,33 +1,43 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
 
-const PageHeader = ({ title, subtitle }) => {
+// Page title block: mono uppercase eyebrow over a display-face heading,
+// with an optional action slot on the right (e.g. a page-level button).
+const PageHeader = ({ title, eyebrow, subtitle, action }) => {
   return (
     <Box
       sx={{
-        backgroundColor: 'background.paper',
-        color: 'text.primary',
-        py: 2,
-        px: 2,
-        textAlign: 'center',
-        boxShadow: '0 4px 16px rgba(26, 39, 51, 0.06)',
-        borderBottom: '1px solid',
-        borderColor: 'divider',
-        mb: '20px',
+        display: 'flex',
+        alignItems: 'flex-end',
+        justifyContent: 'space-between',
+        gap: 2,
+        flexWrap: 'wrap',
+        mb: 3.5,
       }}
     >
-      <Typography variant="h4">
-        {title}
-      </Typography>
-      {subtitle && (
-        <Typography
-          variant="subtitle1"
-          color="text.secondary"
-          sx={{ fontFamily: 'monospace' }}
-        >
-          {subtitle}
-        </Typography>
-      )}
+      <Box>
+        {eyebrow && (
+          <Typography
+            sx={{
+              fontFamily: (theme) => theme.typography.fontFamilyMono,
+              fontSize: '0.68rem',
+              letterSpacing: '0.16em',
+              textTransform: 'uppercase',
+              color: 'primary.main',
+              mb: 0.5,
+            }}
+          >
+            {eyebrow}
+          </Typography>
+        )}
+        <Typography variant="h4">{title}</Typography>
+        {subtitle && (
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.75 }}>
+            {subtitle}
+          </Typography>
+        )}
+      </Box>
+      {action && <Box sx={{ flexShrink: 0 }}>{action}</Box>}
     </Box>
   );
 };

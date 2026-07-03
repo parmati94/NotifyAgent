@@ -105,8 +105,8 @@ function WebhookForm() {
   };
 
   return (
-    <div className = "main-content">
-      <PageHeader title="Webhooks" />
+    <div>
+      <PageHeader eyebrow="Channel · Discord" title="Discord webhooks" />
       <WebhookTable webhooks={webhooks} onDelete={deleteWebhook} onToggleActive={toggleWebhookActive} />
       <Box mt={4} display="flex" justifyContent="center">
         <CustomButton onClick={handleDialogOpen}>Add Webhook</CustomButton>
