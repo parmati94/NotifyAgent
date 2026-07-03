@@ -37,11 +37,6 @@ export const ACCENTS = {
     dark: { main: '#f5a524', soft: '#ffbe4d', deep: '#d18a10' },
     light: { main: '#b26a00', soft: '#f5a524', deep: '#8f5500' },
   },
-  plex: {
-    label: 'Plex Gold',
-    dark: { main: '#e5a00d', soft: '#f7c34a', deep: '#c4880a' },
-    light: { main: '#9a6c00', soft: '#e5a00d', deep: '#7a5500' },
-  },
   blue: {
     label: 'Sky Blue',
     dark: { main: '#3b99ff', soft: '#7ab8ff', deep: '#1f7fe6' },
