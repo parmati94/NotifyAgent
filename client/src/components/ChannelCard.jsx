@@ -1,20 +1,17 @@
 import React from 'react';
 import { keyframes } from '@emotion/react';
 import { Box, ButtonBase, Typography } from '@mui/material';
-import { tokens } from '../theme/theme';
 
-// The signal amber is identical in both color schemes (tokens.dark.accent),
-// so the LED pulse can safely reference it directly.
-const signal = tokens.dark.accent;
-
+// The LED pulse follows the active accent via the signal CSS variable, which
+// stays the bright accent variant in both color schemes.
 const pulse = keyframes`
-  0% { box-shadow: 0 0 0 0 ${signal}73; }
-  70% { box-shadow: 0 0 0 8px ${signal}00; }
-  100% { box-shadow: 0 0 0 0 ${signal}00; }
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--mui-palette-signal-main) 45%, transparent); }
+  70% { box-shadow: 0 0 0 8px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
 `;
 
 // A selectable delivery channel on the compose page. Behaves as a checkbox;
-// the LED reports readiness: amber pulse = selected and ready, red = selected
+// the LED reports readiness: accent pulse = selected and ready, red = selected
 // but not ready to deliver, grey = deselected or not configured.
 const ChannelCard = ({ icon, name, statusLine, ready, selected, onToggle }) => {
   const ledColor = !selected
