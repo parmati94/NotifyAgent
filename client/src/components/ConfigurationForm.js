@@ -36,8 +36,16 @@ const SavedValue = ({ label, value }) => (
     <Typography variant="body2" sx={{ fontWeight: 600, color: 'text.secondary', whiteSpace: 'nowrap' }}>
       {label}
     </Typography>
-    <Typography variant="body2" sx={{ wordBreak: 'break-all', textAlign: 'right' }}>
-      {value ? value : <Box component="span" sx={{ color: 'text.disabled', fontStyle: 'italic' }}>Not set</Box>}
+    <Typography
+      variant="body2"
+      sx={{
+        wordBreak: 'break-all',
+        textAlign: 'right',
+        fontFamily: (theme) => theme.typography.fontFamilyMono,
+        fontSize: '0.78rem',
+      }}
+    >
+      {value ? value : <Box component="span" sx={{ color: 'text.disabled', fontStyle: 'italic', fontFamily: 'inherit' }}>Not set</Box>}
     </Typography>
   </Box>
 );

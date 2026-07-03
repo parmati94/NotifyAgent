@@ -119,7 +119,7 @@ function TemplateForm() {
   return (
     <div>
       <PageHeader eyebrow="Messages · Saved" title="Templates" />
-      <TableContainer component={Paper} sx={{ width: '75%', margin: '0 auto' }} elevation={8}>
+      <TableContainer component={Paper} sx={{ width: { xs: '100%', md: '90%' }, margin: '0 auto' }}>
         <Table sx={{ minWidth: 700 }} aria-label="customized table">
           <TableHead>
             <TableRow>

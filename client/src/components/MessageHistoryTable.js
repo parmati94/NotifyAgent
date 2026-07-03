@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Tooltip } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Tooltip, Chip, Box } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import axios from 'axios';
 
@@ -57,7 +57,7 @@ const MessageHistoryTable = ({ messages }) => {
 
   return (
     <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
-      <TableContainer component={Paper} sx={{ width: '75%' }} elevation={8}>
+      <TableContainer component={Paper} sx={{ width: { xs: '100%', md: '90%' } }}>
         <Table sx={{ minWidth: 700 }} aria-label="customized table">
           <TableHead>
             <TableRow>
@@ -82,8 +82,23 @@ const MessageHistoryTable = ({ messages }) => {
                     {message.subject}
                   </TableCell>
                   <TableCell align="left">{message.body}</TableCell>
-                  <TableCell align="center">{message.services}</TableCell>
                   <TableCell align="center">
+                    <Box sx={{ display: 'flex', gap: 0.5, justifyContent: 'center', flexWrap: 'wrap' }}>
+                      {(message.services || '').split(', ').filter(Boolean).map((service) => (
+                        <Chip
+                          key={service}
+                          label={service}
+                          size="small"
+                          variant="outlined"
+                          sx={{ fontFamily: (theme) => theme.typography.fontFamilyMono, fontSize: '0.68rem' }}
+                        />
+                      ))}
+                    </Box>
+                  </TableCell>
+                  <TableCell
+                    align="center"
+                    sx={{ fontFamily: (theme) => theme.typography.fontFamilyMono, fontSize: '0.78rem', whiteSpace: 'nowrap' }}
+                  >
                     {new Date(message.timestamp.replace(' ', 'T') + 'Z').toLocaleString()}
                   </TableCell>
                   <TableCell align="center">
