@@ -1,13 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { keyframes } from '@emotion/react';
 import CustomButton from './Button';
 import CustomTextField from './TextField';
 import CustomMultilineTextField from './CustomMultilineTextField';
-import { Typography, Box, Checkbox, FormControlLabel, FormGroup, Card, CardContent, CardActions, Chip, TextField, MenuItem, Tooltip } from '@mui/material';
+import { Typography, Box, Card, CardContent, CardActions, TextField, MenuItem, Tooltip } from '@mui/material';
 import CustomSnackbar from './CustomSnackbar';
 import ConfirmationDialog from './ConfirmationDialog';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
+import PageHeader from './PageHeader';
+import ChannelCard from './ChannelCard';
+import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
+import TagIcon from '@mui/icons-material/Tag';
+
+const ripple = keyframes`
+  0% { opacity: 0.9; transform: scale(1); }
+  100% { opacity: 0; transform: scale(2.1); }
+`;
 
 const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -29,6 +37,14 @@ function MessageForm() {
   const [tautulliStatus, setTautulliStatus] = useState(false);
   const [templates, setTemplates] = useState([]);
   const [selectedTemplateId, setSelectedTemplateId] = useState('');
+  const [justSent, setJustSent] = useState(false);
+
+  useEffect(() => {
+    if (!justSent) return undefined;
+    const timer = setTimeout(() => setJustSent(false), 950);
+    return () => clearTimeout(timer);
+  }, [justSent]);
+
   useEffect(() => {
     const fetchTemplates = async () => {
       try {
@@ -46,6 +62,7 @@ function MessageForm() {
       try {
         const discordResponse = await axios.get(`${REACT_APP_API_BASE_URL}/get_webhooks/`);
         setWebhooksStatus(discordResponse.data.length > 0);
+        setDiscordChannels(discordResponse.data);
       } catch (error) {
         console.error('Error fetching webhooks:', error);
       }
@@ -61,6 +78,7 @@ function MessageForm() {
       try {
         const emailResponse = await axios.get(`${REACT_APP_API_BASE_URL}/get_emails/`);
         setEmailStatus(emailResponse.data.length > 0);
+        setEmailCount(emailResponse.data.length);
       } catch (error) {
         console.error('Error fetching emails:', error);
       }
@@ -141,9 +159,10 @@ function MessageForm() {
           services: servicesUsed.join(', ')
         });
 
-        setSnackbarMessage('Message sent successfully');
+        setSnackbarMessage('Message sent');
         setSnackbarSeverity('success');
         setSnackbarOpen(true);
+        setJustSent(true);
       } catch (error) {
         console.error('Error sending message:', error);
         setSnackbarMessage('Error sending message');
@@ -173,96 +192,154 @@ function MessageForm() {
     }
   };
 
-  const statusItems = [
-    { label: 'Email Credentials', ready: emailCredentialStatus, hint: 'SMTP credentials needed to send emails' },
-    { label: 'Tautulli Credentials', ready: tautulliStatus, hint: 'Used to import recipients from Tautulli' },
-    { label: 'Emails', ready: emailStatus, hint: 'At least one recipient email is on file' },
-    { label: 'Discord Webhooks', ready: webhooksStatus, hint: 'At least one webhook is configured' },
-    { label: 'Discord Roles', ready: rolesStatus, hint: 'Optional roles to mention in Discord' },
+  const activeWebhooks = discordChannels.filter((channel) => channel.is_active).length;
+  const emailReady = emailCredentialStatus && emailStatus;
+  const discordReady = activeWebhooks > 0;
+
+  const emailStatusLine = !emailCredentialStatus
+    ? 'SMTP not configured'
+    : emailCount === 0
+      ? 'No recipients yet'
+      : `SMTP · ${emailCount} recipient${emailCount === 1 ? '' : 's'}`;
+
+  const discordStatusLine = !webhooksStatus
+    ? 'No webhooks yet'
+    : activeWebhooks === 0
+      ? 'All webhooks turned off'
+      : `${activeWebhooks} active webhook${activeWebhooks === 1 ? '' : 's'}`;
+
+  const preflightItems = [
+    {
+      label: tautulliStatus ? 'Tautulli connected' : 'Tautulli not connected',
+      ready: tautulliStatus,
+      hint: 'Tautulli is used to import email recipients from Plex.',
+    },
+    {
+      label: rolesStatus ? 'Role mentions on' : 'No role mentions',
+      ready: rolesStatus,
+      hint: 'Discord roles to mention when a message is sent.',
+    },
   ];
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', flexGrow: 1, margin: '0 auto', width: '100%' }}>
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 1.5, alignItems: 'center', width: '100%', padding: 2, backgroundColor: 'background.paper', borderRadius: '0 0 16px 16px', boxShadow: '0 4px 16px rgba(26, 39, 51, 0.06)', borderBottom: '1px solid', borderColor: 'divider', marginBottom: 4 }}>
-        {statusItems.map(({ label, ready, hint }) => (
-          <Tooltip key={label} title={hint} arrow>
-            <Chip
-              icon={ready ? <CheckCircleIcon /> : <RadioButtonUncheckedIcon />}
-              label={label}
-              variant={ready ? 'filled' : 'outlined'}
-              color={ready ? 'success' : 'default'}
-              sx={{ px: 0.5, ...(ready ? {} : { color: 'text.secondary' }) }}
-            />
-          </Tooltip>
-        ))}
-      </Box>
-      <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', flexGrow: 1, width: '100%', px: 2, pb: 4 }}>
-        <Card sx={{ maxWidth: 700, width: '100%', padding: 2 }} >
-          <CardContent>
-            <Typography variant="h4" color="text.primary" gutterBottom align="center">
-              Send Message
-            </Typography>
-            <Typography variant="body2" color="text.secondary" align="center" sx={{ mb: 2 }}>
-              Compose a notification to broadcast via email and Discord.
-            </Typography>
-            <CustomTextField
-              type="text"
-              label="Subject"
-              value={subject}
-              onChange={(e) => setSubject(e.target.value)}
-              fullWidth
-              margin="normal"
-            />
-            <CustomMultilineTextField
-              label="Body"
-              value={body}
-              onChange={(e) => setBody(e.target.value)}
-              placeholder="Body"
-            />
-            <FormGroup row sx={{ justifyContent: 'center', marginTop: 2 }}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    color="primary"
-                    checked={sendEmail}
-                    onChange={(e) => setSendEmail(e.target.checked)}
+    <Box sx={{ width: '100%', maxWidth: 760, mx: 'auto' }}>
+      <PageHeader
+        eyebrow="Broadcast"
+        title="Compose"
+        subtitle="Send one message to every channel you select."
+        action={
+          <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', pb: 0.5 }}>
+            {preflightItems.map(({ label, ready, hint }) => (
+              <Tooltip key={label} title={hint} arrow>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+                  <Box
+                    sx={{
+                      width: 7,
+                      height: 7,
+                      borderRadius: '50%',
+                      bgcolor: ready ? 'success.main' : 'action.disabled',
+                    }}
                   />
-                }
-                label="Send via Email"
+                  <Typography
+                    sx={{
+                      fontFamily: (theme) => theme.typography.fontFamilyMono,
+                      fontSize: '0.68rem',
+                      letterSpacing: '0.06em',
+                      textTransform: 'uppercase',
+                      color: 'text.secondary',
+                    }}
+                  >
+                    {label}
+                  </Typography>
+                </Box>
+              </Tooltip>
+            ))}
+          </Box>
+        }
+      />
+      <Card>
+        <CardContent sx={{ p: { xs: 2.5, md: 3.5 } }}>
+          <TextField
+            select
+            fullWidth
+            size="small"
+            label="Template"
+            value={selectedTemplateId}
+            onChange={handleTemplateChange}
+            helperText="Optionally prefill the subject and body from a saved template."
+          >
+            <MenuItem value="">No template</MenuItem>
+            {templates.map((template) => (
+              <MenuItem key={template.id} value={template.id}>{template.name}</MenuItem>
+            ))}
+          </TextField>
+          <CustomTextField
+            type="text"
+            label="Subject"
+            value={subject}
+            onChange={(e) => setSubject(e.target.value)}
+          />
+          <CustomMultilineTextField
+            label="Body"
+            value={body}
+            onChange={(e) => setBody(e.target.value)}
+            placeholder="Write the announcement…"
+          />
+          <Typography
+            sx={{
+              fontFamily: (theme) => theme.typography.fontFamilyMono,
+              fontSize: '0.68rem',
+              letterSpacing: '0.14em',
+              textTransform: 'uppercase',
+              color: 'text.secondary',
+              mt: 2.5,
+              mb: 1,
+            }}
+          >
+            Channels
+          </Typography>
+          <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
+            <ChannelCard
+              icon={<EmailOutlinedIcon />}
+              name="Email"
+              statusLine={emailStatusLine}
+              ready={emailReady}
+              selected={sendEmail}
+              onToggle={() => setSendEmail((prev) => !prev)}
+            />
+            <ChannelCard
+              icon={<TagIcon />}
+              name="Discord"
+              statusLine={discordStatusLine}
+              ready={discordReady}
+              selected={sendDiscord}
+              onToggle={() => setSendDiscord((prev) => !prev)}
+            />
+          </Box>
+        </CardContent>
+        <CardActions sx={{ justifyContent: 'flex-end', px: { xs: 2.5, md: 3.5 }, pb: 3, pt: 0 }}>
+          <Box sx={{ position: 'relative', display: 'inline-flex' }}>
+            {justSent && (
+              <Box
+                aria-hidden
+                sx={{
+                  position: 'absolute',
+                  inset: 0,
+                  borderRadius: '10px',
+                  border: '2px solid',
+                  borderColor: 'signal.main',
+                  opacity: 0,
+                  pointerEvents: 'none',
+                  '@media (prefers-reduced-motion: no-preference)': {
+                    animation: `${ripple} 0.9s ease-out`,
+                  },
+                }}
               />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    color="primary"
-                    checked={sendDiscord}
-                    onChange={(e) => setSendDiscord(e.target.checked)}
-                  />
-                }
-                label="Send via Discord"
-              />
-            </FormGroup>
-            <Box mt={2} sx={{ width: '75%', mx: 'auto' }}>
-              <TextField
-                select
-                fullWidth
-                size="small"
-                label="Template"
-                value={selectedTemplateId}
-                onChange={handleTemplateChange}
-                helperText="Optionally prefill the subject and body from a saved template."
-              >
-                <MenuItem value="">No template</MenuItem>
-                {templates.map((template) => (
-                  <MenuItem key={template.id} value={template.id}>{template.name}</MenuItem>
-                ))}
-              </TextField>
-            </Box>
-          </CardContent>
-          <CardActions sx={{ justifyContent: 'center' }}>
-            <CustomButton onClick={handleSendMessageClick}>Send Message</CustomButton>
-          </CardActions>
-        </Card>
-      </Box>
+            )}
+            <CustomButton onClick={handleSendMessageClick}>Send message</CustomButton>
+          </Box>
+        </CardActions>
+      </Card>
       <CustomSnackbar
         open={snackbarOpen}
         message={snackbarMessage}
@@ -272,19 +349,28 @@ function MessageForm() {
       <ConfirmationDialog
         open={dialogOpen}
         onClose={handleDialogClose}
-        title="Confirm Send"
+        title="Send this message?"
         content={
           <>
-            <Typography variant="body1">
-              Are you sure you want to send this message to {emailCount} email address(s) and the following Discord channels:
-            </Typography>
-            <ul>
-              {discordChannels.filter(channel => channel.is_active).map((channel) => (
-                <li key={channel.channel_name}>
-                  <Typography variant="body2">{channel.channel_name}</Typography>
-                </li>
-              ))}
-            </ul>
+            {sendEmail && (
+              <Typography variant="body1" sx={{ mb: sendDiscord ? 1 : 0 }}>
+                Email: {emailCount} recipient{emailCount === 1 ? '' : 's'}
+              </Typography>
+            )}
+            {sendDiscord && (
+              <>
+                <Typography variant="body1">
+                  Discord channels:
+                </Typography>
+                <ul style={{ marginTop: 4 }}>
+                  {discordChannels.filter(channel => channel.is_active).map((channel) => (
+                    <li key={channel.channel_name}>
+                      <Typography variant="body2">{channel.channel_name}</Typography>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
           </>
         }
       />

@@ -9,10 +9,10 @@ export default function CustomTextField({ label, value, onChange, placeholder, s
       value={value}
       onChange={onChange}
       placeholder={placeholder}
-      variant="standard"
+      variant="outlined"
       fullWidth
       margin="normal"
-      sx={{ width: '75%', ...sx }}
+      sx={sx}
       InputProps={InputProps}
       {...rest}
     />
