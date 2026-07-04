@@ -1,6 +1,6 @@
 # NotifyAgent
 
-![Screenshot](https://i.imgur.com/IfyWMDQ.png)
+![NotifyAgent — compose a message once and broadcast it to email and Discord](docs/screenshot.png)
 
 ## Docker-less Setup:
 
