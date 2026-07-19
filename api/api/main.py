@@ -308,7 +308,14 @@ def import_emails(db: Session = Depends(get_db)):
 
     if data['response']['result'] == 'success':
         users = data['response']['data']
-        emails = [user['email'] for user in users if user['email']]
+        # Only import users who still have access to the server. Tautulli keeps
+        # removed users (is_active == 0) so their watch history is preserved, but
+        # we don't want to re-add their emails on every import. Default to active
+        # if the field is missing (older Tautulli versions).
+        emails = [
+            user['email'] for user in users
+            if user['email'] and str(user.get('is_active', 1)) == '1'
+        ]
         
         # Fetch exclusion list
         exclusion_list = crud.get_exclusion_list(db)
